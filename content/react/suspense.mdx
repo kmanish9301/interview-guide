@@ -1,0 +1,230 @@
+---
+title: Suspense
+category: React
+difficulty: Advanced
+interviewFrequency: High
+experienceLevel: Mid-Level
+estimatedReadTime: 9
+tags: [react, suspense, async, performance]
+companies:
+  - Meta
+  - Netflix
+---
+
+# Suspense
+
+## 📖 What is Suspense?
+
+**Suspense** is a built-in React component that lets you declaratively specify a loading state (like a spinner) for a part of the component tree that is not yet ready to be displayed. It "suspends" rendering until the underlying asynchronous operation (like fetching data or lazy loading code) finishes.
+
+## 🤔 Why do we need Suspense?
+
+Before Suspense, handling loading states required tedious boilerplate: tracking an `isLoading` state variable, updating it inside a `useEffect` after an API call, and writing early `if (isLoading) return <Spinner />` returns in every component. Suspense extracts this logic declaratively to the parent layer, keeping components focused purely on rendering data.
+
+## ⚙️ Internal Working
+
+When a component "suspends", it actually throws a **Promise** up the call stack during the render phase. React catches this Promise. It then finds the closest `<Suspense>` boundary above it in the tree, renders the `fallback` UI, and waits. When the Promise resolves, React re-renders the component with the newly available data.
+
+## 🧠 How React Engine Handles It
+
+This mechanism is deeply tied to React 18's **Concurrent Features**. By suspending, React can pause the rendering of that specific subtree, switch to rendering other high-priority UI updates, and come back to the suspended tree once the Promise resolves.
+
+## 📝 Syntax
+
+```jsx
+import { Suspense } from "react";
+
+function App() {
+  return (
+    <Suspense fallback={<LoadingSpinner />}>
+      {/* SomeComponent might suspend while fetching data */}
+      <SomeComponent />
+    </Suspense>
+  );
+}
+```
+
+## 💡 Beginner Example
+
+**Code Splitting (Lazy Loading)**:
+The most common use case for Suspense currently is lazy loading components to reduce the initial JavaScript bundle size.
+
+```jsx
+import { lazy, Suspense } from "react";
+
+// The component is fetched over the network ONLY when rendered
+const HeavyDashboard = lazy(() => import("./HeavyDashboard"));
+
+function App() {
+  return (
+    <div>
+      <h1>Welcome</h1>
+      <Suspense fallback={<div>Loading Dashboard...</div>}>
+        <HeavyDashboard />
+      </Suspense>
+    </div>
+  );
+}
+```
+
+## 🚀 Advanced Example
+
+**Data Fetching with Suspense (React Server Components / React Query)**:
+In modern frameworks (like Next.js App Router) or with libraries like React Query, Suspense handles data fetching automatically without `useEffect`.
+
+```jsx
+// A component that fetches data using a Suspense-compatible library
+function UserProfile({ userId }) {
+  // This hook throws a promise if the data isn't cached yet!
+  const { data } = useSuspenseQuery({
+    queryKey: ["user", userId],
+    queryFn: fetchUser
+  });
+
+  return <h1>{data.name}</h1>;
+}
+
+// Parent Component
+function App() {
+  return (
+    <Suspense fallback={<SkeletonProfile />}>
+      <UserProfile userId={1} />
+    </Suspense>
+  );
+}
+```
+
+## 🏢 Production Example
+
+**Nested Suspense Boundaries**:
+In large applications, you can nest Suspense boundaries to create a highly optimized loading sequence. The outer boundary might show a full page skeleton, while inner boundaries handle individual heavy widgets.
+
+```jsx
+<Suspense fallback={<PageSkeleton />}>
+  <MainContent />
+
+  <Suspense fallback={<WidgetSpinner />}>
+    <HeavyAnalyticsWidget />
+  </Suspense>
+
+  <Suspense fallback={<CommentsSkeleton />}>
+    <CommentsSection />
+  </Suspense>
+</Suspense>
+```
+
+## ⚛️ React Example
+
+**`useTransition` and Suspense**:
+When transitioning from one page to another, showing a spinner immediately can feel jarring. `useTransition` allows you to keep showing the _old_ UI while the _new_ UI is suspending in the background.
+
+```jsx
+const [isPending, startTransition] = useTransition();
+
+const handleTabChange = (tabId) => {
+  // Defers the suspense fallback, keeping the current tab visible while fetching
+  startTransition(() => {
+    setTab(tabId);
+  });
+};
+```
+
+## ⚡ Performance
+
+Suspense dramatically improves perceived performance. Instead of rendering a cascading waterfall of spinners as components load one by one, Suspense allows you to orchestrate the loading states smoothly at the layout level.
+
+## 🧠 Memory
+
+Because Suspense relies on throwing Promises, the underlying libraries (like React Query or Relay) must maintain a cache of the resolved data in memory so that when the component re-renders after the Promise resolves, it doesn't just trigger another fetch.
+
+## ❌ Common Mistakes
+
+**Using Suspense with standard `useEffect` fetching**:
+
+```jsx
+// BAD: This does NOT trigger Suspense!
+function Profile() {
+  const [data, setData] = useState(null);
+
+  useEffect(() => {
+    fetch("/data")
+      .then((res) => res.json())
+      .then(setData);
+  }, []);
+
+  if (!data) return null;
+  return <div>{data}</div>;
+}
+```
+
+_Fix_: Standard `fetch` inside `useEffect` does not throw a Promise to React. You must use a Suspense-compatible framework (Next.js, Relay, React Query) or `React.lazy`.
+
+## ✅ Best Practices
+
+1. Place Suspense boundaries intentionally. Don't wrap every single component; wrap meaningful UI sections (like an entire sidebar or a feed).
+2. Design fallback UIs (like Skeleton loaders) that closely match the layout of the final content to prevent Layout Shift (CLS).
+
+## 🆚 Comparison
+
+| Approach                    | Syntax                             | State Management    |
+| --------------------------- | ---------------------------------- | ------------------- |
+| **Traditional (useEffect)** | `if (isLoading) return <Spinner/>` | Manual (`useState`) |
+| **Suspense**                | `<Suspense fallback={<Spinner/>}>` | Handled by React    |
+
+## ❓ Interview Questions
+
+1. **How does Suspense know when a component is loading?**
+   - _Answer_: The component throws a Promise during the render phase. React catches it, renders the Suspense fallback, and waits for the Promise to resolve before attempting to render the component again.
+2. **What is the difference between `Suspense` and `Error Boundaries`?**
+   - _Answer_: `Suspense` catches thrown Promises (loading states). `Error Boundaries` catch thrown Errors (failures). They are often used together to handle the full lifecycle of an async request.
+
+## 🔄 Follow-up Questions
+
+**"Can you use Suspense for server-side rendering (SSR)?"**
+
+- _Answer_: Yes, in React 18, Suspense unlocked streaming SSR. React can send HTML for the resolved parts of the page immediately, and then stream the Suspended HTML over the same connection once the data finishes loading on the server.
+
+## 💻 Coding Questions
+
+**How do you lazy load a component in React?**
+_Solution_:
+
+```jsx
+import { lazy, Suspense } from "react";
+
+const MyModal = lazy(() => import("./MyModal"));
+
+function App() {
+  return (
+    <Suspense fallback={<div>Loading Modal...</div>}>
+      <MyModal />
+    </Suspense>
+  );
+}
+```
+
+## 🧩 Output-Based Questions
+
+If a child component throws a Promise, but there is no `<Suspense>` boundary anywhere in the parent tree, what happens?
+_Answer_: The application will crash. React requires a Suspense boundary to catch the thrown Promise.
+
+## 🐞 Debugging Questions
+
+**Why is my Suspense fallback flashing very quickly?**
+_Fix_: If the data fetches in 50ms, a spinner flashing on the screen is visually jarring. You can use `useTransition` or `useDeferredValue` to delay the appearance of the fallback UI, allowing fast connections to skip the spinner entirely.
+
+## 📄 Cheat Sheet
+
+- **Component**: `<Suspense fallback={<UI />}>`
+- **Use Cases**: `React.lazy` (Code splitting), Data Fetching (with compatible libraries).
+- **Mechanism**: Catching thrown Promises during render.
+- **Benefits**: Declarative loading states, prevents UI waterfalls.
+
+## ⚡ 2-Minute Revision
+
+Suspense is a declarative way to handle asynchronous loading in React. Instead of writing `if (loading)` everywhere, you wrap your components in `<Suspense>` and provide a fallback. Under the hood, components throw Promises to signal they aren't ready. This powers advanced features like Lazy Loading and Streaming SSR in modern frameworks.
+
+## 🔗 Related Topics
+
+- [Lazy Loading](/topic/react/lazy-loading)
+- [Error Boundary](/topic/react/error-boundary)

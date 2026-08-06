@@ -1,0 +1,96 @@
+---
+title: Rendering Patterns
+category: System Design
+difficulty: Advanced
+interviewFrequency: Very High
+experienceLevel: Senior
+estimatedReadTime: 12
+tags: [system design, rendering, ssr, csr, ssg, isr]
+companies:
+  - Meta
+  - Vercel
+  - Netflix
+---
+
+# Rendering Patterns
+
+## 📖 What are Rendering Patterns?
+
+Rendering patterns determine **where** and **when** the HTML for your web application is generated. Will the server construct the HTML on every request? Will the browser download an empty HTML shell and build the UI using JavaScript? Or will the HTML be pre-built at compile time?
+
+## 🤔 Why do we need different patterns?
+
+There is no "one size fits all" for rendering.
+
+- An e-commerce site needs instant SEO and fast initial loads (SSR/SSG).
+- A complex dashboard needs highly interactive, stateful UI without server roundtrips on every click (CSR).
+  Choosing the wrong pattern can result in terrible Core Web Vitals, poor SEO, or massive server costs.
+
+## ⚙️ The Core Patterns
+
+### 1. Client-Side Rendering (CSR)
+
+**How it works**: The server sends a nearly empty HTML file (with a `<div id="root">`) and a massive JavaScript bundle. The browser downloads the JS, parses it, and React/Vue builds the entire DOM on the client.
+
+- **Pros**: Once loaded, navigation is instantaneous. Great for highly interactive apps (Dashboards, SPAs). Low server cost.
+- **Cons**: Terrible SEO (crawlers see an empty page). Slow Time to Interactive (TTI) on slow devices because the browser must parse megabytes of JS before showing anything.
+
+### 2. Server-Side Rendering (SSR)
+
+**How it works**: When a user requests a page, the Node.js server fetches the necessary data, compiles the React components into raw HTML string, and sends it to the browser. The browser immediately displays the HTML (fast FCP), and then "hydrates" it by attaching event listeners.
+
+- **Pros**: Incredible SEO. Fast First Contentful Paint (FCP). Reliable performance on slow client devices.
+- **Cons**: High server costs (CPU intensive). Slow Time to First Byte (TTFB) because the server must wait for data fetching before sending any HTML.
+
+### 3. Static Site Generation (SSG)
+
+**How it works**: The HTML is generated exactly once during the **build step** (e.g., when you run `npm run build`). The static HTML files are then pushed to a global CDN.
+
+- **Pros**: Blazing fast TTFB. Infinite scalability (CDNs are cheap and fast). Perfect SEO. Zero server overhead.
+- **Cons**: Data is stale! If a blog post gets a new comment, you must trigger a full site rebuild to show it. Not suitable for highly dynamic data.
+
+### 4. Incremental Static Regeneration (ISR)
+
+**How it works**: Pioneered by Next.js. It is SSG, but with an expiration timer. The page is built statically, but after X seconds, the _next_ request will trigger a background rebuild of just that specific page.
+
+- **Pros**: Best of both worlds. Blazing fast CDN speeds, but data updates itself without a full site rebuild.
+- **Cons**: Users might occasionally see stale data for a few seconds while the background rebuild occurs.
+
+## 🧠 Advanced Patterns
+
+### Partial Hydration / Islands Architecture
+
+Frameworks like **Astro** ship zero JavaScript by default. You explicitly define "Islands" of interactivity. E.g., the Header and Footer are static HTML, but the "Add to Cart" button is a hydrated React component. This drastically reduces JS bundle size.
+
+### React Server Components (RSC)
+
+Introduced in React 18 / Next.js 13+. Components render on the server and _stay_ on the server. They ship zero JavaScript to the client. Only Client Components (`"use client"`) are hydrated. This blends SSR and CSR seamlessly.
+
+## ✅ Best Practices
+
+- **E-commerce / Marketing Sites**: Use SSG or ISR for product pages.
+- **Dashboards / Admin Panels**: Use CSR. SEO doesn't matter behind a login wall.
+- **Social Media Feeds**: Use SSR, or SSR for the initial shell + CSR for infinite scrolling data.
+
+## 🆚 Comparison
+
+| Pattern     | TTFB    | FCP     | TTI    | SEO       | Server Cost |
+| ----------- | ------- | ------- | ------ | --------- | ----------- |
+| **CSR**     | Fast    | Slow    | Slow   | Poor      | Low         |
+| **SSR**     | Slow    | Fast    | Medium | Excellent | High        |
+| **SSG/ISR** | Fastest | Fastest | Fast   | Excellent | Low         |
+
+## ❓ Interview Questions
+
+1. **What is Hydration?**
+   - _Answer_: Hydration is the process where a frontend framework (like React) takes over server-rendered HTML. It attaches event listeners and state to the static DOM nodes so the page becomes interactive.
+2. **How does ISR differ from SSR?**
+   - _Answer_: SSR renders the page on _every single request_, blocking the response until data is fetched. ISR serves a cached static page instantly from a CDN, and rebuilds the cache in the background periodically.
+
+## 📄 Cheat Sheet
+
+- **CSR**: Rendered in browser. Great for Dashboards.
+- **SSR**: Rendered on server per request. Great for dynamic SEO.
+- **SSG**: Rendered at build time. Great for Blogs/Docs.
+- **ISR**: SSG with a timer to revalidate data.
+- **RSC**: Server-only components that never ship JS to the client.

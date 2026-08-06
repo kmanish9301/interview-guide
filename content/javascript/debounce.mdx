@@ -1,0 +1,243 @@
+---
+title: Debounce
+category: JavaScript
+difficulty: Intermediate
+interviewFrequency: Very High
+experienceLevel: Mid-Level
+estimatedReadTime: 10
+tags: [javascript, debounce, performance, ui]
+companies:
+  - Amazon
+  - Adobe
+  - Google
+  - Netflix
+---
+
+# Debounce
+
+## 📖 What is Debounce?
+
+**Debounce** is a programming practice used to ensure that a time-consuming task does not fire so often that it stalls the performance of the web page. It delays the execution of a function until after a specified amount of time has elapsed since the _last time_ the function was invoked.
+
+## 🤔 Why do we need Debounce?
+
+Certain browser events (like `keyup`, `mousemove`, `scroll`, or window `resize`) can fire dozens or even hundreds of times per second. If you attach a heavy operation (like an API call or DOM re-rendering) directly to these events, the browser will lag, and your server might get DDOS'd by its own users. Debouncing ensures the heavy operation only happens once the user has _stopped_ triggering the event.
+
+## ⚙️ Internal Working
+
+Debounce works by utilizing **Closures** and **`setTimeout`**. When the debounced function is called, it clears the previous timer (if it exists) and starts a new one. If the function is called again before the timer runs out, the timer resets. The actual heavy function only executes if the timer reaches zero without being interrupted.
+
+## 🧠 How JavaScript Engine Handles It
+
+Because debounce uses `setTimeout`, the final execution of the heavy function is pushed to the **Macrotask Queue** by the Web API. The timer is constantly destroyed and recreated in memory until the user stops interacting.
+
+## 📝 Syntax
+
+There is no native `debounce` keyword in JS. Developers typically write their own utility function or use libraries like Lodash (`_.debounce`).
+
+```javascript
+function debounce(func, delay) {
+  let timerId;
+  return function (...args) {
+    clearTimeout(timerId);
+    timerId = setTimeout(() => {
+      func.apply(this, args);
+    }, delay);
+  };
+}
+```
+
+## 💡 Beginner Example
+
+**Search Auto-complete**:
+If a user searches for "Macbook", the `keyup` event fires 7 times. Without debounce, we make 7 API calls.
+
+```javascript
+const fetchResults = (query) => console.log(`Fetching results for ${query}...`);
+
+const debouncedFetch = debounce(fetchResults, 500);
+
+// Simulating fast typing
+debouncedFetch("M");
+debouncedFetch("Ma");
+debouncedFetch("Mac");
+debouncedFetch("Macb");
+debouncedFetch("Macboo");
+debouncedFetch("Macbook");
+
+// Only ONE API call is made, 500ms after the last keystroke!
+// Output: Fetching results for Macbook...
+```
+
+## 🚀 Advanced Example
+
+**Immediate Execution Flag (Leading Edge)**:
+Sometimes you want the function to fire immediately on the first interaction, but ignore subsequent interactions until a pause occurs (like a submit button to prevent double-charging).
+
+```javascript
+function debounceImmediate(func, delay, immediate = false) {
+  let timerId;
+  return function (...args) {
+    const callNow = immediate && !timerId;
+
+    clearTimeout(timerId);
+
+    timerId = setTimeout(() => {
+      timerId = null;
+      if (!immediate) func.apply(this, args);
+    }, delay);
+
+    if (callNow) func.apply(this, args);
+  };
+}
+```
+
+## 🏢 Production Example
+
+In modern architectures, developers almost always rely on battle-tested utilities like Lodash, rather than writing custom debouncers, because Lodash handles edge cases like component unmounting and cancelling.
+
+```javascript
+import { debounce } from "lodash";
+
+// Analytics tracking on scroll
+window.addEventListener(
+  "scroll",
+  debounce(() => {
+    Analytics.track("User scrolled halfway");
+  }, 2000)
+);
+```
+
+## ⚛️ React Example
+
+Debouncing in React can be tricky because components re-render, and recreating the debounced function on every render will cause it to lose its internal timer state.
+
+**Correct way using `useCallback`**:
+
+```jsx
+import { useState, useCallback } from "react";
+import debounce from "lodash/debounce";
+
+function SearchInput() {
+  const [query, setQuery] = useState("");
+
+  // Memoize the debounced function so it survives re-renders
+  const debouncedSearch = useCallback(
+    debounce((nextValue) => {
+      api.search(nextValue);
+    }, 500),
+    []
+  );
+
+  const handleChange = (e) => {
+    setQuery(e.target.value);
+    debouncedSearch(e.target.value); // Trigger debounced API call
+  };
+
+  return <input value={query} onChange={handleChange} />;
+}
+```
+
+## ⚡ Performance
+
+Debounce drastically _improves_ performance by limiting the number of times expensive code runs. It is one of the most critical performance optimization techniques for frontend interfaces.
+
+## 🧠 Memory
+
+Since debounce relies on a closure to hold the `timerId`, it keeps that execution context alive in memory. Additionally, in React, you must be careful to cancel debounced calls when a component unmounts (`debouncedFn.cancel()`) to prevent memory leaks or updating unmounted state.
+
+## ❌ Common Mistakes
+
+Calling `debounce` inside a render loop or directly inside an event listener wrapper:
+
+```javascript
+// BAD: Creates a brand new debouncer every keystroke! It will never delay.
+input.addEventListener("keyup", (e) => {
+  debounce(() => fetch(e.target.value), 500)();
+});
+```
+
+_Fix_: The `debounce` function must be created _outside_ the event listener, and the listener should call the returned debounced instance.
+
+## ✅ Best Practices
+
+1. Apply debounce to `scroll`, `resize`, `mousemove`, and `keyup` events.
+2. In React, use `useMemo` or `useCallback` to cache the debounced function.
+3. Clean up pending debounces when destroying views or unmounting components.
+
+## 🆚 Comparison
+
+| Feature      | Debounce                                            | Throttle                                         |
+| ------------ | --------------------------------------------------- | ------------------------------------------------ |
+| **Behavior** | Waits for a pause before firing.                    | Fires at a strictly enforced regular interval.   |
+| **Best For** | Search inputs, auto-saving.                         | Window resizing, infinite scrolling, game loops. |
+| **Analogy**  | Elevator waits until everyone boards before moving. | A ticking metronome (fires exactly every X ms).  |
+
+## ❓ Interview Questions
+
+1. **Explain Debounce vs Throttle.**
+   - _Answer_: Debounce delays execution until a certain period of inactivity occurs. Throttle guarantees execution at regular intervals, regardless of activity.
+2. **How do you implement Debounce from scratch?**
+   - _Answer_: Return a function that uses a closure to store a `timerId`. Call `clearTimeout` on the ID, then set a new `setTimeout` executing the original function.
+
+## 🔄 Follow-up Questions
+
+**"How do you handle the `this` context inside a custom debounce function?"**
+
+- _Answer_: Inside the returned closure, we must capture `this` and `arguments` (using spread operator or `arguments` object) and invoke the original function using `.apply(this, args)` to preserve the context of the event listener.
+
+## 💻 Coding Questions
+
+**Write a polyfill for Debounce.**
+_Solution_:
+
+```javascript
+function debounce(fn, delay) {
+  let timeout;
+  return function (...args) {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => {
+      fn.apply(this, args);
+    }, delay);
+  };
+}
+```
+
+## 🧩 Output-Based Questions
+
+If a debounced function (delay 500ms) is called at `0ms`, `200ms`, `400ms`, and `700ms`, when does the actual function execute?
+_Answer_: At `1200ms`.
+_Explanation_:
+
+- `0ms`: Timer starts for 500.
+- `200ms`: Timer resets for 700.
+- `400ms`: Timer resets for 900.
+- `700ms`: Timer resets for 1200. No more calls happen, so it executes at `1200ms`.
+
+## 🐞 Debugging Questions
+
+**Why is the API firing on every keystroke in this React code?**
+
+```jsx
+const handleChange = (e) => {
+  const debounced = debounce(api.search, 500);
+  debounced(e.target.value);
+};
+```
+
+_Fix_: A new debouncer is created and destroyed on every single keystroke. It must be created outside the component or cached using `useCallback`.
+
+## 📄 Cheat Sheet
+
+- **Debounce**: "Group multiple rapid events into a single event."
+- **Core Mechanism**: `clearTimeout` + `setTimeout`.
+- **Primary Use Case**: Search bars (auto-complete).
+
+## ⚡ 2-Minute Revision
+
+Debounce is an optimization strategy that limits the rate at which a function is called. By resetting a timer every time an event occurs, it ensures the function only runs once the user has stopped triggering the event (e.g., stopped typing). It relies on closures to keep track of the active timer.
+
+## 🔗 Related Topics
+
+- [Throttle](/topic/javascript/throttle)
+- [Closures](/topic/javascript/closures)

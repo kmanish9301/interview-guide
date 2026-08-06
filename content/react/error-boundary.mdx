@@ -1,0 +1,233 @@
+---
+title: Error Boundary
+category: React
+difficulty: Advanced
+interviewFrequency: Medium
+experienceLevel: Mid-Level
+estimatedReadTime: 7
+tags: [react, error-boundary, reliability, class-components]
+companies:
+  - Meta
+  - Netflix
+---
+
+# Error Boundary
+
+## 📖 What is an Error Boundary?
+
+An **Error Boundary** is a React component that catches JavaScript errors anywhere in its child component tree, logs those errors, and displays a fallback UI instead of crashing the entire application. It acts like a `catch {}` block, but for React components.
+
+## 🤔 Why do we need Error Boundaries?
+
+Before React 16, a JavaScript error inside a component would completely break React's internal state and emit cryptic errors, resulting in a blank white screen (the "White Screen of Death") for the user. Error Boundaries ensure that if one part of the UI crashes (e.g., a broken widget), the rest of the application remains fully functional.
+
+## ⚙️ Internal Working
+
+Currently, Error Boundaries **must be Class Components**. There is no Hook equivalent yet. A class component becomes an Error Boundary if it defines either (or both) of the following lifecycle methods:
+
+1. `static getDerivedStateFromError(error)`: Used to render a fallback UI.
+2. `componentDidCatch(error, errorInfo)`: Used to log error information.
+
+## 🧠 How React Engine Handles It
+
+When an error is thrown during the render phase, in lifecycle methods, or in constructors of any child component, React traverses up the tree looking for the nearest Error Boundary. Once found, React unmounts the crashed child tree and renders the fallback UI provided by `getDerivedStateFromError`.
+
+## 📝 Syntax
+
+```jsx
+import React from "react";
+
+class ErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError(error) {
+    // Update state so the next render shows the fallback UI.
+    return { hasError: true };
+  }
+
+  componentDidCatch(error, errorInfo) {
+    // Log the error to an error reporting service
+    console.error("Caught by boundary:", error, errorInfo);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      // You can render any custom fallback UI
+      return <h1>Something went wrong.</h1>;
+    }
+
+    return this.props.children;
+  }
+}
+```
+
+## 💡 Beginner Example
+
+**Protecting the App**:
+Wrap your main app (or specific fragile sections) with the boundary.
+
+```jsx
+function App() {
+  return (
+    <div>
+      <Header />
+      <ErrorBoundary>
+        <FragileComponent />
+      </ErrorBoundary>
+      <Footer />
+    </div>
+  );
+}
+```
+
+If `FragileComponent` crashes, the Header and Footer will still render perfectly!
+
+## 🚀 Advanced Example
+
+**Using `react-error-boundary`**:
+Since writing Class components in modern React feels archaic, the industry standard is to use the `react-error-boundary` package. It provides a highly flexible functional wrapper.
+
+```jsx
+import { ErrorBoundary } from "react-error-boundary";
+
+function Fallback({ error, resetErrorBoundary }) {
+  return (
+    <div role="alert">
+      <p>Something went wrong:</p>
+      <pre>{error.message}</pre>
+      {/* Allows the user to try rendering the component again */}
+      <button onClick={resetErrorBoundary}>Try again</button>
+    </div>
+  );
+}
+
+function App() {
+  return (
+    <ErrorBoundary
+      FallbackComponent={Fallback}
+      onReset={() => {
+        /* reset some state here */
+      }}
+    >
+      <FragileComponent />
+    </ErrorBoundary>
+  );
+}
+```
+
+## 🏢 Production Example
+
+In large apps, you should place Error Boundaries at different levels of granularity.
+
+- A top-level boundary for catastrophic app crashes (shows a "Reload Page" screen).
+- Route-level boundaries (shows a "Page not found or crashed" screen).
+- Widget-level boundaries (shows a tiny "Failed to load widget" UI, keeping the rest of the dashboard alive).
+
+## ⚛️ React Example
+
+**What Error Boundaries DO NOT catch:**
+Error boundaries do **not** catch errors for:
+
+1. Event handlers (`onClick`, `onSubmit`). Use standard `try/catch` here.
+2. Asynchronous code (e.g. `setTimeout` or `requestAnimationFrame`).
+3. Server-side rendering (SSR).
+4. Errors thrown in the error boundary itself (rather than its children).
+
+## ⚡ Performance
+
+Error Boundaries have negligible performance overhead. They act purely as safety nets during the render phase.
+
+## 🧠 Memory
+
+No special memory considerations, aside from the memory required to store the error object and stack trace in development mode.
+
+## ❌ Common Mistakes
+
+**Relying on Error Boundaries for API failures**:
+
+```jsx
+// BAD: Error boundaries do not catch async fetch errors!
+fetch("/api").then((res) => {
+  if (!res.ok) throw new Error("Failed"); // Boundary will NOT catch this!
+});
+```
+
+_Fix_: You must catch async errors using `.catch()` and set an error state manually, or use a data-fetching library that integrates with Suspense/Error Boundaries (like React Query).
+
+## ✅ Best Practices
+
+1. Do not use Error Boundaries for control flow (like form validation). They are for unexpected exceptions.
+2. Provide a "Reset" or "Try Again" button in your fallback UI so users can attempt to recover from transient errors without refreshing the whole page.
+3. Always log the error to a service like Sentry or Datadog inside `componentDidCatch`.
+
+## 🆚 Comparison
+
+| Error Type                   | Handled By        |
+| ---------------------------- | ----------------- |
+| Render phase errors          | `<ErrorBoundary>` |
+| Lifecycle hook errors        | `<ErrorBoundary>` |
+| `onClick` / Event Handlers   | `try / catch`     |
+| Async `setTimeout` / `fetch` | `try / catch`     |
+
+## ❓ Interview Questions
+
+1. **Can you write an Error Boundary using React Hooks?**
+   - _Answer_: No. As of React 18, there is no Hook equivalent to `getDerivedStateFromError` or `componentDidCatch`. You must use a Class Component (or a third-party library that wraps one).
+2. **Will an Error Boundary catch a failed network request?**
+   - _Answer_: No. Error boundaries only catch errors thrown during the render phase. Since network requests happen asynchronously outside the render cycle, they must be caught with standard `try/catch` or `.catch()`.
+
+## 🔄 Follow-up Questions
+
+**"How do libraries like React Query trigger Error Boundaries on network failure?"**
+
+- _Answer_: If a query fails, React Query catches the async error internally. During the next render cycle, React Query explicitly `throws` the saved error object during the render phase, which the Error Boundary then catches!
+
+## 💻 Coding Questions
+
+**Why won't the Error Boundary catch the error in this button click?**
+
+```jsx
+function BuggyButton() {
+  const handleClick = () => {
+    throw new Error("I crashed!");
+  };
+  return <button onClick={handleClick}>Crash</button>;
+}
+```
+
+_Solution_: Event handlers are not part of the render phase. React knows exactly what to do if an event handler throws an error (it just ignores it and continues). You must use `try/catch` inside `handleClick`.
+
+## 🧩 Output-Based Questions
+
+If Component A is wrapped in an Error Boundary, and Component A throws an error, does the Error Boundary catch it?
+_Answer_: Yes.
+What if the Error Boundary _itself_ throws an error inside its `render` method?
+_Answer_: It will NOT catch it. It will propagate the error up to the next Error Boundary in the tree.
+
+## 🐞 Debugging Questions
+
+**Why is my app crashing despite the Error Boundary?**
+_Fix_: Ensure the error isn't happening in an event handler or asynchronous code. If you want to throw an error from an async callback so the boundary catches it, you must hack it by putting the error in state and throwing it during render:
+
+```jsx
+const [error, setError] = useState(null);
+if (error) throw error; // The boundary will catch this!
+```
+
+## 📄 Cheat Sheet
+
+- **Component**: Must be a Class.
+- **Methods**: `static getDerivedStateFromError` & `componentDidCatch`.
+- **Scope**: Catches render errors in children.
+- **Exclusions**: Async code, Event handlers, SSR.
+
+## ⚡ 2-Minute Revision
+
+Error Boundaries prevent your entire React app from crashing when a single component throws an unexpected error. They replace the broken component tree with a safe fallback UI. Remember that they must be Class components, and they only catch errors that happen during the React render phase, not inside your `onClick` handlers or `setTimeout`s!
+
+## 🔗 Related Topics
+
+- [Suspense](/topic/react/suspense)

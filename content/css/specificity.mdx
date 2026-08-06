@@ -1,0 +1,79 @@
+---
+title: Specificity
+category: CSS
+difficulty: Beginner
+interviewFrequency: High
+experienceLevel: Entry-Level
+estimatedReadTime: 7
+tags: [css, specificity, selectors, rules]
+companies:
+  - Google
+  - Amazon
+  - Spotify
+---
+
+# CSS Specificity
+
+## 📖 What is Specificity?
+
+Specificity is the algorithm the browser uses to decide which CSS rule applies when multiple conflicting rules target the exact same element. It is the "weight" or "priority" of a CSS selector.
+
+## ⚖️ The Specificity Wars
+
+Imagine an HTML element: `<button id="submit" class="btn primary-btn">Submit</button>`.
+If you write:
+
+```css
+button {
+  background: red;
+}
+.btn {
+  background: blue;
+}
+#submit {
+  background: green;
+}
+```
+
+Which color wins? Green wins, because an ID selector is "heavier" (more specific) than a class or tag selector.
+
+## 🧮 How to calculate it (The 4-Digit System)
+
+Think of specificity as a 4-digit number: `0, 0, 0, 0`. The browser compares these numbers from left to right. Whichever rule has the higher number wins.
+
+1. **Inline Styles** `(1, 0, 0, 0)`: Added directly to the HTML tag (`<div style="...">`).
+2. **IDs** `(0, 1, 0, 0)`: `#header`, `#submit`.
+3. **Classes, Attributes, & Pseudo-classes** `(0, 0, 1, 0)`: `.btn`, `[type="text"]`, `:hover`.
+4. **Tags & Pseudo-elements** `(0, 0, 0, 1)`: `div`, `h1`, `::before`.
+
+_Note: The Universal selector (`_`), Combinators (`+`, `>`, `~`), and Negation (`:not()`) have exactly **zero** specificity value! (Though the arguments inside `:not()` do carry weight).\*
+
+### Examples:
+
+- `h1` = 0,0,0,1
+- `ul li` = 0,0,0,2
+- `.btn.active` = 0,0,2,0 (Wins against tags!)
+- `#nav .link` = 0,1,1,0 (Wins against any number of classes!)
+
+## ☢️ The Nuclear Option: `!important`
+
+`!important` completely breaks the specificity algorithm. If a rule has `!important`, it overrides EVERYTHING, even inline styles.
+
+- **Rule**: NEVER use `!important` unless you are overriding third-party library CSS that you cannot edit. Using it to fix your own specificity bugs creates an unmaintainable codebase.
+
+## 🤝 What if there is a tie?
+
+If two rules have the exact same specificity score, the **Source Order** wins. Whichever rule is written _last_ in the CSS file (or loaded last in the HTML) overwrites the previous one. This is why the order of your `<link>` tags in the `<head>` matters!
+
+## ❓ Interview Questions
+
+1. **Which selector wins? `.container .btn` or `#submit`?**
+   - _Answer_: `#submit` wins. One ID (0,1,0,0) is infinitely heavier than any number of classes (0,0,2,0). You could have 100 classes chained together, and a single ID will still override them.
+2. **Why is using `!important` considered a bad practice?**
+   - _Answer_: It breaks the natural cascade and specificity rules of CSS. When you use it, the only way to override it later is by using another `!important` further down in the source order, leading to a toxic, unmaintainable codebase.
+
+## 📄 Cheat Sheet
+
+- **Order of Power**: Inline > ID > Class > Tag.
+- **Tie Breaker**: The last rule declared in the CSS file wins.
+- **Avoid**: IDs for styling (use them for JS/accessibility), and `!important`.

@@ -1,0 +1,62 @@
+---
+title: Box Model
+category: CSS
+difficulty: Beginner
+interviewFrequency: Very High
+experienceLevel: Entry-Level
+estimatedReadTime: 5
+tags: [css, box-model, padding, margin, border]
+companies:
+  - Amazon
+  - Microsoft
+  - Meta
+---
+
+# The CSS Box Model
+
+## 📖 What is the Box Model?
+
+In CSS, every single element is rendered as a rectangular box. The Box Model dictates how the size of that box is calculated and how it interacts with other boxes around it.
+
+## 📦 The 4 Layers
+
+From the inside out, every box consists of:
+
+1. **Content**: The actual text, image, or child elements.
+2. **Padding**: Transparent space _inside_ the border, pushing the content inward. (The element's background color fills the padding area).
+3. **Border**: A line wrapping the padding and content.
+4. **Margin**: Transparent space _outside_ the border, pushing other elements away. (The background color does NOT fill the margin).
+
+## ⚠️ The `box-sizing` Problem
+
+By default, CSS uses `box-sizing: content-box`. This is the source of endless frustration for beginners.
+
+If you set an element to `width: 100px; padding: 20px; border: 5px solid black;`, you might expect the box to be 100px wide.
+But with `content-box`, the width _only_ applies to the content. The browser adds the padding and border _on top_ of the width.
+Total physical width = 100 + (20 _ 2) + (5 _ 2) = **150px**. This causes elements to blow out of their containers.
+
+## 🛠️ The Solution: `border-box`
+
+In modern web development, the very first rule you should write in your CSS reset is:
+
+```css
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+```
+
+With `border-box`, the `width: 100px` applies to the _entire visible box_ (content + padding + border). The browser automatically shrinks the internal content area to make room for the padding and border, ensuring the physical box never exceeds 100px.
+
+## 👻 Margin Collapse
+
+A tricky quirk of the Box Model is **Margin Collapse**. When the vertical margins (top and bottom) of two block-level elements touch, they do not add together. Instead, they collapse into a single margin equal to the larger of the two values.
+_(Note: Horizontal margins never collapse. Margins inside Flexbox or Grid containers never collapse)._
+
+## ❓ Interview Questions
+
+1. **What is the difference between `margin` and `padding`?**
+   - _Answer_: Padding is the inner space between the content and the border. It takes on the element's background color and affects the click area. Margin is the outer space outside the border that pushes other elements away. It is always transparent.
+2. **Explain `box-sizing: border-box`.**
+   - _Answer_: It changes the way the CSS box model calculates width and height. Instead of the width only applying to the content, `border-box` includes the padding and border in the declared width/height, preventing elements from unexpectedly growing larger than their defined size.

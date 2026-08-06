@@ -1,0 +1,245 @@
+---
+title: Utility Types
+category: TypeScript
+difficulty: Intermediate
+interviewFrequency: High
+experienceLevel: Mid-Level
+estimatedReadTime: 9
+tags: [typescript, utilities, types, advanced]
+companies:
+  - Meta
+  - Netflix
+  - Google
+---
+
+# Utility Types
+
+## 📖 What are Utility Types?
+
+**Utility Types** are built-in generic types provided by TypeScript globally. They allow you to manipulate existing types to create new ones, preventing you from writing boilerplate or duplicating code when you need a slightly modified version of an existing interface.
+
+## 🤔 Why do we need Utility Types?
+
+Imagine you have an interface `User` with 10 required properties. Now, you need to create a function to _update_ a user, where all 10 properties are optional. Without utility types, you would have to create a brand new `UpdateUser` interface and manually copy all 10 properties, appending `?` to each one. Utility Types (like `Partial<T>`) do this automatically for you.
+
+## ⚙️ Internal Working
+
+Utility Types are just complex generic Type Aliases shipped with the TypeScript compiler. Under the hood, they use advanced features like Mapped Types, Conditional Types, and the `keyof` operator to transform the input type into the output type.
+
+## 🧠 Most Common Utility Types
+
+### 1. `Partial<T>`
+
+Makes all properties in type `T` optional.
+
+```typescript
+interface Todo {
+  title: string;
+  desc: string;
+}
+// Update can have just title, just desc, or both.
+function updateTodo(todo: Todo, fieldsToUpdate: Partial<Todo>) {
+  return { ...todo, ...fieldsToUpdate };
+}
+```
+
+### 2. `Required<T>`
+
+The opposite of `Partial`. Makes all properties in `T` required (removes `?`).
+
+```typescript
+interface Props {
+  name?: string;
+  age?: number;
+}
+// Error: Property 'age' is missing
+const strictProps: Required<Props> = { name: "Alice" };
+```
+
+### 3. `Readonly<T>`
+
+Makes all properties in `T` read-only.
+
+```typescript
+const obj: Readonly<Todo> = { title: "Buy milk", desc: "2% milk" };
+obj.title = "Buy eggs"; // Error! Cannot reassign.
+```
+
+### 4. `Pick<T, Keys>`
+
+Creates a new type by picking a specific set of properties from `T`.
+
+```typescript
+interface User {
+  id: number;
+  name: string;
+  email: string;
+  passwordHash: string;
+}
+
+// We don't want to expose the password to the frontend
+type PublicUser = Pick<User, "id" | "name" | "email">;
+```
+
+### 5. `Omit<T, Keys>`
+
+The opposite of `Pick`. Creates a new type by grabbing all properties from `T` _except_ the ones you specify.
+
+```typescript
+type PublicUser = Omit<User, "passwordHash">; // Much cleaner than Pick!
+```
+
+### 6. `Record<Keys, Type>`
+
+Constructs an object type whose property keys are `Keys` and whose property values are `Type`. Perfect for defining dictionaries/maps.
+
+```typescript
+type Role = "admin" | "user" | "guest";
+// Forces you to define permissions for exactly these three roles
+const permissions: Record<Role, boolean> = {
+  admin: true,
+  user: false,
+  guest: false
+};
+```
+
+### 7. `Exclude<UnionType, ExcludedMembers>`
+
+Removes types from a Union.
+
+```typescript
+type Status = "success" | "error" | "loading";
+type SettledStatus = Exclude<Status, "loading">; // "success" | "error"
+```
+
+### 8. `Extract<Type, Union>`
+
+The exact opposite of Exclude.
+
+```typescript
+type T0 = Extract<"a" | "b" | "c", "a" | "f">; // "a"
+```
+
+### 9. `NonNullable<Type>`
+
+Removes `null` and `undefined` from a type.
+
+```typescript
+type ValidStrings = NonNullable<string | number | undefined | null>; // string | number
+```
+
+### 10. `ReturnType<Type>`
+
+Extracts the return type of a function.
+
+```typescript
+function getUser() {
+  return { name: "Alice", age: 25 };
+}
+
+type UserObj = ReturnType<typeof getUser>; // { name: string, age: number }
+```
+
+## 🏢 Production Example
+
+Combining Utility Types is a daily occurrence in enterprise codebases.
+
+```typescript
+interface DatabaseRecord {
+  id: string;
+  createdAt: Date;
+  updatedAt: Date;
+  authorId: string;
+  content: string;
+  isPublished: boolean;
+}
+
+// A payload to create a new record shouldn't have ID or timestamps
+// (the DB handles that). It also shouldn't have authorId (handled by Auth token).
+type CreateRecordPayload = Omit<
+  DatabaseRecord,
+  "id" | "createdAt" | "updatedAt" | "authorId"
+>;
+
+// Maybe isPublished is optional when creating?
+type FinalPayload = Partial<Pick<CreateRecordPayload, "isPublished">> &
+  Omit<CreateRecordPayload, "isPublished">;
+```
+
+## ⚛️ React Example
+
+**`ComponentProps`**:
+When building wrapper components, you often want to accept all the standard HTML props (like `onClick`, `className`) without manually defining them.
+
+```tsx
+import { ComponentProps } from "react";
+
+// Grab all standard button props (onClick, disabled, etc.)
+type MyButtonProps = ComponentProps<"button"> & {
+  isLoading?: boolean;
+};
+
+const MyButton = ({ isLoading, children, ...rest }: MyButtonProps) => {
+  return <button {...rest}>{isLoading ? "Loading..." : children}</button>;
+};
+```
+
+## ⚡ Performance
+
+Utility Types are purely compile-time constructs. They are completely erased in the final JavaScript bundle. They have zero runtime performance cost.
+
+## ❌ Common Mistakes
+
+**Using `Pick` when `Omit` is better (and vice-versa)**:
+If you have a 20-property interface and want to remove 1 property, use `Omit`. Do not use `Pick` and manually type out the other 19 properties.
+
+## ✅ Best Practices
+
+1. Combine utilities! You can nest them: `Readonly<Partial<User>>`.
+2. Master `Record` instead of writing `{[key: string]: any}`.
+3. Master `ReturnType` to avoid manually defining types that already exist as the output of a function.
+
+## 🆚 Comparison
+
+| Utility                | Action                      | Operates on                |
+| ---------------------- | --------------------------- | -------------------------- |
+| `Pick` / `Omit`        | Select/remove specific keys | Object Shapes / Interfaces |
+| `Exclude` / `Extract`  | Remove/keep specific types  | Unions (`A \| B \| C`)     |
+| `Partial` / `Required` | Modify optionality (`?`)    | Object Shapes / Interfaces |
+
+## ❓ Interview Questions
+
+1. **What is the difference between `Omit` and `Exclude`?**
+   - _Answer_: `Omit` operates on Object types (Interfaces/Type Aliases). It removes properties from an object shape. `Exclude` operates on Union types (`"a" | "b" | "c"`). It removes specific members from the union.
+2. **How does `Partial` work internally?**
+   - _Answer_: It uses a Mapped Type combined with the `keyof` operator to iterate over all keys in an object and append a `?` modifier to them.
+
+## 💻 Coding Questions
+
+**Extract the type of the props of an existing React component:**
+
+```tsx
+import { ComponentProps } from "react";
+import { ExternalButton } from "some-library";
+
+type ExtBtnProps = ComponentProps<typeof ExternalButton>;
+```
+
+## 📄 Cheat Sheet
+
+- **Partial**: All optional.
+- **Required**: All required.
+- **Readonly**: No reassignment.
+- **Pick**: Grab specific keys.
+- **Omit**: Drop specific keys.
+- **Record**: Dictionary object mapping.
+- **ReturnType**: Grab function output type.
+
+## ⚡ 2-Minute Revision
+
+Utility types are pre-built TypeScript generics that allow you to transform types easily. Instead of duplicating interfaces, use `Partial`, `Omit`, and `Pick` to derive new shapes from existing ones. This keeps your codebase DRY (Don't Repeat Yourself) and ensures that if the base interface changes, all derived types update automatically.
+
+## 🔗 Related Topics
+
+- [Interfaces](/topic/typescript/interfaces)
+- [Generics](/topic/typescript/generics)

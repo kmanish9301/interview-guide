@@ -1,0 +1,55 @@
+---
+title: Stacking Context
+category: CSS
+difficulty: Intermediate
+interviewFrequency: High
+experienceLevel: Mid-Level
+estimatedReadTime: 8
+tags: [css, z-index, stacking, layout]
+companies:
+  - Apple
+  - Stripe
+  - Netflix
+---
+
+# The Stacking Context
+
+## 📖 What is a Stacking Context?
+
+Have you ever given an element `z-index: 999999` and it _still_ appeared hidden behind another element with `z-index: 1`? This incredibly frustrating scenario happens because you don't understand the **Stacking Context**.
+
+A Stacking Context is a 3D conceptualization of HTML elements along an imaginary Z-axis. When a new Stacking Context is formed, it completely traps all of its child elements. No matter how high a child's `z-index` is, it can **never** escape the boundaries of its parent's stacking context.
+
+## 🧱 How it works
+
+Think of stacking contexts like Russian Nesting Dolls or a folder structure.
+If Folder A has a `z-index` of 1, and Folder B has a `z-index` of 2, Folder B will always render on top of Folder A.
+If you put a file inside Folder A and give it `z-index: 9999`, it is only fighting against other files _inside Folder A_. It will never be able to render on top of Folder B.
+
+## ⚡ What triggers a new Stacking Context?
+
+A common misconception is that only `z-index` creates a stacking context. Many modern CSS properties trigger them automatically! The most common triggers are:
+
+1. The root element (`<html>`).
+2. `position: absolute` or `position: relative` **WITH** a `z-index` other than `auto`.
+3. `position: fixed` or `position: sticky`.
+4. Elements that are children of a Flexbox or Grid container, **WITH** a `z-index` other than `auto`.
+5. `opacity` with a value less than 1.
+6. `transform`, `filter`, or `perspective` with any value other than `none`.
+
+## 🛠️ The Fix for the `z-index: 9999` Bug
+
+If your modal (z-index: 9999) is trapped beneath a header (z-index: 1), you need to look at the modal's _parents_. One of its parents has created a stacking context with a low `z-index` or an `opacity`/`transform` rule.
+The solution is usually to move the Modal out of that parent in the DOM tree, attaching it directly to the `<body>` (React Portals are designed exactly for this!).
+
+## ❓ Interview Questions
+
+1. **Why does my `z-index: 1000` element appear underneath a `z-index: 1` element?**
+   - _Answer_: Because the `z-index: 1000` element is trapped inside a parent that has created a lower Stacking Context (e.g., the parent has `position: relative; z-index: 0;` or `opacity: 0.99;`). The children of that parent can only compete for z-index with each other, not with elements outside the parent.
+2. **Does `opacity: 0.99` affect layout?**
+   - _Answer_: While it doesn't shift the geometry of the page, it _does_ silently trigger a new Stacking Context, which can drastically alter the z-axis layering of the page and cause child elements to suddenly render underneath sibling containers.
+
+## 📄 Cheat Sheet
+
+- **Rule of Thumb**: `z-index` only competes with siblings in the same Stacking Context.
+- **Hidden Triggers**: `opacity`, `transform`, and `filter` create stacking contexts without needing any `position` or `z-index` values!

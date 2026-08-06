@@ -1,0 +1,214 @@
+---
+title: keyof
+category: TypeScript
+difficulty: Intermediate
+interviewFrequency: High
+experienceLevel: Mid-Level
+estimatedReadTime: 7
+tags: [typescript, keyof, types, advanced]
+companies:
+  - Microsoft
+  - Uber
+---
+
+# keyof
+
+## 📖 What is `keyof`?
+
+The `keyof` operator in TypeScript takes an object type (an interface or type alias) and produces a string or numeric **literal union** of its keys.
+
+## 🤔 Why do we need `keyof`?
+
+Without `keyof`, if you wanted to restrict a function argument to be exactly one of the keys of an object, you would have to manually type out a string union (`"id" | "name" | "email"`). If the object shape changed later (e.g., you added an `"age"` property), you would have to manually update the union. `keyof` extracts this union dynamically, keeping your types perfectly in sync with your object shapes.
+
+## ⚙️ Internal Working
+
+`keyof` looks at the properties defined on a type at compile-time and extracts them into a union.
+
+```typescript
+interface User {
+  name: string;
+  age: number;
+}
+type UserKeys = keyof User;
+// The compiler resolves this to: "name" | "age"
+```
+
+## 📝 Syntax
+
+```typescript
+type Keys = keyof SomeType;
+```
+
+## 💡 Beginner Example
+
+**Dynamic Property Access**:
+
+```typescript
+interface Car {
+  make: string;
+  model: string;
+  year: number;
+}
+
+// Ensure that 'property' can ONLY be a valid key of Car
+function getProperty(car: Car, property: keyof Car) {
+  return car[property];
+}
+
+const myCar: Car = { make: "Toyota", model: "Corolla", year: 2020 };
+
+getProperty(myCar, "make"); // Valid!
+getProperty(myCar, "color"); // Error: Argument of type '"color"' is not assignable to parameter of type '"make" | "model" | "year"'.
+```
+
+## 🚀 Advanced Example
+
+**Combining `keyof` with Generics**:
+This is how utility types like `Pick` and `Omit` are built under the hood. You can constrain a generic parameter to be a key of _another_ generic parameter.
+
+```typescript
+// T is an object. K MUST be a key of T.
+function getValue<T, K extends keyof T>(obj: T, key: K) {
+  return obj[key]; // TS knows the return type is exactly T[K]
+}
+
+const user = { username: "Alice", active: true };
+
+// TS infers T as the object type, and K as "username"
+// It correctly infers the return type as `string`!
+const name = getValue(user, "username");
+```
+
+## 🏢 Production Example
+
+**Type-Safe Object Iteration**:
+By default, `Object.keys()` in TypeScript returns `string[]`. This is extremely annoying when you want to iterate over an object and access its properties, because `string` is too wide to be used as an index for a specific object.
+
+```typescript
+const themeColors = {
+  primary: "#000",
+  secondary: "#FFF",
+  accent: "#F00"
+};
+
+// Error: Element implicitly has an 'any' type because expression of type 'string' can't be used to index type.
+Object.keys(themeColors).forEach((key) => {
+  console.log(themeColors[key]);
+});
+
+// The Fix! Cast the keys using keyof
+(Object.keys(themeColors) as Array<keyof typeof themeColors>).forEach((key) => {
+  console.log(themeColors[key]); // Perfectly typed!
+});
+```
+
+## ⚛️ React Example
+
+**Dynamic Form State Management**:
+When writing a dynamic `onChange` handler for a form, you can use `keyof` to ensure the field name matches the state object perfectly.
+
+```tsx
+interface FormState {
+  firstName: string;
+  lastName: string;
+  age: number;
+}
+
+function Form() {
+  const [state, setState] = useState<FormState>({
+    firstName: "",
+    lastName: "",
+    age: 0
+  });
+
+  // Field MUST be a valid key of FormState
+  // Value MUST be the specific type associated with that key (e.g. number for age)
+  const handleChange = <K extends keyof FormState>(
+    field: K,
+    value: FormState[K]
+  ) => {
+    setState((prev) => ({ ...prev, [field]: value }));
+  };
+
+  return <input onChange={(e) => handleChange("firstName", e.target.value)} />;
+}
+```
+
+## ⚡ Performance
+
+`keyof` is a type-level operator. It is entirely erased during compilation and has zero runtime performance cost.
+
+## 🧠 Memory
+
+No runtime memory footprint.
+
+## ❌ Common Mistakes
+
+**Using `keyof` on a value instead of a type**:
+
+```typescript
+const obj = { a: 1, b: 2 };
+
+// BAD: 'obj' refers to a value, but is being used as a type here.
+type Keys = keyof obj;
+
+// GOOD: Use 'typeof' to extract the type of the value first!
+type Keys = keyof typeof obj; // "a" | "b"
+```
+
+## ✅ Best Practices
+
+1. **Combine with `typeof`**: You often have a runtime configuration object (like `theme` or `permissions`). Use `keyof typeof config` to automatically generate a union of its keys without writing a separate interface.
+2. **Combine with `Mapped Types`**: `keyof` is the foundation of iterating over types to create new ones (e.g., making all keys optional).
+
+## 🆚 Comparison
+
+| Operator | Works on           | Result                                   |
+| -------- | ------------------ | ---------------------------------------- |
+| `keyof`  | Types / Interfaces | A union of keys (e.g., `"id" \| "name"`) |
+| `typeof` | Runtime Values     | A Type representation of that value      |
+
+## ❓ Interview Questions
+
+1. **What is `keyof typeof` and when would you use it?**
+   - _Answer_: `typeof` extracts the TypeScript type from a runtime JavaScript value/object. `keyof` then extracts the keys of that type into a union of strings. You use it when you have a constant object (like a dictionary of error codes) and you want a type representing all valid keys of that object without maintaining a separate type definition.
+2. **How do you type an index access, like `obj[key]`?**
+   - _Answer_: You represent the type of the key as `K extends keyof T`, and the return type of the lookup is represented as `T[K]` (Indexed Access Type).
+
+## 💻 Coding Questions
+
+**Write a mapped type that makes all properties of an object read-only.**
+_Solution_:
+
+```typescript
+type MyReadonly<T> = {
+  // Iterate over every key in T (using keyof)
+  readonly [K in keyof T]: T[K];
+};
+```
+
+## 🧩 Output-Based Questions
+
+```typescript
+type ArrayKeys = keyof any[];
+```
+
+What does this produce?
+_Answer_: A massive union of all array prototype methods and properties! `"length" | "push" | "pop" | "concat" | "join" | number` (because arrays can be indexed by numbers).
+
+## 📄 Cheat Sheet
+
+- **Purpose**: Get object keys as a union type.
+- **Syntax**: `type Keys = keyof Type;`
+- **Value to Keys**: `type Keys = keyof typeof variable;`
+- **Lookup Type**: `T[K]` (Gets the type of property `K` inside type `T`).
+
+## ⚡ 2-Minute Revision
+
+`keyof` is a powerful operator that takes an object type and spits out a string union of its keys. It is the cornerstone of advanced TypeScript utilities. Combined with generics (`K extends keyof T`), it ensures that functions which dynamically access object properties are strictly type-checked and safe from runtime undefined errors.
+
+## 🔗 Related Topics
+
+- [Generics](/topic/typescript/generics)
+- [Utility Types](/topic/typescript/utility-types)

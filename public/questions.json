@@ -1,0 +1,586 @@
+[
+  {
+    "q": "What is the difference between `margin` and `padding`?",
+    "a": "- _Answer_: Padding is the inner space between the content and the border. It takes on the element's background color and affects the click area. Margin is the outer space outside the border that pushes other elements away. It is always transparent.",
+    "deepDive": "**Concept:**\nIn CSS, every single element is rendered as a rectangular box. The Box Model dictates how the size of that box is calculated and how it interacts with other boxes around it.",
+    "category": "CSS",
+    "topicTitle": "Box Model",
+    "permalink": "/topic/css/box-model"
+  },
+  {
+    "q": "How do you perfectly center a div?",
+    "a": "- _Answer_: Using Flexbox: `display: flex; justify-content: center; align-items: center;`. Using Grid: `display: grid; place-items: center;`.",
+    "deepDive": "**Concept:**\nFlexbox and CSS Grid are the two modern layout systems in CSS. Before them, developers had to rely on painful hacks using `float`, `clear`, or `display: table` to build layouts.",
+    "category": "CSS",
+    "topicTitle": "Flexbox vs Grid",
+    "permalink": "/topic/css/flexbox-vs-grid"
+  },
+  {
+    "q": "What does `1fr` mean in CSS Grid?",
+    "a": "- _Answer_: `fr` stands for fractional unit. It represents a fraction of the available remaining space in the grid container. `grid-template-columns: 1fr 2fr;` creates two columns where the second column is twice as wide as the first.",
+    "deepDive": "**Concept:**\nFlexbox and CSS Grid are the two modern layout systems in CSS. Before them, developers had to rely on painful hacks using `float`, `clear`, or `display: table` to build layouts.",
+    "category": "CSS",
+    "topicTitle": "Flexbox vs Grid",
+    "permalink": "/topic/css/flexbox-vs-grid"
+  },
+  {
+    "q": "Which selector wins? `.container .btn` or `#submit`?",
+    "a": "- _Answer_: `#submit` wins. One ID (0,1,0,0) is infinitely heavier than any number of classes (0,0,2,0). You could have 100 classes chained together, and a single ID will still override them.",
+    "deepDive": "**Concept:**\nSpecificity is the algorithm the browser uses to decide which CSS rule applies when multiple conflicting rules target the exact same element. It is the \"weight\" or \"priority\" of a CSS selector.",
+    "category": "CSS",
+    "topicTitle": "Specificity",
+    "permalink": "/topic/css/specificity"
+  },
+  {
+    "q": "Why is using `!important` considered a bad practice?",
+    "a": "- _Answer_: It breaks the natural cascade and specificity rules of CSS. When you use it, the only way to override it later is by using another `!important` further down in the source order, leading to a toxic, unmaintainable codebase.",
+    "deepDive": "**Concept:**\nSpecificity is the algorithm the browser uses to decide which CSS rule applies when multiple conflicting rules target the exact same element. It is the \"weight\" or \"priority\" of a CSS selector.",
+    "category": "CSS",
+    "topicTitle": "Specificity",
+    "permalink": "/topic/css/specificity"
+  },
+  {
+    "q": "Why does my `z-index: 1000` element appear underneath a `z-index: 1` element?",
+    "a": "- _Answer_: Because the `z-index: 1000` element is trapped inside a parent that has created a lower Stacking Context (e.g., the parent has `position: relative; z-index: 0;` or `opacity: 0.99;`). The children of that parent can only compete for z-index with each other, not with elements outside the parent.",
+    "deepDive": "**Concept:**\nHave you ever given an element `z-index: 999999` and it _still_ appeared hidden behind another element with `z-index: 1`? This incredibly frustrating scenario happens because you don't understand the **Stacking Context**.\n\nA Stacking Context is a 3D conceptualization of HTML elements along an imaginary Z-axis. When a new Stacking Context is formed, it completely traps all of its child elements. No matter how high a child's `z-index` is, it can **never** escape the boundaries of its parent's stacking context.",
+    "category": "CSS",
+    "topicTitle": "Stacking Context",
+    "permalink": "/topic/css/stacking-context"
+  },
+  {
+    "q": "Does `opacity: 0.99` affect layout?",
+    "a": "- _Answer_: While it doesn't shift the geometry of the page, it _does_ silently trigger a new Stacking Context, which can drastically alter the z-axis layering of the page and cause child elements to suddenly render underneath sibling containers.",
+    "deepDive": "**Concept:**\nHave you ever given an element `z-index: 999999` and it _still_ appeared hidden behind another element with `z-index: 1`? This incredibly frustrating scenario happens because you don't understand the **Stacking Context**.\n\nA Stacking Context is a 3D conceptualization of HTML elements along an imaginary Z-axis. When a new Stacking Context is formed, it completely traps all of its child elements. No matter how high a child's `z-index` is, it can **never** escape the boundaries of its parent's stacking context.",
+    "category": "CSS",
+    "topicTitle": "Stacking Context",
+    "permalink": "/topic/css/stacking-context"
+  },
+  {
+    "q": "Can you use `await` outside of an `async` function?",
+    "a": "- _Answer_: Historically, no. But ES2022 introduced **Top-Level Await**, allowing `await` at the top level of ES Modules.",
+    "deepDive": "**Concept:**\n`async`/`await` is syntactic sugar built on top of JavaScript **Promises**. Introduced in ES2017 (ES8), it allows you to write asynchronous, promise-based code that looks and behaves like synchronous code, making it incredibly easy to read and maintain.\n\n**Why it matters:**\nWhile Promises solved the \"Callback Hell\" problem, chaining multiple `.then()` and `.catch()` blocks can still become difficult to read and manage, especially when passing variables down the chain. `async`/`await` flattens the code entirely, allowing you to use standard synchronous control flow (like `try/catch` and `for` loops) with asynchronous operations.",
+    "category": "JavaScript",
+    "topicTitle": "Async Await",
+    "permalink": "/topic/javascript/async-await"
+  },
+  {
+    "q": "What does an `async` function return?",
+    "a": "- _Answer_: It always returns a Promise. If the function returns a raw value (like `return 5`), JavaScript automatically wraps it in a resolved Promise (`Promise.resolve(5)`).",
+    "deepDive": "**Concept:**\n`async`/`await` is syntactic sugar built on top of JavaScript **Promises**. Introduced in ES2017 (ES8), it allows you to write asynchronous, promise-based code that looks and behaves like synchronous code, making it incredibly easy to read and maintain.\n\n**Why it matters:**\nWhile Promises solved the \"Callback Hell\" problem, chaining multiple `.then()` and `.catch()` blocks can still become difficult to read and manage, especially when passing variables down the chain. `async`/`await` flattens the code entirely, allowing you to use standard synchronous control flow (like `try/catch` and `for` loops) with asynchronous operations.",
+    "category": "JavaScript",
+    "topicTitle": "Async Await",
+    "permalink": "/topic/javascript/async-await"
+  },
+  {
+    "q": "What is a closure?",
+    "a": "- _Answer_: A function that remembers the variables from its lexical scope even after the outer function has executed.",
+    "deepDive": "**Concept:**\nA **closure** is the combination of a function bundled together (enclosed) with references to its surrounding state (the lexical environment).\n\nIn simpler terms, a closure gives an inner function access to an outer function's scope, even after the outer function has finished executing. JavaScript engine creates closures every time a function is created.\n\n**Why it matters:**\nClosures are extremely useful in modern JavaScript development because they allow us to associate some data with a function that operates on that data.\n\nWe primarily use closures for:\n\n1. **Data Privacy (Encapsulation)**: Creating private variables that cannot be accessed or modified from the outside.\n2. **Currying & Partial Applications**: Locking in certain arguments for a function to be used later.\n3. **State Retention**: Keeping track of state across multiple function calls (e.g., in React Hooks like `useState`).\n4. **Memoization**: Caching heavy computational results.",
+    "category": "JavaScript",
+    "topicTitle": "Closures",
+    "permalink": "/topic/javascript/closures"
+  },
+  {
+    "q": "Can you modify a variable captured by a closure?",
+    "a": "- _Answer_: Yes, closures capture references to variables, not values. If the inner function modifies the variable, the changes are reflected.",
+    "deepDive": "**Concept:**\nA **closure** is the combination of a function bundled together (enclosed) with references to its surrounding state (the lexical environment).\n\nIn simpler terms, a closure gives an inner function access to an outer function's scope, even after the outer function has finished executing. JavaScript engine creates closures every time a function is created.\n\n**Why it matters:**\nClosures are extremely useful in modern JavaScript development because they allow us to associate some data with a function that operates on that data.\n\nWe primarily use closures for:\n\n1. **Data Privacy (Encapsulation)**: Creating private variables that cannot be accessed or modified from the outside.\n2. **Currying & Partial Applications**: Locking in certain arguments for a function to be used later.\n3. **State Retention**: Keeping track of state across multiple function calls (e.g., in React Hooks like `useState`).\n4. **Memoization**: Caching heavy computational results.",
+    "category": "JavaScript",
+    "topicTitle": "Closures",
+    "permalink": "/topic/javascript/closures"
+  },
+  {
+    "q": "What is the difference between Currying and Partial Application?",
+    "a": "- _Answer_: Currying always returns a unary function (a function taking one argument) until all arguments are satisfied. Partial application binds some arguments and returns a function that takes the remaining arguments (can be more than one).",
+    "deepDive": "**Concept:**\n**Currying** is a functional programming technique where a function with multiple arguments is transformed into a sequence of nested functions, each taking a single argument.\n\nInstead of calling a function like `f(a, b, c)`, you call it like `f(a)(b)(c)`.\n\n**Why it matters:**\nCurrying helps in **Function Composition** and **Partial Application**.\nIt allows us to lock in (or \"preset\") certain arguments and generate a new, specialized function. This leads to extremely modular, reusable, and clean code, eliminating the need to pass the same variables repeatedly.",
+    "category": "JavaScript",
+    "topicTitle": "Currying",
+    "permalink": "/topic/javascript/currying"
+  },
+  {
+    "q": "Why do we use currying?",
+    "a": "- _Answer_: To create highly reusable utility functions, avoid passing the same variables repeatedly, and facilitate function composition.",
+    "deepDive": "**Concept:**\n**Currying** is a functional programming technique where a function with multiple arguments is transformed into a sequence of nested functions, each taking a single argument.\n\nInstead of calling a function like `f(a, b, c)`, you call it like `f(a)(b)(c)`.\n\n**Why it matters:**\nCurrying helps in **Function Composition** and **Partial Application**.\nIt allows us to lock in (or \"preset\") certain arguments and generate a new, specialized function. This leads to extremely modular, reusable, and clean code, eliminating the need to pass the same variables repeatedly.",
+    "category": "JavaScript",
+    "topicTitle": "Currying",
+    "permalink": "/topic/javascript/currying"
+  },
+  {
+    "q": "Explain Debounce vs Throttle.",
+    "a": "- _Answer_: Debounce delays execution until a certain period of inactivity occurs. Throttle guarantees execution at regular intervals, regardless of activity.",
+    "deepDive": "**Concept:**\n**Debounce** is a programming practice used to ensure that a time-consuming task does not fire so often that it stalls the performance of the web page. It delays the execution of a function until after a specified amount of time has elapsed since the _last time_ the function was invoked.\n\n**Why it matters:**\nCertain browser events (like `keyup`, `mousemove`, `scroll`, or window `resize`) can fire dozens or even hundreds of times per second. If you attach a heavy operation (like an API call or DOM re-rendering) directly to these events, the browser will lag, and your server might get DDOS'd by its own users. Debouncing ensures the heavy operation only happens once the user has _stopped_ triggering the event.",
+    "category": "JavaScript",
+    "topicTitle": "Debounce",
+    "permalink": "/topic/javascript/debounce"
+  },
+  {
+    "q": "How do you implement Debounce from scratch?",
+    "a": "- _Answer_: Return a function that uses a closure to store a `timerId`. Call `clearTimeout` on the ID, then set a new `setTimeout` executing the original function.",
+    "deepDive": "**Concept:**\n**Debounce** is a programming practice used to ensure that a time-consuming task does not fire so often that it stalls the performance of the web page. It delays the execution of a function until after a specified amount of time has elapsed since the _last time_ the function was invoked.\n\n**Why it matters:**\nCertain browser events (like `keyup`, `mousemove`, `scroll`, or window `resize`) can fire dozens or even hundreds of times per second. If you attach a heavy operation (like an API call or DOM re-rendering) directly to these events, the browser will lag, and your server might get DDOS'd by its own users. Debouncing ensures the heavy operation only happens once the user has _stopped_ triggering the event.",
+    "category": "JavaScript",
+    "topicTitle": "Debounce",
+    "permalink": "/topic/javascript/debounce"
+  },
+  {
+    "q": "What is the difference between the Microtask and Macrotask queue?",
+    "a": "- _Answer_: Microtasks have higher priority. The event loop empties the entire microtask queue before picking up the next macrotask.",
+    "deepDive": "**Concept:**\nThe **Event Loop** is the secret behind JavaScript's asynchronous behavior. JavaScript is a single-threaded language, meaning it can only execute one task at a time. The Event Loop is a mechanism that continuously checks the Call Stack and the Task Queues, moving asynchronous callbacks into the Call Stack when it's empty, giving the illusion of multi-threading.\n\n**Why it matters:**\nSince JavaScript is single-threaded, a long-running synchronous task (like a heavy calculation) would \"block\" the main thread, freezing the UI. The Event Loop allows Node.js and the browser to perform non-blocking I/O operations (like fetching data, timers, and UI events) by offloading these operations to the system kernel or Web APIs and then executing their callbacks when the main thread is free.",
+    "category": "JavaScript",
+    "topicTitle": "Event Loop",
+    "permalink": "/topic/javascript/event-loop"
+  },
+  {
+    "q": "Can JavaScript be multi-threaded?",
+    "a": "- _Answer_: Native JS is single-threaded, but you can achieve multi-threading using Web Workers.",
+    "deepDive": "**Concept:**\nThe **Event Loop** is the secret behind JavaScript's asynchronous behavior. JavaScript is a single-threaded language, meaning it can only execute one task at a time. The Event Loop is a mechanism that continuously checks the Call Stack and the Task Queues, moving asynchronous callbacks into the Call Stack when it's empty, giving the illusion of multi-threading.\n\n**Why it matters:**\nSince JavaScript is single-threaded, a long-running synchronous task (like a heavy calculation) would \"block\" the main thread, freezing the UI. The Event Loop allows Node.js and the browser to perform non-blocking I/O operations (like fetching data, timers, and UI events) by offloading these operations to the system kernel or Web APIs and then executing their callbacks when the main thread is free.",
+    "category": "JavaScript",
+    "topicTitle": "Event Loop",
+    "permalink": "/topic/javascript/event-loop"
+  },
+  {
+    "q": "What is the Temporal Dead Zone (TDZ)?",
+    "a": "- _Answer_: The TDZ is the period between entering a scope and the actual execution of a `let` or `const` declaration. Accessing the variable during this zone throws a ReferenceError.",
+    "deepDive": "**Concept:**\n**Hoisting** is JavaScript's default behavior of moving declarations to the top of the current scope (script or function) before code execution. This means that a variable or function can be used _before_ it has been declared in the code.\n\n**Why it matters:**\nHoisting is not a feature developers explicitly \"use\"; rather, it's a byproduct of how the JavaScript engine parses and compiles code. It allows for mutual recursion (functions calling each other) without worrying about the order in which they are defined.",
+    "category": "JavaScript",
+    "topicTitle": "Hoisting",
+    "permalink": "/topic/javascript/hoisting"
+  },
+  {
+    "q": "Are arrow functions hoisted?",
+    "a": "- _Answer_: Arrow functions are function expressions. Depending on whether you use `var`, `let`, or `const` to declare them, the variable name is hoisted, but the function body is not.",
+    "deepDive": "**Concept:**\n**Hoisting** is JavaScript's default behavior of moving declarations to the top of the current scope (script or function) before code execution. This means that a variable or function can be used _before_ it has been declared in the code.\n\n**Why it matters:**\nHoisting is not a feature developers explicitly \"use\"; rather, it's a byproduct of how the JavaScript engine parses and compiles code. It allows for mutual recursion (functions calling each other) without worrying about the order in which they are defined.",
+    "category": "JavaScript",
+    "topicTitle": "Hoisting",
+    "permalink": "/topic/javascript/hoisting"
+  },
+  {
+    "q": "What is the difference between `Promise.all` and `Promise.race`?",
+    "a": "- _Answer_: `Promise.all` waits for all promises to resolve (or fails if one fails). `Promise.race` returns the result of the first promise to settle, whether it resolves or rejects.",
+    "deepDive": "**Concept:**\nA **Promise** is an object representing the eventual completion (or failure) of an asynchronous operation and its resulting value. It acts as a proxy for a value that is not necessarily known when the promise is created.\n\n**Why it matters:**\nBefore Promises, JavaScript relied heavily on nested callbacks to handle asynchronous tasks (like fetching data or reading files). This often led to deeply nested, unreadable code known as **Callback Hell** (or the Pyramid of Doom). Promises provide a much cleaner, chainable way to handle async operations, making error handling and control flow significantly easier.",
+    "category": "JavaScript",
+    "topicTitle": "Promises",
+    "permalink": "/topic/javascript/promises"
+  },
+  {
+    "q": "What happens if you resolve a promise multiple times?",
+    "a": "- _Answer_: A promise can only be settled once. Subsequent calls to `resolve()` or `reject()` are completely ignored.",
+    "deepDive": "**Concept:**\nA **Promise** is an object representing the eventual completion (or failure) of an asynchronous operation and its resulting value. It acts as a proxy for a value that is not necessarily known when the promise is created.\n\n**Why it matters:**\nBefore Promises, JavaScript relied heavily on nested callbacks to handle asynchronous tasks (like fetching data or reading files). This often led to deeply nested, unreadable code known as **Callback Hell** (or the Pyramid of Doom). Promises provide a much cleaner, chainable way to handle async operations, making error handling and control flow significantly easier.",
+    "category": "JavaScript",
+    "topicTitle": "Promises",
+    "permalink": "/topic/javascript/promises"
+  },
+  {
+    "q": "What is the difference between `__proto__` and `prototype`?",
+    "a": "- _Answer_: `prototype` is a property only found on constructor functions (used as a blueprint). `__proto__` is the actual internal reference every object has, pointing to the prototype it was created from.",
+    "deepDive": "**Concept:**\nIn JavaScript, almost every object is linked to a second object. That second object is called the **Prototype**. An object inherits properties and methods from its Prototype. This creates a linkage called the **Prototype Chain**, allowing objects to share behaviors without duplicating code.\n\n**Why it matters:**\nPrototypes are JavaScript's mechanism for **Inheritance**. Unlike languages like Java or C++ which use class-based inheritance, JavaScript uses prototype-based inheritance. It allows us to attach methods to a shared prototype object instead of copying the method into every single instance, saving massive amounts of memory.",
+    "category": "JavaScript",
+    "topicTitle": "Prototype",
+    "permalink": "/topic/javascript/prototype"
+  },
+  {
+    "q": "What is the end of the prototype chain?",
+    "a": "- _Answer_: `Object.prototype.__proto__` which is `null`.",
+    "deepDive": "**Concept:**\nIn JavaScript, almost every object is linked to a second object. That second object is called the **Prototype**. An object inherits properties and methods from its Prototype. This creates a linkage called the **Prototype Chain**, allowing objects to share behaviors without duplicating code.\n\n**Why it matters:**\nPrototypes are JavaScript's mechanism for **Inheritance**. Unlike languages like Java or C++ which use class-based inheritance, JavaScript uses prototype-based inheritance. It allows us to attach methods to a shared prototype object instead of copying the method into every single instance, saving massive amounts of memory.",
+    "category": "JavaScript",
+    "topicTitle": "Prototype",
+    "permalink": "/topic/javascript/prototype"
+  },
+  {
+    "q": "What is Lexical Scoping?",
+    "a": "- _Answer_: Lexical scoping means that scope is determined by where variables and blocks are physically placed in the code by the author at write-time.",
+    "deepDive": "**Concept:**\n**Scope** is the current context of execution in which values and expressions are \"visible\" or can be referenced. If a variable or other expression is not in the current scope, it will not be available for use. Scopes can also be layered in a hierarchy, so that child scopes have access to parent scopes, but not vice versa.\n\n**Why it matters:**\nScope provides a level of **security** and **encapsulation** for our variables. It ensures that variables with the same name do not collide with each other across different parts of our codebase, preventing unintended overwrites and making code maintainable.",
+    "category": "JavaScript",
+    "topicTitle": "Scope",
+    "permalink": "/topic/javascript/scope"
+  },
+  {
+    "q": "What is the Scope Chain?",
+    "a": "- _Answer_: The hierarchy of scopes. If a variable isn't found locally, the engine checks the outer scope, traversing up to the global scope.",
+    "deepDive": "**Concept:**\n**Scope** is the current context of execution in which values and expressions are \"visible\" or can be referenced. If a variable or other expression is not in the current scope, it will not be available for use. Scopes can also be layered in a hierarchy, so that child scopes have access to parent scopes, but not vice versa.\n\n**Why it matters:**\nScope provides a level of **security** and **encapsulation** for our variables. It ensures that variables with the same name do not collide with each other across different parts of our codebase, preventing unintended overwrites and making code maintainable.",
+    "category": "JavaScript",
+    "topicTitle": "Scope",
+    "permalink": "/topic/javascript/scope"
+  },
+  {
+    "q": "Are `let` and `const` hoisted?",
+    "a": "- _Answer_: Yes, they are absolutely hoisted to the top of their block. However, they are not initialized. Because they are not initialized, accessing them invokes the Temporal Dead Zone, throwing an error.",
+    "deepDive": "**Concept:**\nThe **Temporal Dead Zone (TDZ)** is a specific period in the execution of JavaScript code where variables declared with `let` and `const` exist in memory but cannot be accessed or used. If you try to access a variable while it is in the TDZ, JavaScript will throw a `ReferenceError`.\n\n**Why it matters:**\nThe TDZ was introduced in ES6 (along with `let` and `const`) to catch errors early. Before ES6, variables declared with `var` were initialized with `undefined` during hoisting, which led to silent and extremely confusing bugs when variables were used before they were explicitly assigned a value. The TDZ forces developers to write cleaner, more predictable code by enforcing declaration before usage.",
+    "category": "JavaScript",
+    "topicTitle": "Temporal Dead Zone",
+    "permalink": "/topic/javascript/tdz"
+  },
+  {
+    "q": "Why is it called \"Temporal\"?",
+    "a": "- _Answer_: Because the dead zone depends on the _time_ of execution, not the physical placement of the code. A function referencing a `let` variable above its declaration works fine, as long as the function is _invoked_ after the declaration.",
+    "deepDive": "**Concept:**\nThe **Temporal Dead Zone (TDZ)** is a specific period in the execution of JavaScript code where variables declared with `let` and `const` exist in memory but cannot be accessed or used. If you try to access a variable while it is in the TDZ, JavaScript will throw a `ReferenceError`.\n\n**Why it matters:**\nThe TDZ was introduced in ES6 (along with `let` and `const`) to catch errors early. Before ES6, variables declared with `var` were initialized with `undefined` during hoisting, which led to silent and extremely confusing bugs when variables were used before they were explicitly assigned a value. The TDZ forces developers to write cleaner, more predictable code by enforcing declaration before usage.",
+    "category": "JavaScript",
+    "topicTitle": "Temporal Dead Zone",
+    "permalink": "/topic/javascript/tdz"
+  },
+  {
+    "q": "Does `this` inside an arrow function point to the object that called it?",
+    "a": "- _Answer_: No. Arrow functions do not bind their own `this`. They look up the scope chain to find `this` in the enclosing lexical context.",
+    "deepDive": "**Concept:**\nIn JavaScript, the `this` keyword refers to an object. Which object it refers to depends strictly on **how** a function is called (its execution context), not where it was defined. It behaves differently in strict mode and non-strict mode.\n\n**Why it matters:**\nThe `this` keyword allows us to reuse functions across different contexts. It lets methods access and manipulate the properties of the object they belong to, enabling Object-Oriented Programming (OOP) patterns in JavaScript.",
+    "category": "JavaScript",
+    "topicTitle": "this Keyword",
+    "permalink": "/topic/javascript/this"
+  },
+  {
+    "q": "What is the difference between `.call()` and `.apply()`?",
+    "a": "- _Answer_: Both explicitly bind `this`. `.call()` takes comma-separated arguments, while `.apply()` takes an array of arguments.",
+    "deepDive": "**Concept:**\nIn JavaScript, the `this` keyword refers to an object. Which object it refers to depends strictly on **how** a function is called (its execution context), not where it was defined. It behaves differently in strict mode and non-strict mode.\n\n**Why it matters:**\nThe `this` keyword allows us to reuse functions across different contexts. It lets methods access and manipulate the properties of the object they belong to, enabling Object-Oriented Programming (OOP) patterns in JavaScript.",
+    "category": "JavaScript",
+    "topicTitle": "this Keyword",
+    "permalink": "/topic/javascript/this"
+  },
+  {
+    "q": "Explain the difference between Throttle and Debounce.",
+    "a": "- _Answer_: Throttle limits the execution to a strict interval (a speed limit). Debounce groups a sudden burst of events into a single execution after a delay.",
+    "deepDive": "**Concept:**\n**Throttle** is a performance optimization technique used to control the rate at which a function is executed. It guarantees that a function is executed at most once in a specified time interval, no matter how many times the event that triggers it is fired.\n\n**Why it matters:**\nWhen users perform continuous actions like scrolling, resizing a window, or dragging an element, the browser fires hundreds of events per second. If you attach heavy calculations or DOM updates to these events without throttling, the browser's main thread becomes blocked, causing visual stuttering (jank). Throttling enforces a strict \"speed limit\" on these functions.",
+    "category": "JavaScript",
+    "topicTitle": "Throttle",
+    "permalink": "/topic/javascript/throttle"
+  },
+  {
+    "q": "When would you use throttle over debounce?",
+    "a": "- _Answer_: When I need constant updates. For example, tracking the scroll percentage of a page to update a progress bar.",
+    "deepDive": "**Concept:**\n**Throttle** is a performance optimization technique used to control the rate at which a function is executed. It guarantees that a function is executed at most once in a specified time interval, no matter how many times the event that triggers it is fired.\n\n**Why it matters:**\nWhen users perform continuous actions like scrolling, resizing a window, or dragging an element, the browser fires hundreds of events per second. If you attach heavy calculations or DOM updates to these events without throttling, the browser's main thread becomes blocked, causing visual stuttering (jank). Throttling enforces a strict \"speed limit\" on these functions.",
+    "category": "JavaScript",
+    "topicTitle": "Throttle",
+    "permalink": "/topic/javascript/throttle"
+  },
+  {
+    "q": "How does Context solve Prop Drilling?",
+    "a": "- _Answer_: Prop drilling forces intermediate components to pass props they don't use. Context allows child components to hook directly into a Provider higher up the tree, bypassing the intermediate components completely.",
+    "deepDive": "**Concept:**\nThe **Context API** is a built-in React feature that provides a way to share values (state, functions, etc.) across the entire component tree without having to explicitly pass props down manually at every level.\n\n**Why it matters:**\nIn React, data flows \"top-down\" (parent to child) via props. If you have a deeply nested component tree and a component at level 10 needs data from level 1, you would have to pass that data through levels 2-9, even if those middle components don't need the data. This anti-pattern is called **Prop Drilling**. Context completely eliminates prop drilling by allowing child components to subscribe directly to a data source higher up in the tree.",
+    "category": "React",
+    "topicTitle": "Context API",
+    "permalink": "/topic/react/context-api"
+  },
+  {
+    "q": "Does using Context replace Redux?",
+    "a": "- _Answer_: Not entirely. Context is a _dependency injection_ mechanism, not a state management tool. It doesn't handle complex state logic, middleware, or granular re-renders like Redux does.",
+    "deepDive": "**Concept:**\nThe **Context API** is a built-in React feature that provides a way to share values (state, functions, etc.) across the entire component tree without having to explicitly pass props down manually at every level.\n\n**Why it matters:**\nIn React, data flows \"top-down\" (parent to child) via props. If you have a deeply nested component tree and a component at level 10 needs data from level 1, you would have to pass that data through levels 2-9, even if those middle components don't need the data. This anti-pattern is called **Prop Drilling**. Context completely eliminates prop drilling by allowing child components to subscribe directly to a data source higher up in the tree.",
+    "category": "React",
+    "topicTitle": "Context API",
+    "permalink": "/topic/react/context-api"
+  },
+  {
+    "q": "Can you write an Error Boundary using React Hooks?",
+    "a": "- _Answer_: No. As of React 18, there is no Hook equivalent to `getDerivedStateFromError` or `componentDidCatch`. You must use a Class Component (or a third-party library that wraps one).",
+    "deepDive": "**Concept:**\nAn **Error Boundary** is a React component that catches JavaScript errors anywhere in its child component tree, logs those errors, and displays a fallback UI instead of crashing the entire application. It acts like a `catch {}` block, but for React components.\n\n**Why it matters:**\nBefore React 16, a JavaScript error inside a component would completely break React's internal state and emit cryptic errors, resulting in a blank white screen (the \"White Screen of Death\") for the user. Error Boundaries ensure that if one part of the UI crashes (e.g., a broken widget), the rest of the application remains fully functional.",
+    "category": "React",
+    "topicTitle": "Error Boundary",
+    "permalink": "/topic/react/error-boundary"
+  },
+  {
+    "q": "Will an Error Boundary catch a failed network request?",
+    "a": "- _Answer_: No. Error boundaries only catch errors thrown during the render phase. Since network requests happen asynchronously outside the render cycle, they must be caught with standard `try/catch` or `.catch()`.",
+    "deepDive": "**Concept:**\nAn **Error Boundary** is a React component that catches JavaScript errors anywhere in its child component tree, logs those errors, and displays a fallback UI instead of crashing the entire application. It acts like a `catch {}` block, but for React components.\n\n**Why it matters:**\nBefore React 16, a JavaScript error inside a component would completely break React's internal state and emit cryptic errors, resulting in a blank white screen (the \"White Screen of Death\") for the user. Error Boundaries ensure that if one part of the UI crashes (e.g., a broken widget), the rest of the application remains fully functional.",
+    "category": "React",
+    "topicTitle": "Error Boundary",
+    "permalink": "/topic/react/error-boundary"
+  },
+  {
+    "q": "How do you implement Code Splitting in React?",
+    "a": "- _Answer_: By using dynamic `import()` wrapped inside `React.lazy()`, and rendering that component inside a `<Suspense>` boundary to handle the loading state while the JS chunk is downloaded.",
+    "deepDive": "**Concept:**\n**Lazy Loading** is an optimization technique where you delay the loading of non-critical resources (like components, images, or libraries) at page load time. Instead, these resources are loaded only when they are actually needed. In React, this is primarily achieved using **Code Splitting** via `React.lazy`.\n\n**Why it matters:**\nBy default, Webpack or Vite bundles your entire React application into one massive JavaScript file. If your app has an Admin Dashboard, a User Profile, and a complex charting library, a standard user visiting the homepage is forced to download all of that code, resulting in a slow initial page load. Lazy loading splits the code into smaller chunks, downloading only the chunk needed for the current screen.",
+    "category": "React",
+    "topicTitle": "Lazy Loading",
+    "permalink": "/topic/react/lazy-loading"
+  },
+  {
+    "q": "Why can't you use `React.lazy` inside a component?",
+    "a": "- _Answer_: Because it creates a new component type on every render. React will unmount the old component and remount the new one, losing all state and causing severe performance issues.",
+    "deepDive": "**Concept:**\n**Lazy Loading** is an optimization technique where you delay the loading of non-critical resources (like components, images, or libraries) at page load time. Instead, these resources are loaded only when they are actually needed. In React, this is primarily achieved using **Code Splitting** via `React.lazy`.\n\n**Why it matters:**\nBy default, Webpack or Vite bundles your entire React application into one massive JavaScript file. If your app has an Admin Dashboard, a User Profile, and a complex charting library, a standard user visiting the homepage is forced to download all of that code, resulting in a slow initial page load. Lazy loading splits the code into smaller chunks, downloading only the chunk needed for the current screen.",
+    "category": "React",
+    "topicTitle": "Lazy Loading",
+    "permalink": "/topic/react/lazy-loading"
+  },
+  {
+    "q": "Why must Redux reducers be pure functions?",
+    "a": "- _Answer_: Because Redux relies on shallow equality checking (`===`) to determine if state has changed. If you mutate the existing state object, the memory address remains the same, and React will not trigger a re-render. Returning a new object forces a re-render.",
+    "deepDive": "**Concept:**\n**Redux** is a predictable state container for JavaScript applications. It provides a centralized \"store\" for the entire application state and enforces strict rules on how that state can be updated. While it can be used with any framework, it is most commonly paired with React via the `react-redux` library.\n\n**Why it matters:**\nAs React applications scale, managing state across dozens of loosely connected components becomes chaotic. Prop drilling becomes unmanageable, and standard Context API can cause massive performance issues if overused. Redux solves this by offering a globally accessible store, granular component updates (only components using specific data re-render), and powerful debugging tools (Redux DevTools).",
+    "category": "React",
+    "topicTitle": "Redux",
+    "permalink": "/topic/react/redux"
+  },
+  {
+    "q": "What is Redux Middleware?",
+    "a": "- _Answer_: Middleware intercepts actions before they reach the reducer. It is used for logging, crash reporting, routing, and handling asynchronous side effects (like API calls via Thunks or Sagas).",
+    "deepDive": "**Concept:**\n**Redux** is a predictable state container for JavaScript applications. It provides a centralized \"store\" for the entire application state and enforces strict rules on how that state can be updated. While it can be used with any framework, it is most commonly paired with React via the `react-redux` library.\n\n**Why it matters:**\nAs React applications scale, managing state across dozens of loosely connected components becomes chaotic. Prop drilling becomes unmanageable, and standard Context API can cause massive performance issues if overused. Redux solves this by offering a globally accessible store, granular component updates (only components using specific data re-render), and powerful debugging tools (Redux DevTools).",
+    "category": "React",
+    "topicTitle": "Redux",
+    "permalink": "/topic/react/redux"
+  },
+  {
+    "q": "How does Suspense know when a component is loading?",
+    "a": "- _Answer_: The component throws a Promise during the render phase. React catches it, renders the Suspense fallback, and waits for the Promise to resolve before attempting to render the component again.",
+    "deepDive": "**Concept:**\n**Suspense** is a built-in React component that lets you declaratively specify a loading state (like a spinner) for a part of the component tree that is not yet ready to be displayed. It \"suspends\" rendering until the underlying asynchronous operation (like fetching data or lazy loading code) finishes.\n\n**Why it matters:**\nBefore Suspense, handling loading states required tedious boilerplate: tracking an `isLoading` state variable, updating it inside a `useEffect` after an API call, and writing early `if (isLoading) return <Spinner />` returns in every component. Suspense extracts this logic declaratively to the parent layer, keeping components focused purely on rendering data.",
+    "category": "React",
+    "topicTitle": "Suspense",
+    "permalink": "/topic/react/suspense"
+  },
+  {
+    "q": "What is the difference between `Suspense` and `Error Boundaries`?",
+    "a": "- _Answer_: `Suspense` catches thrown Promises (loading states). `Error Boundaries` catch thrown Errors (failures). They are often used together to handle the full lifecycle of an async request.",
+    "deepDive": "**Concept:**\n**Suspense** is a built-in React component that lets you declaratively specify a loading state (like a spinner) for a part of the component tree that is not yet ready to be displayed. It \"suspends\" rendering until the underlying asynchronous operation (like fetching data or lazy loading code) finishes.\n\n**Why it matters:**\nBefore Suspense, handling loading states required tedious boilerplate: tracking an `isLoading` state variable, updating it inside a `useEffect` after an API call, and writing early `if (isLoading) return <Spinner />` returns in every component. Suspense extracts this logic declaratively to the parent layer, keeping components focused purely on rendering data.",
+    "category": "React",
+    "topicTitle": "Suspense",
+    "permalink": "/topic/react/suspense"
+  },
+  {
+    "q": "Does `useCallback` prevent the function from being created?",
+    "a": "- _Answer_: No! The function is physically created on every single render. `useCallback` just throws away the newly created function and returns the cached one if the dependencies haven't changed.",
+    "deepDive": "**Concept:**\n`useCallback` is a React Hook used for **memoization**. While `useMemo` caches the _result_ of a calculation, `useCallback` caches a _function definition_ itself between renders. It ensures that a function maintains the same memory address across re-renders unless its dependencies change.\n\n**Why it matters:**\nEvery time a React component re-renders, all functions declared inside it are recreated from scratch, getting a new memory address. Usually, this is fine. However, if you pass one of these functions as a prop to a child component wrapped in `React.memo`, the child will see a \"new\" function reference and re-render unnecessarily, destroying the performance benefits of `React.memo`. `useCallback` prevents this.",
+    "category": "React",
+    "topicTitle": "useCallback",
+    "permalink": "/topic/react/use-callback"
+  },
+  {
+    "q": "What happens if you omit the dependency array in `useCallback`?",
+    "a": "- _Answer_: It will return a new function on every render, making it completely useless and worse for performance than not using it at all.",
+    "deepDive": "**Concept:**\n`useCallback` is a React Hook used for **memoization**. While `useMemo` caches the _result_ of a calculation, `useCallback` caches a _function definition_ itself between renders. It ensures that a function maintains the same memory address across re-renders unless its dependencies change.\n\n**Why it matters:**\nEvery time a React component re-renders, all functions declared inside it are recreated from scratch, getting a new memory address. Usually, this is fine. However, if you pass one of these functions as a prop to a child component wrapped in `React.memo`, the child will see a \"new\" function reference and re-render unnecessarily, destroying the performance benefits of `React.memo`. `useCallback` prevents this.",
+    "category": "React",
+    "topicTitle": "useCallback",
+    "permalink": "/topic/react/use-callback"
+  },
+  {
+    "q": "What happens if you leave out the dependency array?",
+    "a": "- _Answer_: The effect will run after the initial render and after _every single subsequent re-render_ of the component.",
+    "deepDive": "**Concept:**\n`useEffect` is a React Hook that lets you synchronize a component with an external system. It is used to handle **side effects** in functional components, such as fetching data from an API, manually updating the DOM, setting up subscriptions, or working with timers.\n\n**Why it matters:**\nA React component's primary job is to take props and state, and return JSX (the UI). This render phase must be pure (no side effects). If you fetch data or mutate the DOM directly inside the render body, you will cause infinite loops and bugs. `useEffect` allows us to safely execute these impure side effects _after_ React has updated the DOM.",
+    "category": "React",
+    "topicTitle": "useEffect",
+    "permalink": "/topic/react/use-effect"
+  },
+  {
+    "q": "What is the difference between `useEffect` and `useLayoutEffect`?",
+    "a": "- _Answer_: `useEffect` is asynchronous and runs _after_ the browser paints. `useLayoutEffect` is synchronous and blocks the paint until it finishes. Use it only when measuring DOM elements to prevent visual flickering.",
+    "deepDive": "**Concept:**\n`useEffect` is a React Hook that lets you synchronize a component with an external system. It is used to handle **side effects** in functional components, such as fetching data from an API, manually updating the DOM, setting up subscriptions, or working with timers.\n\n**Why it matters:**\nA React component's primary job is to take props and state, and return JSX (the UI). This render phase must be pure (no side effects). If you fetch data or mutate the DOM directly inside the render body, you will cause infinite loops and bugs. `useEffect` allows us to safely execute these impure side effects _after_ React has updated the DOM.",
+    "category": "React",
+    "topicTitle": "useEffect",
+    "permalink": "/topic/react/use-effect"
+  },
+  {
+    "q": "When should you NOT use `useMemo`?",
+    "a": "- _Answer_: You shouldn't use it for trivial calculations (like simple string concatenation or basic math). The overhead of the hook itself outweighs the savings.",
+    "deepDive": "**Concept:**\n`useMemo` is a React Hook used for **memoization**. It caches (remembers) the result of a calculation between renders. It tells React: \"Do not recalculate this value unless one of its dependencies has changed.\"\n\n**Why it matters:**\nIn React, when a component's state or props change, the _entire_ component re-renders. If you have an expensive calculation inside that component (like filtering a massive array or complex math), it will re-calculate on every single render, severely slowing down your app. `useMemo` solves this by caching the output of that expensive calculation.",
+    "category": "React",
+    "topicTitle": "useMemo",
+    "permalink": "/topic/react/use-memo"
+  },
+  {
+    "q": "Does `useMemo` guarantee that the calculation will never run again?",
+    "a": "- _Answer_: No. The React docs state that `useMemo` is a _performance optimization, not a semantic guarantee_. React may choose to clear the cache (e.g., to free memory for offscreen components) and recalculate it.",
+    "deepDive": "**Concept:**\n`useMemo` is a React Hook used for **memoization**. It caches (remembers) the result of a calculation between renders. It tells React: \"Do not recalculate this value unless one of its dependencies has changed.\"\n\n**Why it matters:**\nIn React, when a component's state or props change, the _entire_ component re-renders. If you have an expensive calculation inside that component (like filtering a massive array or complex math), it will re-calculate on every single render, severely slowing down your app. `useMemo` solves this by caching the output of that expensive calculation.",
+    "category": "React",
+    "topicTitle": "useMemo",
+    "permalink": "/topic/react/use-memo"
+  },
+  {
+    "q": "When would you choose `useReducer` over `useState`?",
+    "a": "- _Answer_: When state consists of multiple sub-values that depend on each other (like loading, data, and error), or when the next state depends heavily on the previous state in complex ways. It's also better when you need to pass callbacks deeply down the tree (via context).",
+    "deepDive": "**Concept:**\n`useReducer` is an alternative to `useState` for managing state in a React component. It is highly influenced by Redux. Instead of updating state directly by passing a new value, you **dispatch an action**, and a **reducer function** calculates the new state based on that action.\n\n**Why it matters:**\n`useState` is perfect for independent, simple variables (like a string or a boolean). But as a component grows, state can become a complex object with multiple sub-values that depend on each other. If you have 5 different `useState` hooks that are constantly updated together inside complex event handlers, the logic becomes hard to follow. `useReducer` centralizes all state transition logic into a single, pure function outside your component.",
+    "category": "React",
+    "topicTitle": "useReducer",
+    "permalink": "/topic/react/use-reducer"
+  },
+  {
+    "q": "What makes a reducer function \"pure\"?",
+    "a": "- _Answer_: It doesn't mutate its arguments, it doesn't perform side effects (no API calls or DOM manipulation), and it always returns the exact same output for the exact same input.",
+    "deepDive": "**Concept:**\n`useReducer` is an alternative to `useState` for managing state in a React component. It is highly influenced by Redux. Instead of updating state directly by passing a new value, you **dispatch an action**, and a **reducer function** calculates the new state based on that action.\n\n**Why it matters:**\n`useState` is perfect for independent, simple variables (like a string or a boolean). But as a component grows, state can become a complex object with multiple sub-values that depend on each other. If you have 5 different `useState` hooks that are constantly updated together inside complex event handlers, the logic becomes hard to follow. `useReducer` centralizes all state transition logic into a single, pure function outside your component.",
+    "category": "React",
+    "topicTitle": "useReducer",
+    "permalink": "/topic/react/use-reducer"
+  },
+  {
+    "q": "What is the difference between `useState` and `useRef`?",
+    "a": "- _Answer_: Changing a state variable triggers a component re-render. Changing a ref's `.current` property does not. Refs are for escaping the render cycle.",
+    "deepDive": "**Concept:**\n`useRef` is a React Hook that lets you reference a value that’s not needed for rendering. It returns a mutable object with a single property: `.current`. Unlike state, modifying the `.current` property does **not** trigger a re-render of the component.\n\n**Why it matters:**\nThere are two main reasons we need `useRef`:\n\n1. **Accessing DOM Elements**: Sometimes you need to interact with a DOM element directly (e.g., focusing an input, scrolling to a div, or measuring an element's size).\n2. **Storing Mutable Values**: You need a place to store data that changes over time (like a timer ID or previous state), but you _don't_ want the component to re-render when that data changes.",
+    "category": "React",
+    "topicTitle": "useRef",
+    "permalink": "/topic/react/use-ref"
+  },
+  {
+    "q": "How do you access a DOM element in React?",
+    "a": "- _Answer_: Create a ref using `useRef()`, attach it to the element's `ref` prop (`<div ref={myRef}>`), and then access the native DOM node via `myRef.current`.",
+    "deepDive": "**Concept:**\n`useRef` is a React Hook that lets you reference a value that’s not needed for rendering. It returns a mutable object with a single property: `.current`. Unlike state, modifying the `.current` property does **not** trigger a re-render of the component.\n\n**Why it matters:**\nThere are two main reasons we need `useRef`:\n\n1. **Accessing DOM Elements**: Sometimes you need to interact with a DOM element directly (e.g., focusing an input, scrolling to a div, or measuring an element's size).\n2. **Storing Mutable Values**: You need a place to store data that changes over time (like a timer ID or previous state), but you _don't_ want the component to re-render when that data changes.",
+    "category": "React",
+    "topicTitle": "useRef",
+    "permalink": "/topic/react/use-ref"
+  },
+  {
+    "q": "Why can't you put `useState` inside an `if` statement?",
+    "a": "- _Answer_: React tracks hooks by their call order index. If an `if` statement evaluates differently on the next render, the hook order shifts, breaking the component's state tracking.",
+    "deepDive": "**Concept:**\n`useState` is the most fundamental React Hook. It allows functional components to have state variables. When state changes, React automatically re-renders the component to reflect the new state in the UI.\n\n**Why it matters:**\nBefore Hooks (React 16.8), state could only be managed inside Class Components using `this.state` and `this.setState`. Functional components were \"stateless\". `useState` allows developers to write simpler, more readable functional components while still retaining the ability to hold dynamic data across renders.",
+    "category": "React",
+    "topicTitle": "useState",
+    "permalink": "/topic/react/use-state"
+  },
+  {
+    "q": "What is State Batching?",
+    "a": "- _Answer_: React groups multiple state updates into a single re-render for better performance. In React 18, this happens automatically for promises, timeouts, and native event handlers.",
+    "deepDive": "**Concept:**\n`useState` is the most fundamental React Hook. It allows functional components to have state variables. When state changes, React automatically re-renders the component to reflect the new state in the UI.\n\n**Why it matters:**\nBefore Hooks (React 16.8), state could only be managed inside Class Components using `this.state` and `this.setState`. Functional components were \"stateless\". `useState` allows developers to write simpler, more readable functional components while still retaining the ability to hold dynamic data across renders.",
+    "category": "React",
+    "topicTitle": "useState",
+    "permalink": "/topic/react/use-state"
+  },
+  {
+    "q": "When would you choose a Micro-Frontend architecture?",
+    "a": "- _Answer_: You should only choose micro-frontends when scaling the _organization_, not the technology. If you have 50+ frontend developers split across multiple autonomous teams (e.g., a Cart team, a User Profile team, a Search team) and they need independent deployment lifecycles, micro-frontends make sense. For small or medium teams, it introduces unnecessary infrastructure complexity.",
+    "deepDive": "**Concept:**\nFrontend Architecture is the process of designing the high-level structure of a web application. As frontend apps have grown from simple jQuery scripts into massive, stateful applications matching the complexity of backend systems, architecture has become crucial to maintain scalability, performance, and team velocity.",
+    "category": "System Design",
+    "topicTitle": "Frontend Architecture",
+    "permalink": "/topic/system-design/architecture"
+  },
+  {
+    "q": "Where would you store the currently selected tab in a multi-tab UI?",
+    "a": "- _Answer_: It depends on the requirement. If the user should be able to copy the URL and send it to a friend so they see the exact same tab, it MUST be stored in the URL Search Params. If it's just a temporary UI state that doesn't need to be shareable, local component state (`useState`) is perfect.",
+    "deepDive": "**Concept:**\nFrontend Architecture is the process of designing the high-level structure of a web application. As frontend apps have grown from simple jQuery scripts into massive, stateful applications matching the complexity of backend systems, architecture has become crucial to maintain scalability, performance, and team velocity.",
+    "category": "System Design",
+    "topicTitle": "Frontend Architecture",
+    "permalink": "/topic/system-design/architecture"
+  },
+  {
+    "q": "Why does setting exact dimensions on images improve Web Vitals?",
+    "a": "- _Answer_: It improves the CLS (Cumulative Layout Shift) metric. When dimensions are explicitly set, the browser calculates the aspect ratio and reserves the empty space in the layout phase immediately. When the image finally downloads, it perfectly fills the reserved space without pushing surrounding content down.",
+    "deepDive": "**Concept:**\nCore Web Vitals are a set of specific, standardized metrics created by Google to measure the user experience of a webpage. They focus on three key aspects: **Loading**, **Interactivity**, and **Visual Stability**.\n\nBecause Google uses CWV as a direct ranking factor for SEO, optimizing these metrics is a mandatory requirement for modern frontend applications.",
+    "category": "System Design",
+    "topicTitle": "Core Web Vitals",
+    "permalink": "/topic/system-design/core-web-vitals"
+  },
+  {
+    "q": "What is the difference between FCP and LCP?",
+    "a": "- _Answer_: First Contentful Paint (FCP) triggers when the _very first_ pixel of content (like a loading spinner or header text) paints to the screen. Largest Contentful Paint (LCP) triggers when the _largest_ element in the viewport (usually the hero image or main headline) finishes rendering.",
+    "deepDive": "**Concept:**\nCore Web Vitals are a set of specific, standardized metrics created by Google to measure the user experience of a webpage. They focus on three key aspects: **Loading**, **Interactivity**, and **Visual Stability**.\n\nBecause Google uses CWV as a direct ranking factor for SEO, optimizing these metrics is a mandatory requirement for modern frontend applications.",
+    "category": "System Design",
+    "topicTitle": "Core Web Vitals",
+    "permalink": "/topic/system-design/core-web-vitals"
+  },
+  {
+    "q": "What is Hydration?",
+    "a": "- _Answer_: Hydration is the process where a frontend framework (like React) takes over server-rendered HTML. It attaches event listeners and state to the static DOM nodes so the page becomes interactive.",
+    "deepDive": "**Concept:**\nRendering patterns determine **where** and **when** the HTML for your web application is generated. Will the server construct the HTML on every request? Will the browser download an empty HTML shell and build the UI using JavaScript? Or will the HTML be pre-built at compile time?\n\n**Why it matters:**\nThere is no \"one size fits all\" for rendering.\n\n- An e-commerce site needs instant SEO and fast initial loads (SSR/SSG).\n- A complex dashboard needs highly interactive, stateful UI without server roundtrips on every click (CSR).\n  Choosing the wrong pattern can result in terrible Core Web Vitals, poor SEO, or massive server costs.",
+    "category": "System Design",
+    "topicTitle": "Rendering Patterns",
+    "permalink": "/topic/system-design/rendering-patterns"
+  },
+  {
+    "q": "How does ISR differ from SSR?",
+    "a": "- _Answer_: SSR renders the page on _every single request_, blocking the response until data is fetched. ISR serves a cached static page instantly from a CDN, and rebuilds the cache in the background periodically.",
+    "deepDive": "**Concept:**\nRendering patterns determine **where** and **when** the HTML for your web application is generated. Will the server construct the HTML on every request? Will the browser download an empty HTML shell and build the UI using JavaScript? Or will the HTML be pre-built at compile time?\n\n**Why it matters:**\nThere is no \"one size fits all\" for rendering.\n\n- An e-commerce site needs instant SEO and fast initial loads (SSR/SSG).\n- A complex dashboard needs highly interactive, stateful UI without server roundtrips on every click (CSR).\n  Choosing the wrong pattern can result in terrible Core Web Vitals, poor SEO, or massive server costs.",
+    "category": "System Design",
+    "topicTitle": "Rendering Patterns",
+    "permalink": "/topic/system-design/rendering-patterns"
+  },
+  {
+    "q": "What is the difference between `defer` and `async` in script tags?",
+    "a": "- _Answer_: Both download the script in the background without blocking the HTML parser. However, `async` executes the script the moment it finishes downloading (which pauses HTML parsing). `defer` waits until the entire HTML document is parsed before executing, making it safer for scripts that rely on the DOM.",
+    "deepDive": "**Concept:**\nWeb performance refers to how fast a web page loads, becomes interactive, and responds to user inputs. In modern system design, performance isn't an afterthought—it is a core architectural requirement. Amazon famously found that every 100ms of latency cost them 1% in sales.",
+    "category": "System Design",
+    "topicTitle": "Web Performance",
+    "permalink": "/topic/system-design/web-performance"
+  },
+  {
+    "q": "How do you prevent a layout thrashing?",
+    "a": "- _Answer_: Layout thrashing occurs when JavaScript repeatedly reads a layout property (like `offsetWidth`) and then writes a layout property, forcing the browser to synchronously recalculate the layout over and over. You prevent it by batching DOM reads and DOM writes, using `requestAnimationFrame`, or using tools like `FastDOM`.",
+    "deepDive": "**Concept:**\nWeb performance refers to how fast a web page loads, becomes interactive, and responds to user inputs. In modern system design, performance isn't an afterthought—it is a core architectural requirement. Amazon famously found that every 100ms of latency cost them 1% in sales.",
+    "category": "System Design",
+    "topicTitle": "Web Performance",
+    "permalink": "/topic/system-design/web-performance"
+  },
+  {
+    "q": "What is the difference between `any` and a Generic `<T>`?",
+    "a": "- _Answer_: `any` disables type checking completely. If a function accepts `any` and returns `any`, the compiler loses all track of what the variable actually is. A Generic captures the type of the argument provided, preserves it, and enforces it on the return type or other arguments.",
+    "deepDive": "**Concept:**\n**Generics** allow you to write reusable, flexible code that works with a variety of types, rather than a single specific type. They act like \"variables for types\". Instead of passing a value (like a string or a number) to a function, you pass a _Type_ to a function, class, or interface.\n\n**Why it matters:**\nWithout Generics, if you wanted a function to accept any type of data, you would have to use the dreaded `any` type. However, using `any` completely destroys TypeScript's type checking. Generics allow you to accept any type _while preserving the type information_.",
+    "category": "TypeScript",
+    "topicTitle": "Generics",
+    "permalink": "/topic/typescript/generics"
+  },
+  {
+    "q": "How do you restrict what types a Generic can accept?",
+    "a": "- _Answer_: By using Generic Constraints with the `extends` keyword (e.g., `<T extends object>`).",
+    "deepDive": "**Concept:**\n**Generics** allow you to write reusable, flexible code that works with a variety of types, rather than a single specific type. They act like \"variables for types\". Instead of passing a value (like a string or a number) to a function, you pass a _Type_ to a function, class, or interface.\n\n**Why it matters:**\nWithout Generics, if you wanted a function to accept any type of data, you would have to use the dreaded `any` type. However, using `any` completely destroys TypeScript's type checking. Generics allow you to accept any type _while preserving the type information_.",
+    "category": "TypeScript",
+    "topicTitle": "Generics",
+    "permalink": "/topic/typescript/generics"
+  },
+  {
+    "q": "What is `infer` used for?",
+    "a": "- _Answer_: `infer` is used inside Conditional Types to declare a temporary type variable. It pattern-matches against a structure (like an Array, Promise, or Function) and extracts the inner type so it can be returned or manipulated.",
+    "deepDive": "**Concept:**\nThe `infer` keyword is an advanced TypeScript feature used **exclusively within Conditional Types** (`T extends U ? X : Y`). It allows you to declare a new, temporary type variable inside the condition, tell TypeScript to figure out (infer) what that type is based on the input, and then extract that type so you can use it in the true/false branches.\n\n**Why it matters:**\nSometimes you are handed a complex type (like an Array, a Promise, or a Function), and you need to \"unwrap\" it to get the type _inside_ it. For example, if you have `Promise<string>`, how do you programmatically extract just the `string`? `infer` allows you to pattern-match against types and extract their internal pieces.",
+    "category": "TypeScript",
+    "topicTitle": "infer",
+    "permalink": "/topic/typescript/infer"
+  },
+  {
+    "q": "How does `ReturnType<T>` work under the hood?",
+    "a": "- _Answer_: It uses a conditional type and `infer`. It checks if `T` extends a function signature `(...args: any[]) => infer R`. If it does, it returns `R` (the inferred return type). If not, it returns `any`.",
+    "deepDive": "**Concept:**\nThe `infer` keyword is an advanced TypeScript feature used **exclusively within Conditional Types** (`T extends U ? X : Y`). It allows you to declare a new, temporary type variable inside the condition, tell TypeScript to figure out (infer) what that type is based on the input, and then extract that type so you can use it in the true/false branches.\n\n**Why it matters:**\nSometimes you are handed a complex type (like an Array, a Promise, or a Function), and you need to \"unwrap\" it to get the type _inside_ it. For example, if you have `Promise<string>`, how do you programmatically extract just the `string`? `infer` allows you to pattern-match against types and extract their internal pieces.",
+    "category": "TypeScript",
+    "topicTitle": "infer",
+    "permalink": "/topic/typescript/infer"
+  },
+  {
+    "q": "What is the difference between an Interface and a Type Alias?",
+    "a": "- _Answer_: Interfaces are specifically for defining object shapes and support \"Declaration Merging\". Type aliases can define object shapes, but can also define primitives, unions, and tuples. Type aliases use intersections (`&`) to combine, whereas interfaces use `extends`.",
+    "deepDive": "**Concept:**\nIn TypeScript, an **Interface** is a way to define the exact shape of an object. It acts as a strict contract that an object must adhere to, specifying what properties and methods the object must have, and what types those properties must be.\n\n**Why it matters:**\nJavaScript is a dynamically typed language, meaning objects can change their shape at runtime. This causes countless runtime errors (e.g., `Cannot read property 'name' of undefined`). Interfaces provide compile-time type checking, ensuring that the objects you pass around your application match the expected structure before the code even runs.",
+    "category": "TypeScript",
+    "topicTitle": "Interfaces",
+    "permalink": "/topic/typescript/interfaces"
+  },
+  {
+    "q": "Does an object have to explicitly declare it implements an interface?",
+    "a": "- _Answer_: No. TypeScript uses Structural Typing. If an object happens to have the exact shape defined by the interface, TypeScript considers it compatible.",
+    "deepDive": "**Concept:**\nIn TypeScript, an **Interface** is a way to define the exact shape of an object. It acts as a strict contract that an object must adhere to, specifying what properties and methods the object must have, and what types those properties must be.\n\n**Why it matters:**\nJavaScript is a dynamically typed language, meaning objects can change their shape at runtime. This causes countless runtime errors (e.g., `Cannot read property 'name' of undefined`). Interfaces provide compile-time type checking, ensuring that the objects you pass around your application match the expected structure before the code even runs.",
+    "category": "TypeScript",
+    "topicTitle": "Interfaces",
+    "permalink": "/topic/typescript/interfaces"
+  },
+  {
+    "q": "What is `keyof typeof` and when would you use it?",
+    "a": "- _Answer_: `typeof` extracts the TypeScript type from a runtime JavaScript value/object. `keyof` then extracts the keys of that type into a union of strings. You use it when you have a constant object (like a dictionary of error codes) and you want a type representing all valid keys of that object without maintaining a separate type definition.",
+    "deepDive": "**Concept:**\nThe `keyof` operator in TypeScript takes an object type (an interface or type alias) and produces a string or numeric **literal union** of its keys.\n\n**Why it matters:**\nWithout `keyof`, if you wanted to restrict a function argument to be exactly one of the keys of an object, you would have to manually type out a string union (`\"id\" | \"name\" | \"email\"`). If the object shape changed later (e.g., you added an `\"age\"` property), you would have to manually update the union. `keyof` extracts this union dynamically, keeping your types perfectly in sync with your object shapes.",
+    "category": "TypeScript",
+    "topicTitle": "keyof",
+    "permalink": "/topic/typescript/keyof"
+  },
+  {
+    "q": "How do you type an index access, like `obj[key]`?",
+    "a": "- _Answer_: You represent the type of the key as `K extends keyof T`, and the return type of the lookup is represented as `T[K]` (Indexed Access Type).",
+    "deepDive": "**Concept:**\nThe `keyof` operator in TypeScript takes an object type (an interface or type alias) and produces a string or numeric **literal union** of its keys.\n\n**Why it matters:**\nWithout `keyof`, if you wanted to restrict a function argument to be exactly one of the keys of an object, you would have to manually type out a string union (`\"id\" | \"name\" | \"email\"`). If the object shape changed later (e.g., you added an `\"age\"` property), you would have to manually update the union. `keyof` extracts this union dynamically, keeping your types perfectly in sync with your object shapes.",
+    "category": "TypeScript",
+    "topicTitle": "keyof",
+    "permalink": "/topic/typescript/keyof"
+  },
+  {
+    "q": "When would you use a Type Alias instead of an Interface?",
+    "a": "- _Answer_: I would use a Type Alias when I need to define a union type (e.g., `string | null`), a tuple, or when I want to create a semantic name for a primitive type. Interfaces cannot do these things; they are strictly for object shapes.",
+    "deepDive": "**Concept:**\nA **Type Alias** is exactly what it sounds like: a custom name (alias) for any valid TypeScript type. It can be used to define the shape of an object, but unlike interfaces, it can also be used to name primitives, unions, tuples, and complex utility intersections.\n\n**Why it matters:**\nWhen you have a complex type like `string | number | boolean`, typing that out repeatedly across your codebase is tedious and error-prone. A Type Alias allows you to abstract that complexity into a single, reusable name, making your code significantly cleaner and easier to maintain.",
+    "category": "TypeScript",
+    "topicTitle": "Type Alias",
+    "permalink": "/topic/typescript/type-alias"
+  },
+  {
+    "q": "What is an Intersection Type?",
+    "a": "- _Answer_: An intersection type (using `&`) combines multiple types into one. The resulting type possesses all the properties of the intersected types. It is the Type Alias equivalent of an Interface `extends`.",
+    "deepDive": "**Concept:**\nA **Type Alias** is exactly what it sounds like: a custom name (alias) for any valid TypeScript type. It can be used to define the shape of an object, but unlike interfaces, it can also be used to name primitives, unions, tuples, and complex utility intersections.\n\n**Why it matters:**\nWhen you have a complex type like `string | number | boolean`, typing that out repeatedly across your codebase is tedious and error-prone. A Type Alias allows you to abstract that complexity into a single, reusable name, making your code significantly cleaner and easier to maintain.",
+    "category": "TypeScript",
+    "topicTitle": "Type Alias",
+    "permalink": "/topic/typescript/type-alias"
+  },
+  {
+    "q": "What is the difference between `Omit` and `Exclude`?",
+    "a": "- _Answer_: `Omit` operates on Object types (Interfaces/Type Aliases). It removes properties from an object shape. `Exclude` operates on Union types (`\"a\" | \"b\" | \"c\"`). It removes specific members from the union.",
+    "deepDive": "**Concept:**\n**Utility Types** are built-in generic types provided by TypeScript globally. They allow you to manipulate existing types to create new ones, preventing you from writing boilerplate or duplicating code when you need a slightly modified version of an existing interface.\n\n**Why it matters:**\nImagine you have an interface `User` with 10 required properties. Now, you need to create a function to _update_ a user, where all 10 properties are optional. Without utility types, you would have to create a brand new `UpdateUser` interface and manually copy all 10 properties, appending `?` to each one. Utility Types (like `Partial<T>`) do this automatically for you.",
+    "category": "TypeScript",
+    "topicTitle": "Utility Types",
+    "permalink": "/topic/typescript/utility-types"
+  },
+  {
+    "q": "How does `Partial` work internally?",
+    "a": "- _Answer_: It uses a Mapped Type combined with the `keyof` operator to iterate over all keys in an object and append a `?` modifier to them.",
+    "deepDive": "**Concept:**\n**Utility Types** are built-in generic types provided by TypeScript globally. They allow you to manipulate existing types to create new ones, preventing you from writing boilerplate or duplicating code when you need a slightly modified version of an existing interface.\n\n**Why it matters:**\nImagine you have an interface `User` with 10 required properties. Now, you need to create a function to _update_ a user, where all 10 properties are optional. Without utility types, you would have to create a brand new `UpdateUser` interface and manually copy all 10 properties, appending `?` to each one. Utility Types (like `Partial<T>`) do this automatically for you.",
+    "category": "TypeScript",
+    "topicTitle": "Utility Types",
+    "permalink": "/topic/typescript/utility-types"
+  }
+]

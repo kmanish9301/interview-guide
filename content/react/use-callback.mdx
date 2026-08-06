@@ -1,0 +1,259 @@
+---
+title: useCallback
+category: React
+difficulty: Intermediate
+interviewFrequency: High
+experienceLevel: Mid-Level
+estimatedReadTime: 9
+tags: [react, hooks, performance, memoization]
+companies:
+  - Meta
+  - Netflix
+  - Microsoft
+---
+
+# useCallback
+
+## 📖 What is useCallback?
+
+`useCallback` is a React Hook used for **memoization**. While `useMemo` caches the _result_ of a calculation, `useCallback` caches a _function definition_ itself between renders. It ensures that a function maintains the same memory address across re-renders unless its dependencies change.
+
+## 🤔 Why do we need useCallback?
+
+Every time a React component re-renders, all functions declared inside it are recreated from scratch, getting a new memory address. Usually, this is fine. However, if you pass one of these functions as a prop to a child component wrapped in `React.memo`, the child will see a "new" function reference and re-render unnecessarily, destroying the performance benefits of `React.memo`. `useCallback` prevents this.
+
+## ⚙️ Internal Working
+
+`useCallback` takes two arguments:
+
+1. The **function** you want to cache.
+2. A **dependency array**.
+
+On the first render, `useCallback` returns the function you passed. On subsequent renders, it will return that exact same function from the previous render, as long as the dependencies haven't changed. If they have, it returns the newly created function.
+
+## 🧠 How React Engine Handles It
+
+Under the hood, `useCallback(fn, deps)` is exactly equivalent to `useMemo(() => fn, deps)`. React stores the function reference in the Fiber node associated with the component.
+
+## 📝 Syntax
+
+```jsx
+const memoizedCallback = useCallback(() => {
+  doSomething(a, b);
+}, [a, b]);
+```
+
+## 💡 Beginner Example
+
+```jsx
+import { useState, useCallback } from "react";
+
+function Parent() {
+  const [count, setCount] = useState(0);
+
+  // If we didn't use useCallback, handleFetch would be recreated
+  // every time 'count' changes.
+  const handleFetch = useCallback(() => {
+    console.log("Fetching data...");
+  }, []); // Empty array: function reference NEVER changes
+
+  return (
+    <div>
+      <p>Count: {count}</p>
+      <button onClick={() => setCount(count + 1)}>Increment</button>
+
+      {/* Child only re-renders if handleFetch changes memory address */}
+      <Child onClick={handleFetch} />
+    </div>
+  );
+}
+```
+
+## 🚀 Advanced Example
+
+**Debouncing inside React Components:**
+If you try to debounce a function inside a component, the debouncer is recreated on every render, wiping out its internal timer. You must use `useCallback` to preserve the debouncer.
+
+```jsx
+import { useState, useCallback } from "react";
+import { debounce } from "lodash";
+
+function SearchInput() {
+  const [query, setQuery] = useState("");
+
+  // Cache the debounced function so it survives re-renders
+  const debouncedSearch = useCallback(
+    debounce((searchTerm) => {
+      fetchResults(searchTerm);
+    }, 500),
+    [] // Run once
+  );
+
+  const handleChange = (e) => {
+    setQuery(e.target.value);
+    debouncedSearch(e.target.value);
+  };
+
+  return <input value={query} onChange={handleChange} />;
+}
+```
+
+## 🏢 Production Example
+
+**Passing callbacks to Custom Hooks**:
+When writing a custom hook that accepts a callback function, you often need to put that callback inside a `useEffect` dependency array. If the user of the hook doesn't memoize the callback, it will cause an infinite loop.
+
+```jsx
+// Custom Hook
+function useEventListener(eventName, handler) {
+  useEffect(() => {
+    window.addEventListener(eventName, handler);
+    return () => window.removeEventListener(eventName, handler);
+  }, [eventName, handler]); // handler is a dependency!
+}
+
+// Usage in Component
+function App() {
+  // MUST use useCallback here, or useEventListener will constantly re-run
+  const onScroll = useCallback(() => {
+    console.log("Scrolled!");
+  }, []);
+
+  useEventListener("scroll", onScroll);
+  return <div>App</div>;
+}
+```
+
+## ⚛️ React Example
+
+**When is `useCallback` completely useless?**
+
+```jsx
+function App() {
+  const [count, setCount] = useState(0);
+
+  // USELESS!
+  // <button> is an intrinsic DOM element, it doesn't care about referential equality.
+  // We are just making React do extra work for no reason.
+  const handleClick = useCallback(() => setCount((c) => c + 1), []);
+
+  return <button onClick={handleClick}>Click</button>;
+}
+```
+
+## ⚡ Performance
+
+Like `useMemo`, `useCallback` has an overhead cost. Creating the function, allocating the array, and running the dependency check is often slower than just recreating the function. **Only use `useCallback` if:**
+
+1. You are passing the function to a component wrapped in `React.memo`.
+2. The function is a dependency in a `useEffect` or another hook.
+
+## 🧠 Memory
+
+Caching functions keeps the closure scope attached to that function alive in memory. If your callback captures large variables from the component scope, they will not be garbage collected until the dependencies change.
+
+## ❌ Common Mistakes
+
+**Stale Closures:**
+
+```jsx
+const [count, setCount] = useState(0);
+
+const increment = useCallback(() => {
+  // BUG: Because dependency array is empty, 'count' is always 0.
+  // This will set the count to 1 forever.
+  setCount(count + 1);
+}, []);
+```
+
+_Fix_: Add `count` to the dependency array `[count]`, OR use functional updates `setCount(prev => prev + 1)` which removes the need for `count` in the dependency array.
+
+## ✅ Best Practices
+
+1. Avoid premature optimization. Don't wrap every function in `useCallback`.
+2. If a function doesn't use any state or props, move it **outside** the component instead of using `useCallback`.
+3. Use the `eslint-plugin-react-hooks` exhaustive-deps rule to ensure you don't forget dependencies.
+
+## 🆚 Comparison
+
+| Hook          | Caches                     | When to use                                  |
+| ------------- | -------------------------- | -------------------------------------------- |
+| `useMemo`     | The _result_ of a function | Heavy math, filtering, mapping               |
+| `useCallback` | The _function_ itself      | Passing stable callbacks to child components |
+
+## ❓ Interview Questions
+
+1. **Does `useCallback` prevent the function from being created?**
+   - _Answer_: No! The function is physically created on every single render. `useCallback` just throws away the newly created function and returns the cached one if the dependencies haven't changed.
+2. **What happens if you omit the dependency array in `useCallback`?**
+   - _Answer_: It will return a new function on every render, making it completely useless and worse for performance than not using it at all.
+
+## 🔄 Follow-up Questions
+
+**"If `useCallback` creates the function anyway, how does it save performance?"**
+
+- _Answer_: It doesn't save performance in the parent component. It saves performance in the _child_ component. By keeping the memory reference stable, the child component (if wrapped in `React.memo`) can skip its entire render cycle.
+
+## 💻 Coding Questions
+
+**Refactor this code to prevent Child from re-rendering when text is typed:**
+
+```jsx
+function Parent() {
+  const [text, setText] = useState("");
+  const doSomething = () => console.log("Action");
+
+  return (
+    <div>
+      <input onChange={(e) => setText(e.target.value)} />
+      <MemoizedChild action={doSomething} />
+    </div>
+  );
+}
+```
+
+_Solution_:
+Wrap `doSomething` in `useCallback`.
+`const doSomething = useCallback(() => console.log("Action"), []);`
+
+## 🧩 Output-Based Questions
+
+```jsx
+const func1 = () => {};
+const func2 = useCallback(() => {}, []);
+```
+
+If the component re-renders 5 times, how many unique function references are created in memory for `func1` and `func2`?
+_Answer_:
+`func1`: 5 distinct references.
+`func2`: 1 stored reference (though 5 inline functions were created and 4 were instantly garbage collected).
+
+## 🐞 Debugging Questions
+
+**Why is my `useCallback` acting like a stale closure?**
+
+```jsx
+const [name, setName] = useState("John");
+
+const greet = useCallback(() => {
+  console.log(`Hello, ${name}`);
+}, []);
+```
+
+_Fix_: The dependency array is empty `[]`. The `greet` function captured `name = "John"` in its closure on the first render and will never update. Fix: Add `[name]` to the dependency array.
+
+## 📄 Cheat Sheet
+
+- **Purpose**: Cache a function's memory reference.
+- **First Arg**: The function `() => {}`.
+- **Second Arg**: Dependency array `[a, b]`.
+- **Primary Use**: Used in conjunction with `React.memo` to prevent child re-renders.
+
+## ⚡ 2-Minute Revision
+
+`useCallback` caches a function definition so its memory address remains stable across re-renders. You only need it if you are passing functions as props to deeply nested or heavy child components that are optimized with `React.memo`, or if the function is used inside a `useEffect` dependency array. Otherwise, you're just making React do extra work!
+
+## 🔗 Related Topics
+
+- [useMemo](/topic/react/usememo)
+- [React.memo](/topic/react/react-memo)

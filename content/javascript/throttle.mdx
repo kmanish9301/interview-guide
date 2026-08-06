@@ -1,0 +1,217 @@
+---
+title: Throttle
+category: JavaScript
+difficulty: Intermediate
+interviewFrequency: High
+experienceLevel: Mid-Level
+estimatedReadTime: 9
+tags: [javascript, throttle, performance, ui]
+companies:
+  - Meta
+  - Google
+  - Uber
+---
+
+# Throttle
+
+## 📖 What is Throttle?
+
+**Throttle** is a performance optimization technique used to control the rate at which a function is executed. It guarantees that a function is executed at most once in a specified time interval, no matter how many times the event that triggers it is fired.
+
+## 🤔 Why do we need Throttle?
+
+When users perform continuous actions like scrolling, resizing a window, or dragging an element, the browser fires hundreds of events per second. If you attach heavy calculations or DOM updates to these events without throttling, the browser's main thread becomes blocked, causing visual stuttering (jank). Throttling enforces a strict "speed limit" on these functions.
+
+## ⚙️ Internal Working
+
+Throttle works by keeping track of the last time a function was invoked (using a timestamp flag or a timeout). When an event occurs, it checks if enough time has passed since the last execution. If it has, the function runs and the timestamp updates. If not, the function call is simply ignored.
+
+## 🧠 How JavaScript Engine Handles It
+
+Since throttling often involves synchronous timestamp checking, it avoids pushing thousands of callbacks onto the Macrotask queue (which would happen if you used raw `setTimeout` for everything). It efficiently drops redundant calls in memory before they hit the Event Loop.
+
+## 📝 Syntax
+
+There is no native `throttle` keyword. You must write a custom utility or use a library like Lodash (`_.throttle`).
+
+```javascript
+function throttle(func, limit) {
+  let inThrottle;
+  return function (...args) {
+    if (!inThrottle) {
+      func.apply(this, args);
+      inThrottle = true;
+      setTimeout(() => {
+        inThrottle = false;
+      }, limit);
+    }
+  };
+}
+```
+
+## 💡 Beginner Example
+
+**Window Resizing**:
+Instead of recalculating a layout 500 times during a window drag, we throttle it to run exactly once every 200ms.
+
+```javascript
+const handleResize = () => console.log("Recalculating layout...");
+const throttledResize = throttle(handleResize, 200);
+
+window.addEventListener("resize", throttledResize);
+```
+
+## 🚀 Advanced Example
+
+**Timestamp-based Throttle**:
+A more robust implementation uses timestamps rather than just `setTimeout`, which allows for trailing edge executions.
+
+```javascript
+function throttleWithTimestamp(func, limit) {
+  let lastRan = 0;
+
+  return function (...args) {
+    const now = Date.now();
+    if (now - lastRan >= limit) {
+      func.apply(this, args);
+      lastRan = now;
+    }
+  };
+}
+```
+
+## 🏢 Production Example
+
+In complex applications, such as a map dragging interface (like Google Maps) or an infinite scrolling feed (like Twitter), rendering new tiles or fetching new posts is strictly throttled so the network and GPU aren't overwhelmed.
+
+```javascript
+import { throttle } from "lodash";
+
+// Only check scroll position once every 500ms
+window.addEventListener(
+  "scroll",
+  throttle(() => {
+    if (isNearBottom()) {
+      fetchMorePosts();
+    }
+  }, 500)
+);
+```
+
+## ⚛️ React Example
+
+Similar to Debounce, when using Throttle in React, the throttled function must be memoized so it isn't recreated on every render, which would break the internal timing mechanism.
+
+```jsx
+import { useCallback } from "react";
+import throttle from "lodash/throttle";
+
+function DragBox() {
+  const handleDrag = useCallback(
+    throttle((event) => {
+      // Update element position based on event.clientX/Y
+      updatePosition(event);
+    }, 16), // ~60 frames per second
+    []
+  );
+
+  return <div onMouseMove={handleDrag}>Drag me</div>;
+}
+```
+
+## ⚡ Performance
+
+Throttling provides massive performance gains for continuous events. For 60fps rendering during continuous events, you typically throttle to `16ms` (`1000ms / 60 ≈ 16ms`).
+
+## 🧠 Memory
+
+Throttles are extremely memory efficient compared to debouncers. While a debouncer constantly creates and destroys timers, a basic timestamp throttle only does simple integer subtraction without touching the Macrotask queue.
+
+## ❌ Common Mistakes
+
+**Confusing it with Debounce**:
+If you use Debounce for an infinite scroll handler, the posts will only load _after_ the user stops scrolling completely. You want Throttle here, so it loads _while_ they are scrolling, just at a controlled pace.
+
+## ✅ Best Practices
+
+1. Use **Throttle** for continuous events where you want continuous feedback (Scrolling, Dragging, Resizing).
+2. Use **Debounce** for continuous events where you only care about the final state (Typing in a search bar).
+3. Use Lodash's throttle in production to handle edge cases (like `leading` and `trailing` executions).
+
+## 🆚 Comparison
+
+| Feature             | Throttle                                         | Debounce                               |
+| ------------------- | ------------------------------------------------ | -------------------------------------- |
+| **Execution**       | Enforces a maximum rate (e.g. once every 100ms). | Delays execution until a pause occurs. |
+| **User Experience** | Fluid, continuous updates.                       | Snappy updates at the very end.        |
+| **Best For**        | Scroll, Resize, MouseMove.                       | Keyup, Auto-save.                      |
+
+## ❓ Interview Questions
+
+1. **Explain the difference between Throttle and Debounce.**
+   - _Answer_: Throttle limits the execution to a strict interval (a speed limit). Debounce groups a sudden burst of events into a single execution after a delay.
+2. **When would you use throttle over debounce?**
+   - _Answer_: When I need constant updates. For example, tracking the scroll percentage of a page to update a progress bar.
+
+## 🔄 Follow-up Questions
+
+**"How do you implement a trailing execution in a throttle?"**
+
+- _Answer_: If an event happens while the throttle is locked, you save those arguments and use a `setTimeout` to execute the function one last time when the lock releases, ensuring the final state is always captured.
+
+## 💻 Coding Questions
+
+**Write a simple throttle polyfill.**
+_Solution_:
+
+```javascript
+function throttle(fn, delay) {
+  let lastTime = 0;
+  return function (...args) {
+    const now = new Date().getTime();
+    if (now - lastTime >= delay) {
+      fn.apply(this, args);
+      lastTime = now;
+    }
+  };
+}
+```
+
+## 🧩 Output-Based Questions
+
+A function throttled at 500ms is called at `0ms`, `200ms`, `600ms`, and `700ms`. When does it execute?
+_Answer_: At `0ms` and `600ms`.
+_Explanation_:
+
+- `0ms`: Executes immediately.
+- `200ms`: Ignored (locked until 500ms).
+- `600ms`: Executes (time > 500ms).
+- `700ms`: Ignored (locked until 1100ms).
+
+## 🐞 Debugging Questions
+
+**Why is this throttle not working in React?**
+
+```jsx
+const ScrollTracker = () => {
+  const onScroll = throttle(() => console.log("scrolling"), 1000);
+  return <div onScroll={onScroll}>Content</div>;
+};
+```
+
+_Fix_: Because `onScroll` is redefined on every render, the throttle's internal memory is wiped out repeatedly. It must be wrapped in `useCallback(throttle(...), [])`.
+
+## 📄 Cheat Sheet
+
+- **Throttle**: "Fire at most once every X milliseconds."
+- **Core Mechanism**: Timestamps (`Date.now()`) or boolean flags.
+- **Primary Use Case**: Scrolling, resizing, window events.
+
+## ⚡ 2-Minute Revision
+
+Throttle ensures a function is called at a regular interval, preventing the browser from being overwhelmed by continuous events like scrolling. It acts as a strict speed limit. Always memoize throttled functions in modern UI frameworks to preserve their closure state.
+
+## 🔗 Related Topics
+
+- [Debounce](/topic/javascript/debounce)
+- [Closures](/topic/javascript/closures)

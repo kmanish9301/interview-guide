@@ -1,0 +1,217 @@
+---
+title: Type Alias
+category: TypeScript
+difficulty: Beginner
+interviewFrequency: High
+experienceLevel: Entry-Level
+estimatedReadTime: 7
+tags: [typescript, types, aliases, unions]
+companies:
+  - Netflix
+  - Uber
+  - Google
+---
+
+# Type Alias
+
+## 📖 What is a Type Alias?
+
+A **Type Alias** is exactly what it sounds like: a custom name (alias) for any valid TypeScript type. It can be used to define the shape of an object, but unlike interfaces, it can also be used to name primitives, unions, tuples, and complex utility intersections.
+
+## 🤔 Why do we need Type Aliases?
+
+When you have a complex type like `string | number | boolean`, typing that out repeatedly across your codebase is tedious and error-prone. A Type Alias allows you to abstract that complexity into a single, reusable name, making your code significantly cleaner and easier to maintain.
+
+## ⚙️ Internal Working
+
+Like interfaces, Type Aliases are completely erased by the TypeScript compiler. They exist only during development to provide type safety and IDE autocomplete.
+
+## 🧠 How TypeScript Engine Handles It
+
+When TypeScript evaluates a Type Alias, it simply substitutes the alias name with the actual type definition it points to during the type-checking phase.
+
+## 📝 Syntax
+
+You declare a type alias using the `type` keyword, followed by the name, an equals sign `=`, and the type definition.
+
+```typescript
+// Naming a primitive union
+type ID = string | number;
+
+// Naming an object shape
+type Point = {
+  x: number;
+  y: number;
+};
+
+// Naming a function signature
+type Callback = (data: string) => void;
+```
+
+## 💡 Beginner Example
+
+Using a Union type to restrict values to specific strings (String Literal Types):
+
+```typescript
+// We can restrict the status to exactly these three strings
+type OrderStatus = "pending" | "shipped" | "delivered";
+
+function updateStatus(status: OrderStatus) {
+  console.log(`Order is now ${status}`);
+}
+
+updateStatus("shipped"); // Valid
+updateStatus("cancelled"); // Error! "cancelled" is not assignable to type OrderStatus
+```
+
+## 🚀 Advanced Example
+
+**Intersections (Combining Types)**:
+While interfaces use `extends` to inherit properties, Type Aliases use the intersection operator `&` to merge multiple types into one.
+
+```typescript
+type Person = { name: string };
+type Employee = { employeeId: number };
+
+// The resulting type requires BOTH 'name' and 'employeeId'
+type StaffMember = Person & Employee;
+
+const newHire: StaffMember = {
+  name: "Alice",
+  employeeId: 101
+};
+```
+
+## 🏢 Production Example
+
+**Complex Data Structures (Tuples)**:
+Type aliases are the only way to name complex, non-object structures like Tuples (arrays with fixed lengths and types at specific indices).
+
+```typescript
+// A tuple representing a 3D coordinate [x, y, z]
+type Coordinate3D = [number, number, number];
+
+const myPosition: Coordinate3D = [10, 20, 30];
+
+// Error: Source has 4 element(s) but target allows only 3.
+const invalidPosition: Coordinate3D = [10, 20, 30, 40];
+```
+
+## ⚛️ React Example
+
+Defining component props using a Type Alias. (This is highly common in functional React components, and many teams prefer `type` over `interface` for props).
+
+```tsx
+type ButtonProps = {
+  title: string;
+  variant: "primary" | "secondary" | "danger"; // Union type
+  onClick: (e: React.MouseEvent<HTMLButtonElement>) => void;
+};
+
+const Button = ({ title, variant, onClick }: ButtonProps) => {
+  return (
+    <button className={`btn-${variant}`} onClick={onClick}>
+      {title}
+    </button>
+  );
+};
+```
+
+## ⚡ Performance
+
+Type Aliases have zero impact on runtime performance. During compile time, massive, deeply nested intersection types (`&`) can occasionally cause the TypeScript compiler to slow down compared to interface inheritance (`extends`), but this is only noticeable in gigantic enterprise codebases.
+
+## 🧠 Memory
+
+Type Aliases are purely compile-time constructs and consume no runtime memory.
+
+## ❌ Common Mistakes
+
+**Trying to re-declare a Type Alias**:
+Unlike Interfaces, Type Aliases do not support Declaration Merging. If you declare the same type twice, the compiler throws an error.
+
+```typescript
+type Window = { title: string };
+// Error: Duplicate identifier 'Window'.
+type Window = { open: boolean };
+```
+
+## ✅ Best Practices
+
+1. Use `type` when defining primitives, unions (`|`), intersections (`&`), tuples, and function signatures.
+2. Use `interface` when defining the shape of an object that might need to be extended later or merged by third-party libraries.
+3. Be consistent. Many modern codebases choose to use `type` for absolutely everything (including object shapes) just to keep the syntax uniform.
+
+## 🆚 Comparison
+
+| Feature                 | `type` Alias                             | `interface`                |
+| ----------------------- | ---------------------------------------- | -------------------------- |
+| **Syntax**              | `type Name = { ... }`                    | `interface Name { ... }`   |
+| **Primitives & Unions** | Yes (e.g., `type ID = string \| number`) | No (Objects only)          |
+| **Combining**           | Intersection (`&`)                       | Inheritance (`extends`)    |
+| **Declaration Merging** | No (Throws Error)                        | Yes (Merges automatically) |
+
+## ❓ Interview Questions
+
+1. **When would you use a Type Alias instead of an Interface?**
+   - _Answer_: I would use a Type Alias when I need to define a union type (e.g., `string | null`), a tuple, or when I want to create a semantic name for a primitive type. Interfaces cannot do these things; they are strictly for object shapes.
+2. **What is an Intersection Type?**
+   - _Answer_: An intersection type (using `&`) combines multiple types into one. The resulting type possesses all the properties of the intersected types. It is the Type Alias equivalent of an Interface `extends`.
+
+## 🔄 Follow-up Questions
+
+**"Can an Interface extend a Type Alias?"**
+
+- _Answer_: Yes! As long as the Type Alias defines an object shape (and not a union or primitive), an Interface can extend it.
+  `type Name = { first: string }; interface Person extends Name { last: string }`
+
+## 💻 Coding Questions
+
+**Create a type alias that accepts only specific CSS hex colors:**
+_Solution_:
+
+```typescript
+type HexColor = "#FF0000" | "#00FF00" | "#0000FF";
+const myColor: HexColor = "#FF0000"; // Valid
+```
+
+## 🧩 Output-Based Questions
+
+```typescript
+type A = { x: number };
+type B = { y: number };
+type C = A | B;
+
+const obj: C = { x: 1, y: 2 };
+```
+
+_Is this valid?_
+_Answer_: Yes! `C` is a union of `A` or `B`. Since `obj` has `x`, it satisfies `A`. The excess property `y` is technically allowed here because it satisfies `B`, making it valid for the union.
+
+## 🐞 Debugging Questions
+
+**Why can't I merge these two types?**
+
+```typescript
+type User = { name: string };
+type User = { age: number }; // Duplicate identifier error
+```
+
+_Fix_: Type Aliases do not support declaration merging. You must either use interfaces, or create a third intersected type:
+`type UserData = { name: string } & { age: number };`
+
+## 📄 Cheat Sheet
+
+- **Keyword**: `type`
+- **Object**: `type Obj = { a: string }`
+- **Union**: `type Status = "OK" | "FAIL"`
+- **Intersection**: `type Merged = ObjA & ObjB`
+
+## ⚡ 2-Minute Revision
+
+Type Aliases let you assign custom names to any TypeScript type. While Interfaces are restricted to object shapes and support merging, Type Aliases are the versatile "Swiss Army Knife" of TypeScript. They can represent objects, unions, primitives, and tuples. Use them to write DRY (Don't Repeat Yourself) code when dealing with complex type definitions.
+
+## 🔗 Related Topics
+
+- [Interfaces](/topic/typescript/interfaces)
+- [Utility Types](/topic/typescript/utility-types)

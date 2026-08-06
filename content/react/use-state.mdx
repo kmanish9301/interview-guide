@@ -1,0 +1,200 @@
+---
+title: useState
+category: React
+difficulty: Beginner
+interviewFrequency: Very High
+experienceLevel: Entry-Level
+estimatedReadTime: 10
+tags: [react, hooks, state]
+companies:
+  - Meta
+  - Netflix
+  - Uber
+---
+
+# useState
+
+## 📖 What is useState?
+
+`useState` is the most fundamental React Hook. It allows functional components to have state variables. When state changes, React automatically re-renders the component to reflect the new state in the UI.
+
+## 🤔 Why do we need useState?
+
+Before Hooks (React 16.8), state could only be managed inside Class Components using `this.state` and `this.setState`. Functional components were "stateless". `useState` allows developers to write simpler, more readable functional components while still retaining the ability to hold dynamic data across renders.
+
+## ⚙️ Internal Working
+
+When you call `useState`, React allocates a piece of memory linked to that specific component instance in the virtual DOM tree. On the initial render, it assigns the initial value. On subsequent renders, it ignores the initial value and returns the current state from its internal memory.
+
+## 🧠 How React Engine Handles It
+
+React uses a Linked List to keep track of Hooks internally. It relies strictly on the **Call Order**. This is why you cannot put Hooks inside loops, conditions, or nested functions. If the call order changes between renders, React loses track of which state belongs to which `useState` call.
+
+## 📝 Syntax
+
+```jsx
+const [state, setState] = useState(initialState);
+```
+
+- `state`: The current value.
+- `setState`: A function to update the value.
+- `initialState`: The value used only during the very first render.
+
+## 💡 Beginner Example
+
+```jsx
+import { useState } from "react";
+
+function Counter() {
+  const [count, setCount] = useState(0);
+
+  return (
+    <div>
+      <p>You clicked {count} times</p>
+      <button onClick={() => setCount(count + 1)}>Click me</button>
+    </div>
+  );
+}
+```
+
+## 🚀 Advanced Example
+
+**Lazy Initialization**:
+If the initial state requires an expensive computation, you should pass a function to `useState`. This function is only executed on the initial render, saving performance on subsequent re-renders.
+
+```jsx
+// BAD: calculateExpensiveValue() runs on EVERY render!
+const [data, setData] = useState(calculateExpensiveValue());
+
+// GOOD: calculateExpensiveValue() runs ONLY on initial render!
+const [data, setData] = useState(() => calculateExpensiveValue());
+```
+
+## 🏢 Production Example
+
+**Handling complex state objects**:
+Unlike `this.setState` in Class Components, `useState` does _not_ automatically merge object state. You must spread the previous state manually.
+
+```jsx
+const [user, setUser] = useState({ name: "Alice", age: 25 });
+
+const updateAge = () => {
+  // We MUST spread the existing properties, otherwise 'name' is deleted!
+  setUser((prevUser) => ({
+    ...prevUser,
+    age: prevUser.age + 1
+  }));
+};
+```
+
+## ⚡ Performance
+
+React **batches** state updates for performance. If you call `setCount(count + 1)` three times sequentially in the same synchronous function, React only processes one re-render.
+
+## 🧠 Memory
+
+State variables are kept in memory as long as the component is mounted. When the component unmounts, the state is destroyed and garbage collected.
+
+## ❌ Common Mistakes
+
+**Updating state with Stale Closures:**
+
+```jsx
+const [count, setCount] = useState(0);
+
+const incrementTwice = () => {
+  setCount(count + 1);
+  setCount(count + 1);
+  // 'count' is captured from the closure, so it's still 0 here.
+  // Result: count becomes 1, not 2.
+};
+```
+
+## ✅ Best Practices
+
+1. **Use Functional Updates**: If the new state depends on the old state, pass a callback to the setter: `setCount(prev => prev + 1)`.
+2. **Keep state minimal**: Don't put data in state if it can be derived from props or other state variables.
+3. **Split state**: Use multiple `useState` calls for independent values instead of one massive object.
+
+## 🆚 Comparison
+
+| Feature               | `useState`                 | `this.setState` (Classes) |
+| --------------------- | -------------------------- | ------------------------- |
+| **Paradigm**          | Functional                 | Object-Oriented           |
+| **Object Merging**    | Manual (must spread `...`) | Automatic                 |
+| **Call Restrictions** | Top-level only             | Anywhere in class methods |
+
+## ❓ Interview Questions
+
+1. **Why can't you put `useState` inside an `if` statement?**
+   - _Answer_: React tracks hooks by their call order index. If an `if` statement evaluates differently on the next render, the hook order shifts, breaking the component's state tracking.
+2. **What is State Batching?**
+   - _Answer_: React groups multiple state updates into a single re-render for better performance. In React 18, this happens automatically for promises, timeouts, and native event handlers.
+
+## 🔄 Follow-up Questions
+
+**"How does `useState` differ from `useRef`?"**
+
+- _Answer_: Updating `useState` triggers a re-render. Updating `useRef.current` does _not_ trigger a re-render. Use state for UI data, use refs for mutable instances or DOM elements.
+
+## 💻 Coding Questions
+
+**Fix the bug so it increments correctly:**
+
+```jsx
+function Counter() {
+  const [count, setCount] = useState(0);
+  const incrementAsync = () => {
+    setTimeout(() => {
+      setCount(count + 1);
+    }, 1000);
+  };
+  return <button onClick={incrementAsync}>{count}</button>;
+}
+```
+
+_Solution_:
+Because of closures, `count` is stale inside the timeout. Use a functional update: `setCount(prevCount => prevCount + 1);`
+
+## 🧩 Output-Based Questions
+
+```jsx
+const [count, setCount] = useState(0);
+
+const handleClick = () => {
+  setCount(1);
+  setCount(1);
+  setCount(1);
+};
+```
+
+_How many times does the component re-render?_
+_Output_: **One time**. React batches the updates. Furthermore, because the value is identical (`1` to `1`), React bails out of rendering entirely after the first evaluation.
+
+## 🐞 Debugging Questions
+
+**Why is my object missing properties?**
+
+```jsx
+const [user, setUser] = useState({ first: "John", last: "Doe" });
+// Later...
+setUser({ first: "Jane" });
+```
+
+_Fix_: Unlike class state, hooks don't merge objects. The `last` property was overwritten and deleted. Fix: `setUser(prev => ({ ...prev, first: "Jane" }))`.
+
+## 📄 Cheat Sheet
+
+- **Import**: `import { useState } from 'react';`
+- **Hook Rule**: Only call at the top level of React functions.
+- **Previous State**: Use `setVal(prev => prev + 1)` when relying on old state.
+- **Lazy Init**: Use `useState(() => expensive())` for heavy initializations.
+
+## ⚡ 2-Minute Revision
+
+`useState` is the core hook for managing data that changes over time and affects the UI. It returns an array with the value and a setter function. Remember to use functional updates for dependent state, and always spread objects/arrays because `useState` replaces data rather than merging it.
+
+## 🔗 Related Topics
+
+- [useEffect](/topic/react/useeffect)
+- [useReducer](/topic/react/usereducer)

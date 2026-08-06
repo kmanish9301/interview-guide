@@ -1,0 +1,272 @@
+---
+title: Promises
+category: JavaScript
+difficulty: Intermediate
+interviewFrequency: Very High
+experienceLevel: Mid-Level
+estimatedReadTime: 10
+tags: [javascript, promises, async, core]
+companies:
+  - Amazon
+  - Adobe
+  - Microsoft
+---
+
+# Promises
+
+## 📖 What is a Promise?
+
+A **Promise** is an object representing the eventual completion (or failure) of an asynchronous operation and its resulting value. It acts as a proxy for a value that is not necessarily known when the promise is created.
+
+## 🤔 Why do we need Promises?
+
+Before Promises, JavaScript relied heavily on nested callbacks to handle asynchronous tasks (like fetching data or reading files). This often led to deeply nested, unreadable code known as **Callback Hell** (or the Pyramid of Doom). Promises provide a much cleaner, chainable way to handle async operations, making error handling and control flow significantly easier.
+
+## ⚙️ Internal Working
+
+A Promise is essentially a state machine. It can be in one of three states:
+
+1. **Pending**: The initial state. The operation has not completed yet.
+2. **Fulfilled (Resolved)**: The operation completed successfully.
+3. **Rejected**: The operation failed.
+
+Once a Promise is fulfilled or rejected, it is considered **settled**, and its state cannot change again.
+
+## 🧠 How JavaScript Engine Handles It
+
+When a Promise resolves or rejects, its `.then()` or `.catch()` callbacks are pushed to the **Microtask Queue**. The Event Loop prioritizes the Microtask Queue over the Macrotask Queue (where `setTimeout` callbacks go), meaning Promise callbacks are executed immediately after the current synchronous code finishes, before any rendering or timers.
+
+## 📝 Syntax
+
+```javascript
+const myPromise = new Promise((resolve, reject) => {
+  // Asynchronous operation here
+  const success = true;
+
+  if (success) {
+    resolve("Operation was successful!");
+  } else {
+    reject("Operation failed!");
+  }
+});
+
+myPromise
+  .then((result) => console.log(result))
+  .catch((error) => console.error(error))
+  .finally(() => console.log("Done!"));
+```
+
+## 💡 Beginner Example
+
+```javascript
+function fetchUser() {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve({ id: 1, name: "Alice" });
+    }, 1000);
+  });
+}
+
+fetchUser().then((user) => console.log(user.name));
+// After 1 second: "Alice"
+```
+
+## 🚀 Advanced Example
+
+**Promise Combinators**: Handling multiple promises at once.
+
+```javascript
+const p1 = Promise.resolve(3);
+const p2 = new Promise((resolve) => setTimeout(resolve, 100, "foo"));
+const p3 = fetch("/api/data"); // Returns a promise
+
+// Wait for ALL promises to resolve
+Promise.all([p1, p2, p3])
+  .then((values) => console.log(values))
+  .catch((error) => console.error("One failed!", error));
+
+// Wait for the FIRST promise to settle (resolve or reject)
+Promise.race([p1, p2]).then((value) => console.log(value)); // 3
+```
+
+## 🏢 Production Example
+
+Chaining Promises to avoid deeply nested callbacks:
+
+```javascript
+function loginUser(email, password) {
+  return fetch("/api/login", { method: "POST", body: { email, password } })
+    .then((response) => {
+      if (!response.ok) throw new Error("Login Failed");
+      return response.json();
+    })
+    .then((userData) => {
+      return fetch(`/api/permissions/${userData.id}`);
+    })
+    .then((permissions) => {
+      console.log("Login successful with permissions", permissions);
+    })
+    .catch((error) => {
+      // Catches ANY error in the chain above
+      console.error("Auth flow failed:", error.message);
+    });
+}
+```
+
+## ⚛️ React Example
+
+Fetching data in a `useEffect` using Promises:
+
+```jsx
+useEffect(() => {
+  let isMounted = true;
+
+  fetch("https://api.example.com/data")
+    .then((res) => res.json())
+    .then((data) => {
+      if (isMounted) setData(data);
+    })
+    .catch((err) => console.error(err));
+
+  return () => {
+    isMounted = false;
+  };
+}, []);
+```
+
+## ⚡ Performance
+
+Using `Promise.all` allows you to execute independent asynchronous operations in **parallel** rather than sequentially, massively improving performance.
+
+```javascript
+// BAD (Sequential - takes 2 seconds)
+const users = await fetchUsers(); // 1s
+const posts = await fetchPosts(); // 1s
+
+// GOOD (Parallel - takes 1 second)
+const [users, posts] = await Promise.all([fetchUsers(), fetchPosts()]);
+```
+
+## 🧠 Memory
+
+If you don't handle rejected promises (e.g., missing a `.catch()`), you will get an `UnhandledPromiseRejectionWarning`, which in some environments can crash the Node.js process and leak memory.
+
+## ❌ Common Mistakes
+
+1. **Forgetting to return**: If you don't `return` a promise inside a `.then()`, the next `.then()` will receive `undefined`.
+2. **Nesting instead of chaining**:
+   ```javascript
+   // Anti-pattern
+   fetch().then((res) => {
+     parse(res).then((data) => console.log(data));
+   });
+   ```
+
+## ✅ Best Practices
+
+1. Always append a `.catch()` at the end of your promise chains.
+2. Use `Promise.all` for parallel operations.
+3. Use `Promise.allSettled` if you want to wait for multiple promises but don't want one failure to crash the whole operation.
+
+## 🆚 Comparison
+
+| Feature            | Callbacks                     | Promises                     |
+| ------------------ | ----------------------------- | ---------------------------- |
+| **Control Flow**   | Nested (Callback Hell)        | Chained (Flat)               |
+| **Error Handling** | Hard to catch errors globally | One `.catch()` catches all   |
+| **State**          | None                          | Pending, Fulfilled, Rejected |
+
+## ❓ Interview Questions
+
+1. **What is the difference between `Promise.all` and `Promise.race`?**
+   - _Answer_: `Promise.all` waits for all promises to resolve (or fails if one fails). `Promise.race` returns the result of the first promise to settle, whether it resolves or rejects.
+2. **What happens if you resolve a promise multiple times?**
+   - _Answer_: A promise can only be settled once. Subsequent calls to `resolve()` or `reject()` are completely ignored.
+
+## 🔄 Follow-up Questions
+
+**"What does `Promise.allSettled` do?"**
+
+- _Answer_: It waits for all promises to settle (regardless of success or failure) and returns an array of objects describing the outcome of each promise.
+
+## 💻 Coding Questions
+
+**Implement a simple polyfill for `Promise.all`.**
+_Solution_:
+
+```javascript
+function myPromiseAll(promises) {
+  return new Promise((resolve, reject) => {
+    let results = [];
+    let completed = 0;
+
+    if (promises.length === 0) resolve(results);
+
+    promises.forEach((p, index) => {
+      Promise.resolve(p)
+        .then((val) => {
+          results[index] = val;
+          completed++;
+          if (completed === promises.length) resolve(results);
+        })
+        .catch(reject);
+    });
+  });
+}
+```
+
+## 🧩 Output-Based Questions
+
+```javascript
+Promise.resolve(1)
+  .then((val) => {
+    console.log(val);
+    return val + 1;
+  })
+  .then((val) => {
+    console.log(val);
+    throw new Error("Failed");
+  })
+  .catch((err) => {
+    console.log("Error caught");
+    return 10;
+  })
+  .then((val) => console.log(val));
+```
+
+_Output_:
+`1`
+`2`
+`Error caught`
+`10`
+
+## 🐞 Debugging Questions
+
+**Why is this promise not catching the error?**
+
+```javascript
+try {
+  fetch("/api/data").then((res) => console.log(res));
+} catch (e) {
+  console.log("Caught!", e);
+}
+```
+
+_Fix_: A synchronous `try/catch` block cannot catch asynchronous errors inside a Promise. You must append `.catch()` to the promise chain or use `await` inside an `async` function.
+
+## 📄 Cheat Sheet
+
+- **Pending**: Initial state.
+- **Fulfilled**: Success (`.then`).
+- **Rejected**: Failed (`.catch`).
+- **.finally()**: Runs regardless of success or failure.
+- **Microtask Queue**: Where promise callbacks live.
+
+## ⚡ 2-Minute Revision
+
+Promises solve callback hell by allowing us to chain asynchronous operations. They exist in three states (Pending, Fulfilled, Rejected) and can only settle once. Use `Promise.all` for parallel execution and never forget to add a `.catch()` block!
+
+## 🔗 Related Topics
+
+- [Event Loop](/topic/javascript/event-loop)
+- [Async Await](/topic/javascript/async-await)

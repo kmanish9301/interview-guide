@@ -1,0 +1,81 @@
+---
+title: Core Web Vitals
+category: System Design
+difficulty: Intermediate
+interviewFrequency: High
+experienceLevel: Mid-Level
+estimatedReadTime: 8
+tags: [system design, web-vitals, seo, performance, lcp, cls, inp]
+companies:
+  - Google
+  - Netflix
+  - Shopify
+---
+
+# Core Web Vitals (CWV)
+
+## 📖 What are Core Web Vitals?
+
+Core Web Vitals are a set of specific, standardized metrics created by Google to measure the user experience of a webpage. They focus on three key aspects: **Loading**, **Interactivity**, and **Visual Stability**.
+
+Because Google uses CWV as a direct ranking factor for SEO, optimizing these metrics is a mandatory requirement for modern frontend applications.
+
+## 📊 The 3 Main Metrics
+
+### 1. LCP (Largest Contentful Paint) - _Loading_
+
+LCP measures the time it takes for the largest text block or image element within the viewport to become visible.
+
+- **Good**: Under 2.5 seconds.
+- **Poor**: Over 4.0 seconds.
+- **How to fix**:
+  - Optimize the hero image (use WebP/AVIF, compress heavily).
+  - Preload the hero image (`<link rel="preload" as="image" href="...">`).
+  - Don't use client-side rendering (CSR) for the main content; use SSR or SSG so the HTML is delivered instantly.
+
+### 2. INP (Interaction to Next Paint) - _Interactivity_
+
+_Note: INP replaced FID (First Input Delay) in March 2024._
+INP measures the longest latency of all click, tap, and keyboard interactions throughout the entire lifespan of a user's visit to a page. It ensures the UI is snappy and responsive.
+
+- **Good**: Under 200 milliseconds.
+- **Poor**: Over 500 milliseconds.
+- **How to fix**:
+  - Minimize main-thread work. Yield to the main thread frequently.
+  - Break up long-running JavaScript tasks using `setTimeout` or `requestIdleCallback`.
+  - Avoid large React state updates that re-render the entire page on a single click.
+
+### 3. CLS (Cumulative Layout Shift) - _Visual Stability_
+
+CLS measures unexpected layout shifts that occur during the lifespan of the page. This happens when elements dynamically load in and push other content down (e.g., an ad loads late and pushes the button you were about to click).
+
+- **Good**: Under 0.1.
+- **Poor**: Over 0.25.
+- **How to fix**:
+  - Always set `width` and `height` attributes on `<img>` and `<video>` tags so the browser can reserve the exact space before the media downloads.
+  - Set a `min-height` on containers that fetch dynamic content.
+  - Never insert content dynamically _above_ existing content unless in response to a user action.
+
+## 📈 Other Important Metrics
+
+- **TTFB (Time to First Byte)**: The time it takes for the browser to receive the very first byte of data from the server. (Fix: Use a CDN, upgrade server CPU, cache DB queries).
+- **FCP (First Contentful Paint)**: The time when the first piece of DOM (text, image, SVG) is rendered.
+- **TTI (Time to Interactive)**: The time when the page is fully loaded and capable of reliably responding to user input quickly (main thread is quiet).
+
+## 🛠️ How to Measure CWV
+
+- **Field Data (Real Users)**: Chrome User Experience Report (CrUX), Google Search Console. This is what Google actually uses for SEO ranking.
+- **Lab Data (Simulated)**: Lighthouse, Chrome DevTools. Good for local debugging before pushing to production.
+
+## ❓ Interview Questions
+
+1. **Why does setting exact dimensions on images improve Web Vitals?**
+   - _Answer_: It improves the CLS (Cumulative Layout Shift) metric. When dimensions are explicitly set, the browser calculates the aspect ratio and reserves the empty space in the layout phase immediately. When the image finally downloads, it perfectly fills the reserved space without pushing surrounding content down.
+2. **What is the difference between FCP and LCP?**
+   - _Answer_: First Contentful Paint (FCP) triggers when the _very first_ pixel of content (like a loading spinner or header text) paints to the screen. Largest Contentful Paint (LCP) triggers when the _largest_ element in the viewport (usually the hero image or main headline) finishes rendering.
+
+## 📄 Cheat Sheet
+
+- **LCP (Loading)**: < 2.5s. Fix by preloading hero images and using SSR.
+- **INP (Interactivity)**: < 200ms. Fix by breaking up heavy JS tasks so the main thread isn't blocked.
+- **CLS (Stability)**: < 0.1. Fix by reserving space for images/ads with explicit width/height.

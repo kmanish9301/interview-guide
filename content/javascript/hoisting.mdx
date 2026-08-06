@@ -1,0 +1,217 @@
+---
+title: Hoisting
+category: JavaScript
+difficulty: Intermediate
+interviewFrequency: Very High
+experienceLevel: Entry-Level
+estimatedReadTime: 8
+tags: [javascript, hoisting, scope, core]
+companies:
+  - Amazon
+  - Adobe
+  - Microsoft
+---
+
+# Hoisting
+
+## 📖 What is Hoisting?
+
+**Hoisting** is JavaScript's default behavior of moving declarations to the top of the current scope (script or function) before code execution. This means that a variable or function can be used _before_ it has been declared in the code.
+
+## 🤔 Why do we need Hoisting?
+
+Hoisting is not a feature developers explicitly "use"; rather, it's a byproduct of how the JavaScript engine parses and compiles code. It allows for mutual recursion (functions calling each other) without worrying about the order in which they are defined.
+
+## ⚙️ Internal Working
+
+JavaScript executes code in two phases:
+
+1. **Creation Phase**: The engine goes through the code and allocates memory for variable and function declarations.
+2. **Execution Phase**: The engine executes the code line by line.
+
+Because memory is allocated during the Creation Phase, the declarations conceptually "move to the top" of their scope.
+
+## 🧠 How JavaScript Engine Handles It
+
+- **Function Declarations**: Completely hoisted. The engine stores the function name and the actual function body in memory.
+- **`var` Declarations**: Hoisted, but initialized with `undefined`.
+- **`let` and `const`**: Hoisted, but NOT initialized. They are placed in a Temporal Dead Zone (TDZ) from the start of the block until the declaration is evaluated.
+
+## 📝 Syntax
+
+```javascript
+// Function declarations can be called before they are written
+greet();
+
+function greet() {
+  console.log("Hello!");
+}
+```
+
+## 💡 Beginner Example
+
+```javascript
+console.log(myVar); // Output: undefined (not ReferenceError!)
+var myVar = 10;
+console.log(myVar); // Output: 10
+```
+
+This happens because internally, JavaScript interprets it as:
+
+```javascript
+var myVar;
+console.log(myVar);
+myVar = 10;
+console.log(myVar);
+```
+
+## 🚀 Advanced Example
+
+**Function Expressions are NOT hoisted completely:**
+
+```javascript
+console.log(add(2, 2)); // ReferenceError / TypeError
+const add = function (a, b) {
+  return a + b;
+};
+```
+
+If you use `var` for a function expression:
+
+```javascript
+console.log(multiply(2, 2)); // TypeError: multiply is not a function
+var multiply = function (a, b) {
+  return a * b;
+};
+```
+
+_Why?_ `var multiply` is hoisted and initialized to `undefined`. When you try to invoke `undefined(2, 2)`, it throws a TypeError.
+
+## 🏢 Production Example
+
+Hoisting allows developers to structure their files by putting execution logic at the top and helper functions at the bottom, improving readability.
+
+```javascript
+// Main execution at the top
+initApp();
+fetchData();
+
+// Helper definitions at the bottom
+function initApp() { ... }
+function fetchData() { ... }
+```
+
+## ⚛️ React Example
+
+In React, hoisting is rarely an issue because modern bundlers and ES6 modules enforce strict module scoping, and developers exclusively use `const` or `let`. However, understanding hoisting is crucial when writing utility functions at the bottom of a component file.
+
+## ⚡ Performance
+
+Hoisting itself has no negative performance impact; it all happens during the fast compilation phase before execution begins.
+
+## 🧠 Memory
+
+Since `var` variables are initialized with `undefined` in memory before the code even runs, they consume a tiny bit of memory upfront, but this is negligible in modern engines.
+
+## ❌ Common Mistakes
+
+Assuming `let` and `const` are not hoisted. They **are** hoisted, but they are not initialized. If they weren't hoisted, the following code would output `20`, but it actually throws an error:
+
+```javascript
+let x = 20;
+{
+  console.log(x); // ReferenceError! (Because the inner 'x' is hoisted and blocks the outer 'x')
+  let x = 10;
+}
+```
+
+## ✅ Best Practices
+
+1. **Always use `const` and `let`**. They prevent confusing bugs by throwing a ReferenceError if you try to use them before declaration.
+2. **Declare variables at the top** of their respective scopes to make the code highly readable and predictable.
+3. Use **Function Declarations** for global helpers, and **Function Expressions (`const`)** for scoped logic.
+
+## 🆚 Comparison
+
+| Declaration     | Hoisted? | Initialized as      | Can use before declaration?    |
+| --------------- | -------- | ------------------- | ------------------------------ |
+| `function`      | Yes      | Actual function     | Yes                            |
+| `var`           | Yes      | `undefined`         | Yes (but value is `undefined`) |
+| `let` / `const` | Yes      | Uninitialized (TDZ) | No (ReferenceError)            |
+
+## ❓ Interview Questions
+
+1. **What is the Temporal Dead Zone (TDZ)?**
+   - _Answer_: The TDZ is the period between entering a scope and the actual execution of a `let` or `const` declaration. Accessing the variable during this zone throws a ReferenceError.
+2. **Are arrow functions hoisted?**
+   - _Answer_: Arrow functions are function expressions. Depending on whether you use `var`, `let`, or `const` to declare them, the variable name is hoisted, but the function body is not.
+
+## 🔄 Follow-up Questions
+
+**"How does hoisting work with classes?"**
+
+- _Answer_: Class declarations are hoisted in exactly the same way as `let` and `const`. They are placed in the Temporal Dead Zone and cannot be instantiated before they are declared in the code.
+
+## 💻 Coding Questions
+
+**What happens here and why?**
+
+```javascript
+var a = 1;
+function b() {
+  a = 10;
+  return;
+  function a() {}
+}
+b();
+console.log(a);
+```
+
+_Solution_:
+It prints `1`.
+Inside `b()`, the function declaration `function a() {}` is hoisted to the top of `b`'s scope. So `a` is a local variable inside `b`. When `a = 10;` runs, it reassigns the local `a`, leaving the global `a = 1` untouched.
+
+## 🧩 Output-Based Questions
+
+```javascript
+function sayHi() {
+  console.log(name);
+  console.log(age);
+  var name = "Lydia";
+  let age = 21;
+}
+
+sayHi();
+```
+
+_Output_:
+`undefined` (for name)
+`ReferenceError` (for age).
+
+## 🐞 Debugging Questions
+
+**Why does this throw an error?**
+
+```javascript
+const result = calculate(5, 5);
+
+const calculate = (a, b) => a + b;
+```
+
+_Fix_: `calculate` is a function expression declared with `const`. It is in the TDZ when it is invoked. Change it to a Function Declaration (`function calculate(a,b)`) or move the invocation below the declaration.
+
+## 📄 Cheat Sheet
+
+- **Function Declarations**: Completely hoisted.
+- **`var`**: Hoisted, initialized to `undefined`.
+- **`let` / `const` / `class`**: Hoisted, placed in TDZ (throws error).
+- **Function Expressions**: Follow the rules of the variable they are assigned to.
+
+## ⚡ 2-Minute Revision
+
+Hoisting moves declarations to the top of the scope in memory before code runs. It's why we can call functions before writing them. `var` variables are hoisted as `undefined`, causing confusion, which is why modern JavaScript relies heavily on `let` and `const`, which throw errors if accessed too early (Temporal Dead Zone).
+
+## 🔗 Related Topics
+
+- [Scope](/topic/javascript/scope)
+- [TDZ (Temporal Dead Zone)](/topic/javascript/tdz)

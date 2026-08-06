@@ -1,0 +1,251 @@
+---
+title: Redux
+category: React
+difficulty: Advanced
+interviewFrequency: Very High
+experienceLevel: Mid-Level
+estimatedReadTime: 12
+tags: [react, state, redux, architecture]
+companies:
+  - Amazon
+  - Adobe
+  - Netflix
+---
+
+# Redux
+
+## 📖 What is Redux?
+
+**Redux** is a predictable state container for JavaScript applications. It provides a centralized "store" for the entire application state and enforces strict rules on how that state can be updated. While it can be used with any framework, it is most commonly paired with React via the `react-redux` library.
+
+## 🤔 Why do we need Redux?
+
+As React applications scale, managing state across dozens of loosely connected components becomes chaotic. Prop drilling becomes unmanageable, and standard Context API can cause massive performance issues if overused. Redux solves this by offering a globally accessible store, granular component updates (only components using specific data re-render), and powerful debugging tools (Redux DevTools).
+
+## ⚙️ Internal Working
+
+Redux is built on three core principles:
+
+1. **Single Source of Truth**: The global state of your application is stored in an object tree within a single store.
+2. **State is Read-Only**: The only way to change the state is to emit an **Action** (an object describing what happened).
+3. **Changes are made with Pure Functions**: You write **Reducers** (pure functions) that take the previous state and an action, and return the next state.
+
+## 🧠 How React Engine Handles It
+
+React itself doesn't know about Redux. The `react-redux` library uses the Context API under the hood to pass the store instance down, and then uses a highly optimized subscription model (`useSyncExternalStore` in React 18) to trigger re-renders only when the exact slice of state a component is listening to changes.
+
+## 📝 Syntax
+
+Modern Redux is written using **Redux Toolkit (RTK)**, which eliminates all the legacy boilerplate.
+
+```javascript
+import { configureStore, createSlice } from "@reduxjs/toolkit";
+
+// 1. Create a Slice (Reducer + Actions)
+const counterSlice = createSlice({
+  name: "counter",
+  initialState: { value: 0 },
+  reducers: {
+    increment: (state) => {
+      state.value += 1;
+    } // RTK uses Immer under the hood for mutability!
+  }
+});
+
+// 2. Export Actions
+export const { increment } = counterSlice.actions;
+
+// 3. Create Store
+export const store = configureStore({
+  reducer: { counter: counterSlice.reducer }
+});
+```
+
+## 💡 Beginner Example
+
+Using the store in a React component:
+
+```jsx
+import { useSelector, useDispatch } from "react-redux";
+import { increment } from "./store";
+
+function Counter() {
+  // Read data from the store
+  const count = useSelector((state) => state.counter.value);
+
+  // Get the dispatch function
+  const dispatch = useDispatch();
+
+  return (
+    <div>
+      <p>{count}</p>
+      <button onClick={() => dispatch(increment())}>Add</button>
+    </div>
+  );
+}
+```
+
+## 🚀 Advanced Example
+
+**Asynchronous Actions (Thunks)**:
+Reducers must be pure. You cannot make API calls inside them. Instead, Redux uses Middleware (like Redux Thunk) to handle async logic. RTK provides `createAsyncThunk`.
+
+```javascript
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+
+// Async Thunk
+export const fetchUser = createAsyncThunk("user/fetchById", async (userId) => {
+  const response = await fetch(`/api/users/${userId}`);
+  return await response.json();
+});
+
+const userSlice = createSlice({
+  name: "user",
+  initialState: { data: null, status: "idle" },
+  reducers: {},
+  // Handle the async thunk lifecycle
+  extraReducers: (builder) => {
+    builder.addCase(fetchUser.pending, (state) => {
+      state.status = "loading";
+    });
+    builder.addCase(fetchUser.fulfilled, (state, action) => {
+      state.status = "succeeded";
+      state.data = action.payload;
+    });
+  }
+});
+```
+
+## 🏢 Production Example
+
+In large enterprises, developers structure their Redux stores by **features** rather than by files (actions/reducers). Redux Toolkit is the industry standard. `RTK Query` is also heavily used to automatically cache and manage server state, completely replacing the need to write thunks for standard API calls.
+
+## ⚛️ React Example
+
+**The `<Provider>` Component**:
+To make the store available to React components, you wrap your entire application in the Redux Provider.
+
+```jsx
+import { Provider } from "react-redux";
+import { store } from "./store";
+
+function App() {
+  return (
+    <Provider store={store}>
+      <MainComponent />
+    </Provider>
+  );
+}
+```
+
+## ⚡ Performance
+
+Redux is extremely fast when reading data. `useSelector` forces a component to re-render _only_ if the exact slice of data it selects changes.
+
+```jsx
+// GOOD: Only re-renders if 'name' changes
+const name = useSelector((state) => state.user.name);
+
+// BAD: Re-renders if ANY property on 'user' changes
+const user = useSelector((state) => state.user);
+```
+
+## 🧠 Memory
+
+Because Redux state is global and centralized, it stays in memory for the lifetime of the application. Be careful not to store massive amounts of unrelated data (like full binary images or huge raw API responses) in the store if they are only needed on a single page.
+
+## ❌ Common Mistakes
+
+**Mutating State in Legacy Redux**:
+Before RTK, mutating state was the most common Redux bug.
+
+```javascript
+// BAD (Legacy Redux)
+function badReducer(state, action) {
+  state.value = action.payload; // Mutated! React won't re-render.
+  return state;
+}
+
+// GOOD (Legacy Redux)
+function goodReducer(state, action) {
+  return { ...state, value: action.payload }; // New object returned
+}
+```
+
+_(Note: Redux Toolkit uses Immer, allowing you to write mutable syntax safely!)_
+
+## ✅ Best Practices
+
+1. **Use Redux Toolkit (RTK)**. Never write legacy `switch` statement reducers anymore.
+2. **Keep State Serializable**. Do not put Promises, functions, or class instances into the Redux store.
+3. Select data as granularly as possible with `useSelector` to prevent unnecessary re-renders.
+
+## 🆚 Comparison
+
+| Feature         | Context API                     | Redux (RTK)                          |
+| --------------- | ------------------------------- | ------------------------------------ |
+| **Primary Use** | Passing data without props      | Centralized state management         |
+| **Performance** | Renders all consumers on update | Granular re-renders                  |
+| **DevTools**    | Basic React DevTools            | Advanced Redux Time-Travel Debugging |
+
+## ❓ Interview Questions
+
+1. **Why must Redux reducers be pure functions?**
+   - _Answer_: Because Redux relies on shallow equality checking (`===`) to determine if state has changed. If you mutate the existing state object, the memory address remains the same, and React will not trigger a re-render. Returning a new object forces a re-render.
+2. **What is Redux Middleware?**
+   - _Answer_: Middleware intercepts actions before they reach the reducer. It is used for logging, crash reporting, routing, and handling asynchronous side effects (like API calls via Thunks or Sagas).
+
+## 🔄 Follow-up Questions
+
+**"What is the difference between Application State and Server State?"**
+
+- _Answer_: Application state is local UI data (like "is modal open"). Server state is data fetched from an API (like user profiles). Redux traditionally handled both, but modern apps use RTK Query or React Query for server state, leaving Redux solely for complex application state.
+
+## 💻 Coding Questions
+
+**How do you dispatch an action with a payload?**
+_Solution_:
+
+```jsx
+const dispatch = useDispatch();
+// Assuming a 'login' action creator was made by createSlice
+dispatch(login({ username: "Alice", token: "123" }));
+```
+
+## 🧩 Output-Based Questions
+
+If you have a Redux state `{ count: 0, theme: 'dark' }`, and a component selects `state.theme`. When `dispatch(incrementCount())` is fired, does the component re-render?
+_Answer_: No. `useSelector` uses strict equality `===` on the returned value. Since `theme` didn't change, the component bails out of rendering, unlike the Context API.
+
+## 🐞 Debugging Questions
+
+**Why is my component not updating when I dispatch an action?**
+
+```javascript
+// Legacy reducer
+function userReducer(state, action) {
+  if (action.type === "UPDATE") {
+    state.name = action.payload;
+    return state;
+  }
+}
+```
+
+_Fix_: The reducer mutated the state directly and returned the same object reference. Fix by returning a new object: `return { ...state, name: action.payload };` or by migrating to Redux Toolkit.
+
+## 📄 Cheat Sheet
+
+- **Store**: The global object holding all state.
+- **Action**: An event describing a change `{ type, payload }`.
+- **Reducer**: A pure function `(state, action) => newState`.
+- **Dispatch**: The method to send actions to the store.
+- **Selector**: The method to read data from the store.
+
+## ⚡ 2-Minute Revision
+
+Redux is a predictable global state manager. It forces a strict one-way data flow: UI dispatches an Action -> Reducer calculates new State -> UI re-renders via Selectors. Modern Redux Toolkit (RTK) handles all the boilerplate, making it incredibly powerful for large-scale enterprise applications.
+
+## 🔗 Related Topics
+
+- [useReducer](/topic/react/usereducer)
+- [Context API](/topic/react/context-api)

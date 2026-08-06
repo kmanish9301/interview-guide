@@ -1,0 +1,295 @@
+---
+title: Closures
+category: JavaScript
+difficulty: Intermediate
+interviewFrequency: Very High
+experienceLevel: Mid-Level
+estimatedReadTime: 10
+tags: [javascript, closures, scope, core]
+companies:
+  - Amazon
+  - Adobe
+  - Microsoft
+  - Google
+  - Meta
+---
+
+# Closures
+
+## 📖 What is a Closure?
+
+A **closure** is the combination of a function bundled together (enclosed) with references to its surrounding state (the lexical environment).
+
+In simpler terms, a closure gives an inner function access to an outer function's scope, even after the outer function has finished executing. JavaScript engine creates closures every time a function is created.
+
+## 🤔 Why do we need Closures?
+
+Closures are extremely useful in modern JavaScript development because they allow us to associate some data with a function that operates on that data.
+
+We primarily use closures for:
+
+1. **Data Privacy (Encapsulation)**: Creating private variables that cannot be accessed or modified from the outside.
+2. **Currying & Partial Applications**: Locking in certain arguments for a function to be used later.
+3. **State Retention**: Keeping track of state across multiple function calls (e.g., in React Hooks like `useState`).
+4. **Memoization**: Caching heavy computational results.
+
+## ⚙️ Internal Working
+
+In JavaScript, closures are created at **function creation time**, not execution time.
+
+When a function is invoked, an execution context is created and placed on the execution stack. This context contains:
+
+- The Variable Object (where local variables live).
+- A reference to the outer lexical environment (scope chain).
+
+When a function returns another function, the inner function retains a reference to the outer function's lexical environment even after the outer function has popped off the execution stack. The JavaScript garbage collector does not destroy this memory because the inner function still holds a reference to it. This retained memory is what we call a closure.
+
+## 🧠 How JavaScript Engine Handles It
+
+Under the hood, V8 (and other engines) allocate variables that might be part of a closure onto the **Heap** instead of the **Stack**. Since heap memory persists beyond function execution, the inner function can safely access these variables long after the outer function returns.
+
+## 📝 Syntax
+
+```javascript
+function outerFunction() {
+  let outerVariable = "I'm outside!";
+
+  function innerFunction() {
+    console.log(outerVariable); // Accessible due to closure
+  }
+
+  return innerFunction;
+}
+
+const myClosure = outerFunction();
+myClosure(); // Logs: "I'm outside!"
+```
+
+## 💡 Beginner Example
+
+A simple counter function that keeps track of the count without exposing the variable globally.
+
+```javascript
+function makeCounter() {
+  let count = 0; // Private variable
+
+  return function () {
+    count++;
+    return count;
+  };
+}
+
+const counter1 = makeCounter();
+console.log(counter1()); // 1
+console.log(counter1()); // 2
+
+const counter2 = makeCounter();
+console.log(counter2()); // 1 (independent closure state)
+```
+
+## 🚀 Advanced Example
+
+Using closures for Memoization (caching function results).
+
+```javascript
+function memoizeAddition() {
+  let cache = {};
+
+  return function (num) {
+    if (num in cache) {
+      console.log("Fetching from cache");
+      return cache[num];
+    } else {
+      console.log("Calculating result");
+      let result = num + 10;
+      cache[num] = result;
+      return result;
+    }
+  };
+}
+
+const add = memoizeAddition();
+console.log(add(5)); // Calculating result -> 15
+console.log(add(5)); // Fetching from cache -> 15
+```
+
+## 🏢 Production Example
+
+**The Module Pattern**: Very common in pre-ES6 codebases to emulate classes and private methods.
+
+```javascript
+const BankAccount = (function () {
+  // Private variables
+  let balance = 0;
+
+  // Public API
+  return {
+    deposit: function (amount) {
+      balance += amount;
+      console.log(`Deposited ${amount}. New balance: ${balance}`);
+    },
+    withdraw: function (amount) {
+      if (amount > balance) {
+        console.log("Insufficient funds");
+        return;
+      }
+      balance -= amount;
+      console.log(`Withdrew ${amount}. New balance: ${balance}`);
+    },
+    getBalance: function () {
+      return balance;
+    }
+  };
+})();
+
+BankAccount.deposit(100);
+console.log(BankAccount.balance); // undefined (Private!)
+```
+
+## ⚛️ React Example
+
+React Hooks rely entirely on closures. For example, `useEffect` often creates a closure around state variables.
+
+```jsx
+import { useState, useEffect } from "react";
+
+function Timer() {
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    // The interval callback forms a closure around the `count` state.
+    // NOTE: This can cause a "Stale Closure" bug if dependencies aren't managed!
+    const timer = setInterval(() => {
+      setCount((prev) => prev + 1);
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, []);
+
+  return <div>{count}</div>;
+}
+```
+
+## ⚡ Performance
+
+Closures are extremely fast, but they do have a memory cost. Because closures prevent variables from being garbage collected, excessive use of closures (especially in large loops) can lead to higher memory consumption.
+
+## 🧠 Memory
+
+Memory leaks often happen when a closure mistakenly retains references to large DOM elements or huge objects that are no longer needed.
+
+## ❌ Common Mistakes
+
+**Stale Closures in React**:
+When a closure captures a state variable but the function is not recreated when the state updates, it will continue pointing to the old, "stale" state.
+
+```javascript
+// BAD
+useEffect(() => {
+  setInterval(() => {
+    console.log(count); // Will always log 0 if `count` isn't in dependency array
+  }, 1000);
+}, []);
+```
+
+## ✅ Best Practices
+
+1. Avoid creating unnecessary functions inside loops if those functions form closures.
+2. Clean up closures (like event listeners or timers) to prevent memory leaks.
+3. In React, always use the dependency array correctly or use the `setState(prev => prev + 1)` updater pattern to avoid stale closures.
+
+## 🆚 Comparison
+
+| Feature        | Scope                                    | Closure                                     |
+| -------------- | ---------------------------------------- | ------------------------------------------- |
+| **Definition** | The current context of execution.        | A function remembering its outer scope.     |
+| **Lifespan**   | Dies when the function finishes running. | Lives as long as the inner function exists. |
+| **Access**     | Inner scopes can access outer scopes.    | Retains access to outer scopes infinitely.  |
+
+## ❓ Interview Questions
+
+1. **What is a closure?**
+   - _Answer_: A function that remembers the variables from its lexical scope even after the outer function has executed.
+2. **Can you modify a variable captured by a closure?**
+   - _Answer_: Yes, closures capture references to variables, not values. If the inner function modifies the variable, the changes are reflected.
+
+## 🔄 Follow-up Questions
+
+_If you answer the above correctly, the interviewer might ask:_
+**"How does garbage collection work with closures?"**
+
+- _Answer_: The GC uses a mark-and-sweep algorithm. Since the closure maintains a reference to the outer variables, the GC marks them as "reachable" and does not destroy them until the closure itself is destroyed.
+
+## 💻 Coding Questions
+
+**Write a function `createBase` that allows this:**
+
+```javascript
+var addSix = createBase(6);
+addSix(10); // returns 16
+addSix(21); // returns 27
+```
+
+_Solution_:
+
+```javascript
+function createBase(base) {
+  return function (num) {
+    return base + num;
+  };
+}
+```
+
+## 🧩 Output-Based Questions
+
+**What is the output?**
+
+```javascript
+for (var i = 0; i < 3; i++) {
+  setTimeout(function () {
+    console.log(i);
+  }, 1000);
+}
+```
+
+_Output_: `3, 3, 3`.
+_Explanation_: `var` is function-scoped. The loop finishes instantly, setting `i` to 3. The `setTimeout` callbacks run after 1 second, accessing the same `i` reference, which is now 3. (Use `let` to fix this).
+
+## 🐞 Debugging Questions
+
+**Fix the code below so it logs 0, 1, 2:**
+
+```javascript
+for (var i = 0; i < 3; i++) {
+  setTimeout(() => console.log(i), 1000);
+}
+```
+
+_Fix using IIFE (Immediately Invoked Function Expression):_
+
+```javascript
+for (var i = 0; i < 3; i++) {
+  (function (j) {
+    setTimeout(() => console.log(j), 1000);
+  })(i);
+}
+```
+
+_Or simply change `var` to `let`._
+
+## 📄 Cheat Sheet
+
+- **Closure** = Function + Lexical Environment
+- Used for: Data privacy, Memoization, Currying.
+- Created at: Function creation time.
+- Memory: Resides on the Heap, prevents garbage collection.
+
+## ⚡ 2-Minute Revision
+
+Closures give inner functions access to outer scope variables. They are the backbone of React Hooks, module patterns, and higher-order functions. Beware of memory leaks and stale closures when dealing with async code.
+
+## 🔗 Related Topics
+
+- [Scope](/topic/javascript/scope)
+- [Hoisting](/topic/javascript/hoisting)
+- [Event Loop](/topic/javascript/event-loop)

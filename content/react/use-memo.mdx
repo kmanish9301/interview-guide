@@ -1,0 +1,235 @@
+---
+title: useMemo
+category: React
+difficulty: Intermediate
+interviewFrequency: High
+experienceLevel: Mid-Level
+estimatedReadTime: 9
+tags: [react, hooks, performance, memoization]
+companies:
+  - Meta
+  - Adobe
+  - Microsoft
+---
+
+# useMemo
+
+## 📖 What is useMemo?
+
+`useMemo` is a React Hook used for **memoization**. It caches (remembers) the result of a calculation between renders. It tells React: "Do not recalculate this value unless one of its dependencies has changed."
+
+## 🤔 Why do we need useMemo?
+
+In React, when a component's state or props change, the _entire_ component re-renders. If you have an expensive calculation inside that component (like filtering a massive array or complex math), it will re-calculate on every single render, severely slowing down your app. `useMemo` solves this by caching the output of that expensive calculation.
+
+## ⚙️ Internal Working
+
+`useMemo` takes two arguments:
+
+1. A **pure calculation function** that returns a value.
+2. A **dependency array**.
+
+During the initial render, React executes the function and stores the result in memory. On subsequent renders, React checks the dependency array. If the dependencies are identical to the previous render, React skips the function execution and simply returns the cached result.
+
+## 🧠 How React Engine Handles It
+
+Under the hood, React stores the cached value directly on the Fiber node associated with the component instance. It uses `Object.is()` comparison to check if the dependencies have changed.
+
+## 📝 Syntax
+
+```jsx
+const cachedValue = useMemo(() => calculateValue(a, b), [a, b]);
+```
+
+## 💡 Beginner Example
+
+If `count` changes, the component re-renders, but `expensiveNumber` will NOT be recalculated. It will only recalculate if `multiplier` changes.
+
+```jsx
+import { useState, useMemo } from "react";
+
+function Calculator({ multiplier }) {
+  const [count, setCount] = useState(0);
+
+  // This will ONLY run when 'multiplier' changes
+  const expensiveNumber = useMemo(() => {
+    console.log("Calculating...");
+    return multiplier * 1000000;
+  }, [multiplier]);
+
+  return (
+    <div>
+      <p>Result: {expensiveNumber}</p>
+      <button onClick={() => setCount(count + 1)}>Click {count}</button>
+    </div>
+  );
+}
+```
+
+## 🚀 Advanced Example
+
+**Referential Equality Check**:
+`useMemo` isn't just for heavy math. It is crucially used to preserve the memory address (reference) of objects and arrays passed down to memoized child components.
+
+```jsx
+function ParentComponent({ user, theme }) {
+  // If we just wrote: const style = { color: theme };
+  // A brand new object is created in memory on EVERY render.
+
+  // By using useMemo, the object reference remains identical
+  // as long as the 'theme' string doesn't change.
+  const style = useMemo(() => {
+    return { color: theme, margin: "10px" };
+  }, [theme]);
+
+  // ChildComponent will skip re-rendering if it is wrapped in React.memo
+  // because the 'style' prop's memory reference hasn't changed.
+  return <ChildComponent user={user} style={style} />;
+}
+```
+
+## 🏢 Production Example
+
+Filtering and sorting a massive data grid:
+
+```jsx
+function DataGrid({ rows, filterText }) {
+  // We only want to run this expensive filter/sort operation
+  // if the raw data (rows) or the search query (filterText) changes.
+
+  const filteredAndSortedRows = useMemo(() => {
+    return rows
+      .filter((row) => row.name.includes(filterText))
+      .sort((a, b) => a.id - b.id);
+  }, [rows, filterText]);
+
+  return (
+    <ul>
+      {filteredAndSortedRows.map((row) => (
+        <li key={row.id}>{row.name}</li>
+      ))}
+    </ul>
+  );
+}
+```
+
+## ⚛️ React Example
+
+`useMemo` vs `useCallback`:
+They are functionally very similar.
+
+- `useMemo` caches the _result_ of calling a function.
+- `useCallback` caches the _function itself_.
+
+`useCallback(fn, deps)` is exactly equivalent to `useMemo(() => fn, deps)`.
+
+## ⚡ Performance
+
+**Do not over-use `useMemo`**.
+Calling `useMemo` has a minor performance cost (React has to allocate memory and run dependency checks). If the calculation is just `a + b`, or filtering a 5-item array, the cost of checking the dependencies is actually _higher_ than just recalculating the value. Save `useMemo` for genuinely expensive operations (e.g. processing thousands of items) or preserving referential equality for `React.memo` children.
+
+## 🧠 Memory
+
+Since `useMemo` caches the result, that data remains in memory until the dependencies change or the component unmounts. Caching massive DOM nodes or gigabytes of data can cause memory bloat.
+
+## ❌ Common Mistakes
+
+**Performing Side Effects inside useMemo:**
+
+```jsx
+// BAD! useMemo should be a pure calculation.
+const value = useMemo(() => {
+  fetch("/api/data"); // Side effect!
+  document.title = "Hello"; // Side effect!
+  return 5;
+}, []);
+```
+
+_Fix_: Side effects belong in `useEffect`, never in `useMemo` or the render body.
+
+## ✅ Best Practices
+
+1. **Measure first**: Only add `useMemo` if you have proven (via React Profiler) that a calculation is causing a performance bottleneck.
+2. Ensure the function passed to `useMemo` is **pure** (no mutations, no network requests).
+3. Always provide an accurate dependency array.
+
+## 🆚 Comparison
+
+| Hook          | Caches                      | Use Case                                |
+| ------------- | --------------------------- | --------------------------------------- |
+| `useMemo`     | A calculated value / object | Heavy math, preventing child re-renders |
+| `useCallback` | A function definition       | Passing stable callbacks to children    |
+| `useEffect`   | Nothing (Runs side effects) | API calls, subscriptions                |
+
+## ❓ Interview Questions
+
+1. **When should you NOT use `useMemo`?**
+   - _Answer_: You shouldn't use it for trivial calculations (like simple string concatenation or basic math). The overhead of the hook itself outweighs the savings.
+2. **Does `useMemo` guarantee that the calculation will never run again?**
+   - _Answer_: No. The React docs state that `useMemo` is a _performance optimization, not a semantic guarantee_. React may choose to clear the cache (e.g., to free memory for offscreen components) and recalculate it.
+
+## 🔄 Follow-up Questions
+
+**"If a child component is wrapped in `React.memo`, but receives an un-memoized array as a prop, will it re-render?"**
+
+- _Answer_: Yes. Every time the parent renders, a new array is created in memory. `React.memo` uses shallow comparison (`prevProp === nextProp`). Since the memory addresses differ, the child will re-render. You must wrap the array in `useMemo` in the parent.
+
+## 💻 Coding Questions
+
+**Fix the performance bug:**
+
+```jsx
+function App({ data }) {
+  const [dark, setDark] = useState(false);
+
+  // This takes 2 seconds to run!
+  const processed = heavyProcess(data);
+
+  return (
+    <div className={dark ? "dark" : "light"}>
+      <button onClick={() => setDark(!dark)}>Toggle Theme</button>
+      <Chart data={processed} />
+    </div>
+  );
+}
+```
+
+_Solution_: Every time the theme toggles, `heavyProcess` runs. Wrap it:
+`const processed = useMemo(() => heavyProcess(data), [data]);`
+
+## 🧩 Output-Based Questions
+
+```jsx
+const obj1 = { name: "Alice" };
+const obj2 = useMemo(() => ({ name: "Alice" }), []);
+
+console.log(obj1 === obj2);
+```
+
+_Output_: `false`. They are two completely different objects in memory.
+
+## 🐞 Debugging Questions
+
+**Why is my `useMemo` throwing an error?**
+
+```jsx
+const result = useMemo(calculateHeavyMath(a, b), [a, b]);
+```
+
+_Fix_: `useMemo` expects a _function returning a value_, not the value itself. By writing `calculateHeavyMath(a, b)`, you are executing the function immediately during render and passing its result as the first argument. It should be: `useMemo(() => calculateHeavyMath(a, b), [a, b])`.
+
+## 📄 Cheat Sheet
+
+- **Purpose**: Cache a calculated value.
+- **First Arg**: Function that returns the value `() => value`.
+- **Second Arg**: Dependency array `[a, b]`.
+- **Rule of Thumb**: Use for heavy math OR preserving object/array references.
+
+## ⚡ 2-Minute Revision
+
+`useMemo` stops expensive functions from running on every render. If its dependencies haven't changed, it spits out the same result it calculated last time. While it's great for fixing slow components, don't sprinkle it everywhere—it has its own memory and performance costs!
+
+## 🔗 Related Topics
+
+- [useCallback](/topic/react/usecallback)
+- [React.memo](/topic/react/react-memo)

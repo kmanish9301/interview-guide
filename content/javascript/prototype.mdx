@@ -1,0 +1,211 @@
+---
+title: Prototype
+category: JavaScript
+difficulty: Advanced
+interviewFrequency: High
+experienceLevel: Mid-Level
+estimatedReadTime: 15
+tags: [javascript, prototype, inheritance, oop]
+companies:
+  - Amazon
+  - Adobe
+  - Meta
+---
+
+# Prototype
+
+## 📖 What is a Prototype?
+
+In JavaScript, almost every object is linked to a second object. That second object is called the **Prototype**. An object inherits properties and methods from its Prototype. This creates a linkage called the **Prototype Chain**, allowing objects to share behaviors without duplicating code.
+
+## 🤔 Why do we need Prototypes?
+
+Prototypes are JavaScript's mechanism for **Inheritance**. Unlike languages like Java or C++ which use class-based inheritance, JavaScript uses prototype-based inheritance. It allows us to attach methods to a shared prototype object instead of copying the method into every single instance, saving massive amounts of memory.
+
+## ⚙️ Internal Working
+
+When you try to access a property on an object (e.g., `obj.myProp`), the JavaScript engine first looks for `myProp` directly on `obj`. If it doesn't find it there, it looks at `obj`'s prototype (accessible via `__proto__` or `Object.getPrototypeOf(obj)`). If it's not there, it looks at the prototype's prototype, and so on, until it reaches `null`.
+
+## 🧠 How JavaScript Engine Handles It
+
+This lookup process along the prototype chain is dynamic. If you add a new method to a prototype, all objects that inherit from that prototype instantly have access to the new method, even if they were created before the method was added.
+
+## 📝 Syntax
+
+```javascript
+const animal = {
+  eats: true
+};
+
+const rabbit = {
+  jumps: true
+};
+
+// Setting 'animal' as the prototype of 'rabbit'
+Object.setPrototypeOf(rabbit, animal);
+
+console.log(rabbit.eats); // true (inherited from animal)
+console.log(rabbit.jumps); // true (own property)
+```
+
+## 💡 Beginner Example
+
+When you create an array, it automatically inherits from `Array.prototype`.
+
+```javascript
+const arr = [1, 2, 3];
+// arr doesn't have a 'push' method directly on it.
+// It inherits 'push' from Array.prototype!
+arr.push(4);
+```
+
+## 🚀 Advanced Example
+
+**Constructor Functions and Prototypes**:
+Before ES6 Classes, this is how inheritance was structured:
+
+```javascript
+function Person(name) {
+  this.name = name;
+}
+
+// Attach methods to the prototype, NOT inside the constructor!
+Person.prototype.greet = function () {
+  console.log("Hello, I am " + this.name);
+};
+
+const alice = new Person("Alice");
+const bob = new Person("Bob");
+
+alice.greet(); // Hello, I am Alice
+console.log(alice.greet === bob.greet); // true! They share the exact same function in memory.
+```
+
+## 🏢 Production Example
+
+**Polyfilling modern features in older browsers:**
+If a browser doesn't support a new Array method like `.includes()`, you can add it directly to the prototype.
+
+```javascript
+if (!Array.prototype.includes) {
+  Array.prototype.includes = function (searchElement) {
+    return this.indexOf(searchElement) !== -1;
+  };
+}
+```
+
+## ⚛️ React Example
+
+While React developers rarely touch prototypes directly today, understanding them is crucial for understanding why extending `React.Component` gives your class access to `this.setState` (it inherits it from `React.Component.prototype`).
+
+## ⚡ Performance
+
+Looking up properties high up on the prototype chain can be detrimental to performance in critical code blocks. If the engine has to traverse 4 levels of prototypes to find a property, it takes longer than finding it directly on the object.
+
+## 🧠 Memory
+
+Adding methods to a prototype instead of `this` inside a constructor saves memory. If you put a function on `this`, every new instance gets a completely separate copy of that function in RAM. By putting it on the prototype, 1,000 instances will point to a single function in memory.
+
+## ❌ Common Mistakes
+
+**Modifying native prototypes:**
+
+```javascript
+// BAD PRACTICE: Never do this in production!
+Object.prototype.myCustomFunc = function() { ... }
+```
+
+Modifying `Object.prototype` or `Array.prototype` (known as "Monkey Patching") can cause severe conflicts with other libraries or future JavaScript updates.
+
+## ✅ Best Practices
+
+1. Use `class` and `extends` (ES6) for inheritance; it's much cleaner and abstracts the prototype wiring safely.
+2. Use `Object.create(proto)` to create an object with a specific prototype without invoking a constructor.
+3. Never mutate native prototypes unless you are writing a strictly isolated polyfill.
+
+## 🆚 Comparison
+
+| Feature         | Class Inheritance (Java/C++) | Prototypal Inheritance (JS)                 |
+| --------------- | ---------------------------- | ------------------------------------------- |
+| **Structure**   | Blueprint based              | Object based                                |
+| **Inheritance** | Classes inherit from classes | Objects inherit directly from other objects |
+| **Dynamism**    | Rigid at runtime             | Fully dynamic at runtime                    |
+
+## ❓ Interview Questions
+
+1. **What is the difference between `__proto__` and `prototype`?**
+   - _Answer_: `prototype` is a property only found on constructor functions (used as a blueprint). `__proto__` is the actual internal reference every object has, pointing to the prototype it was created from.
+2. **What is the end of the prototype chain?**
+   - _Answer_: `Object.prototype.__proto__` which is `null`.
+
+## 🔄 Follow-up Questions
+
+**"How can you create an object that doesn't have a prototype?"**
+
+- _Answer_: You can use `Object.create(null)`. This creates an absolutely empty object (a dictionary) that does not inherit `toString` or any other methods from `Object.prototype`.
+
+## 💻 Coding Questions
+
+**Implement inheritance without using the `class` keyword.**
+_Solution_:
+
+```javascript
+function Animal(name) {
+  this.name = name;
+}
+Animal.prototype.speak = function () {
+  console.log("Roar");
+};
+
+function Dog(name, breed) {
+  Animal.call(this, name); // Super()
+  this.breed = breed;
+}
+// Set up inheritance
+Dog.prototype = Object.create(Animal.prototype);
+Dog.prototype.constructor = Dog; // Fix constructor pointer
+
+const d = new Dog("Rex", "German Shepherd");
+d.speak(); // Roar
+```
+
+## 🧩 Output-Based Questions
+
+```javascript
+function Foo() {}
+const f = new Foo();
+console.log(f.__proto__ === Foo.prototype);
+console.log(Foo.prototype.__proto__ === Object.prototype);
+```
+
+_Output_:
+`true`
+`true`
+
+## 🐞 Debugging Questions
+
+**Why does `hasOwnProperty` fail here?**
+
+```javascript
+const dict = Object.create(null);
+dict.age = 25;
+console.log(dict.hasOwnProperty("age"));
+```
+
+_Fix_: Because the object has no prototype, it doesn't inherit `hasOwnProperty` from `Object.prototype`. Fix by calling it explicitly: `Object.prototype.hasOwnProperty.call(dict, "age")`.
+
+## 📄 Cheat Sheet
+
+- **Prototype Chain**: The linkage between objects.
+- **`__proto__`**: The actual link (accessor property).
+- **`.prototype`**: The blueprint object attached to constructors.
+- **Top of the chain**: `null`.
+
+## ⚡ 2-Minute Revision
+
+JavaScript relies on Prototypal Inheritance. Objects point to other objects to share methods. This saves memory and allows dynamic extension of functionality. ES6 `class` syntax is just syntactic sugar over this prototype chain!
+
+## 🔗 Related Topics
+
+- [this Keyword](/topic/javascript/this)
+- [Scope](/topic/javascript/scope)

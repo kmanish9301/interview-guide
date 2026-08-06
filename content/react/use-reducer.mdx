@@ -1,0 +1,277 @@
+---
+title: useReducer
+category: React
+difficulty: Advanced
+interviewFrequency: Medium
+experienceLevel: Mid-Level
+estimatedReadTime: 11
+tags: [react, hooks, state, reducers]
+companies:
+  - Meta
+  - Netflix
+---
+
+# useReducer
+
+## 📖 What is useReducer?
+
+`useReducer` is an alternative to `useState` for managing state in a React component. It is highly influenced by Redux. Instead of updating state directly by passing a new value, you **dispatch an action**, and a **reducer function** calculates the new state based on that action.
+
+## 🤔 Why do we need useReducer?
+
+`useState` is perfect for independent, simple variables (like a string or a boolean). But as a component grows, state can become a complex object with multiple sub-values that depend on each other. If you have 5 different `useState` hooks that are constantly updated together inside complex event handlers, the logic becomes hard to follow. `useReducer` centralizes all state transition logic into a single, pure function outside your component.
+
+## ⚙️ Internal Working
+
+`useReducer` takes two required arguments:
+
+1. A **reducer function** `(state, action) => newState`.
+2. An **initial state** object.
+
+It returns an array with:
+
+1. The **current state**.
+2. A **dispatch function** to send actions to the reducer.
+
+## 🧠 How React Engine Handles It
+
+Internally, `useState` actually uses `useReducer` under the hood! The React engine handles the dispatched actions, runs them synchronously through the pure reducer function you provided, and then re-renders the component with the returned state object.
+
+## 📝 Syntax
+
+```jsx
+const [state, dispatch] = useReducer(reducer, initialState);
+
+// Dispatching an action
+dispatch({ type: "INCREMENT", payload: 5 });
+```
+
+## 💡 Beginner Example
+
+A counter using `useReducer`:
+
+```jsx
+import { useReducer } from "react";
+
+// 1. Define the Reducer (Outside the component!)
+function counterReducer(state, action) {
+  switch (action.type) {
+    case "INCREMENT":
+      return { count: state.count + 1 };
+    case "DECREMENT":
+      return { count: state.count - 1 };
+    default:
+      return state;
+  }
+}
+
+function Counter() {
+  // 2. Initialize the Hook
+  const [state, dispatch] = useReducer(counterReducer, { count: 0 });
+
+  return (
+    <div>
+      <p>Count: {state.count}</p>
+      {/* 3. Dispatch Actions */}
+      <button onClick={() => dispatch({ type: "INCREMENT" })}>+</button>
+      <button onClick={() => dispatch({ type: "DECREMENT" })}>-</button>
+    </div>
+  );
+}
+```
+
+## 🚀 Advanced Example
+
+**Fetching Data with Loading/Error States**:
+Managing API calls usually requires 3 states: `loading`, `data`, and `error`. `useReducer` handles this beautifully.
+
+```jsx
+const initialState = { loading: false, data: null, error: null };
+
+function fetchReducer(state, action) {
+  switch (action.type) {
+    case "FETCH_START":
+      return { ...state, loading: true, error: null };
+    case "FETCH_SUCCESS":
+      return { ...state, loading: false, data: action.payload };
+    case "FETCH_ERROR":
+      return { ...state, loading: false, error: action.payload };
+    default:
+      return state;
+  }
+}
+
+function DataFetcher({ url }) {
+  const [state, dispatch] = useReducer(fetchReducer, initialState);
+
+  useEffect(() => {
+    dispatch({ type: "FETCH_START" });
+    fetch(url)
+      .then((res) => res.json())
+      .then((data) => dispatch({ type: "FETCH_SUCCESS", payload: data }))
+      .catch((err) => dispatch({ type: "FETCH_ERROR", payload: err.message }));
+  }, [url]);
+
+  if (state.loading) return <p>Loading...</p>;
+  if (state.error) return <p>Error: {state.error}</p>;
+  return <div>{JSON.stringify(state.data)}</div>;
+}
+```
+
+## 🏢 Production Example
+
+**Passing Dispatch via Context:**
+In deep component trees, prop-drilling multiple `setState` callbacks is messy. A massive architectural pattern is to combine `useReducer` with `useContext`. You provide the `dispatch` function via context, allowing deeply nested child components to trigger state transitions globally without Redux.
+
+```jsx
+export const TodosDispatch = createContext(null);
+
+function TodosApp() {
+  const [todos, dispatch] = useReducer(todosReducer, []);
+
+  return (
+    <TodosDispatch.Provider value={dispatch}>
+      <DeeplyNestedComponent />
+    </TodosDispatch.Provider>
+  );
+}
+
+// DeeplyNestedComponent.js
+function DeeplyNestedComponent() {
+  const dispatch = useContext(TodosDispatch);
+  return (
+    <button onClick={() => dispatch({ type: "DELETE", id: 5 })}>Delete</button>
+  );
+}
+```
+
+## ⚛️ React Example
+
+**Lazy Initialization**:
+`useReducer` takes an optional third argument: an `init` function. This is useful if the initial state needs to be extracted from `localStorage` or involves a heavy calculation.
+
+```jsx
+function init(initialCount) {
+  return { count: initialCount };
+}
+
+function Counter({ initialCount }) {
+  const [state, dispatch] = useReducer(reducer, initialCount, init);
+}
+```
+
+## ⚡ Performance
+
+`useReducer` is excellent for performance when combined with Context. The `dispatch` function has a stable memory reference for the lifetime of the component. Passing `dispatch` down to children does _not_ break `React.memo` (unlike passing newly created arrow functions or `setState` wrappers).
+
+## 🧠 Memory
+
+Because the reducer function is pure and declared outside the component, it does not get recreated on every render, saving a microscopic amount of memory. State memory footprint is identical to `useState`.
+
+## ❌ Common Mistakes
+
+**Mutating State inside the Reducer**:
+
+```jsx
+function badReducer(state, action) {
+  if (action.type === "ADD") {
+    // BAD: Mutating the existing state directly! React will not re-render.
+    state.total = state.total + 1;
+    return state;
+  }
+}
+```
+
+_Fix_: A reducer MUST be pure. It must return a brand new object.
+`return { ...state, total: state.total + 1 };`
+
+## ✅ Best Practices
+
+1. **Always use a switch statement** inside your reducer; it scales better than `if/else`.
+2. **Always spread the existing state** (`...state`) when returning a new object to avoid dropping properties.
+3. Keep the reducer function **pure**: no side effects, no API calls, no `Math.random()`.
+
+## 🆚 Comparison
+
+| Feature              | `useState`                     | `useReducer`                      |
+| -------------------- | ------------------------------ | --------------------------------- |
+| **Use Case**         | Simple, independent values     | Complex, intertwined state logic  |
+| **Logic Location**   | Inside event handlers          | Centralized in a Reducer function |
+| **Update Mechanism** | Call a setter with a new value | Dispatch an Action object         |
+
+## ❓ Interview Questions
+
+1. **When would you choose `useReducer` over `useState`?**
+   - _Answer_: When state consists of multiple sub-values that depend on each other (like loading, data, and error), or when the next state depends heavily on the previous state in complex ways. It's also better when you need to pass callbacks deeply down the tree (via context).
+2. **What makes a reducer function "pure"?**
+   - _Answer_: It doesn't mutate its arguments, it doesn't perform side effects (no API calls or DOM manipulation), and it always returns the exact same output for the exact same input.
+
+## 🔄 Follow-up Questions
+
+**"Can you use multiple `useReducer` hooks in one component?"**
+
+- _Answer_: Yes. Just like `useState`, you can have as many `useReducer` hooks as you want. However, if they are highly related, it makes sense to combine them into one reducer.
+
+## 💻 Coding Questions
+
+**Write a reducer for a toggle switch:**
+_Solution_:
+
+```jsx
+function toggleReducer(state, action) {
+  switch (action.type) {
+    case "TOGGLE":
+      return { isOn: !state.isOn };
+    case "SET":
+      return { isOn: action.payload };
+    default:
+      return state;
+  }
+}
+```
+
+## 🧩 Output-Based Questions
+
+```jsx
+function reducer(state, action) {
+  return state;
+}
+
+const [state, dispatch] = useReducer(reducer, { a: 1 });
+dispatch({ type: "CHANGE" });
+```
+
+_Does the component re-render?_
+_Answer_: No. The reducer returns the exact same object reference (`state`). React bails out of the re-render.
+
+## 🐞 Debugging Questions
+
+**Why is my state being wiped out?**
+
+```jsx
+function reducer(state, action) {
+  switch (action.type) {
+    case "UPDATE_NAME":
+      // The state originally had { name: 'A', age: 10 }
+      return { name: action.payload };
+  }
+}
+```
+
+_Fix_: The reducer returned an object with only `name`. The `age` property was dropped. Fix by spreading state: `return { ...state, name: action.payload }`.
+
+## 📄 Cheat Sheet
+
+- **Hook**: `const [state, dispatch] = useReducer(reducer, initialState)`
+- **Reducer**: `(state, action) => newState`
+- **Action**: `{ type: 'ACTION_NAME', payload: data }`
+- **Rule**: Never mutate state, always return a new object.
+
+## ⚡ 2-Minute Revision
+
+`useReducer` is the big brother of `useState`. It is perfect for complex state logic that involves multiple sub-values or complex transitions. By moving the state logic out of your event handlers and into a centralized, pure reducer function, your components become cleaner, easier to test, and significantly easier to maintain.
+
+## 🔗 Related Topics
+
+- [useState](/topic/react/use-state)
+- [Context API](/topic/react/context-api)

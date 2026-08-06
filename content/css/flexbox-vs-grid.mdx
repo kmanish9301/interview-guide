@@ -1,0 +1,62 @@
+---
+title: Flexbox vs Grid
+category: CSS
+difficulty: Beginner
+interviewFrequency: High
+experienceLevel: Entry-Level
+estimatedReadTime: 7
+tags: [css, flexbox, grid, layout]
+companies:
+  - Apple
+  - Google
+  - Netflix
+---
+
+# Flexbox vs Grid
+
+## 📖 What are they?
+
+Flexbox and CSS Grid are the two modern layout systems in CSS. Before them, developers had to rely on painful hacks using `float`, `clear`, or `display: table` to build layouts.
+
+## 🥊 The Core Difference
+
+The golden rule of modern CSS layout is:
+
+- **Flexbox is for 1-Dimensional layouts** (either a row OR a column).
+- **CSS Grid is for 2-Dimensional layouts** (rows AND columns simultaneously).
+
+### 1. Flexbox (Flexible Box Module)
+
+Flexbox excels at distributing space and aligning content along a single axis. It is content-driven. You put items in a flex container, and they flex (grow/shrink) to fill the available space based on their content size.
+
+- **Best for**: UI components like Navigation bars, Toolbars, Icon rows, and aligning a single item perfectly in the center of a div.
+- **Key Properties**:
+  - `justify-content`: Aligns items along the main axis.
+  - `align-items`: Aligns items along the cross axis.
+  - `flex-direction`: Sets the main axis (`row` or `column`).
+
+### 2. CSS Grid
+
+Grid excels at dividing a page into major regions. It is layout-driven. You define a strict grid structure (a checkerboard) first, and then place content into the specific cells of that grid.
+
+- **Best for**: Entire page layouts, photo galleries, masonry layouts, and complex dashboard structures.
+- **Key Properties**:
+  - `grid-template-columns`: Defines the number and size of columns (e.g., `1fr 2fr 1fr`).
+  - `grid-template-rows`: Defines the number and size of rows.
+  - `grid-column / grid-row`: Used on children to span across multiple tracks.
+
+## 🤝 Using them together
+
+They are not mutually exclusive! A perfect modern layout uses Grid for the macro-layout (Header, Sidebar, Main Content, Footer) and Flexbox for the micro-layout (aligning the avatar and username horizontally inside the Header).
+
+## ❓ Interview Questions
+
+1. **How do you perfectly center a div?**
+   - _Answer_: Using Flexbox: `display: flex; justify-content: center; align-items: center;`. Using Grid: `display: grid; place-items: center;`.
+2. **What does `1fr` mean in CSS Grid?**
+   - _Answer_: `fr` stands for fractional unit. It represents a fraction of the available remaining space in the grid container. `grid-template-columns: 1fr 2fr;` creates two columns where the second column is twice as wide as the first.
+
+## 📄 Cheat Sheet
+
+- **Flexbox**: 1D, Content First, aligns elements in a single line.
+- **Grid**: 2D, Layout First, defines a rigid structure for elements to fit into.

@@ -1,0 +1,201 @@
+---
+title: Scope
+category: JavaScript
+difficulty: Beginner
+interviewFrequency: Very High
+experienceLevel: Entry-Level
+estimatedReadTime: 10
+tags: [javascript, scope, context]
+companies:
+  - Amazon
+  - Adobe
+  - Microsoft
+---
+
+# Scope
+
+## 📖 What is Scope?
+
+**Scope** is the current context of execution in which values and expressions are "visible" or can be referenced. If a variable or other expression is not in the current scope, it will not be available for use. Scopes can also be layered in a hierarchy, so that child scopes have access to parent scopes, but not vice versa.
+
+## 🤔 Why do we need Scope?
+
+Scope provides a level of **security** and **encapsulation** for our variables. It ensures that variables with the same name do not collide with each other across different parts of our codebase, preventing unintended overwrites and making code maintainable.
+
+## ⚙️ Internal Working
+
+JavaScript uses **Lexical Scoping** (also known as Static Scoping). This means that the scope of a variable is determined by its physical location within the source code during the compilation phase, not where the function is called.
+
+## 🧠 How JavaScript Engine Handles It
+
+When the engine executes code, it maintains a **Scope Chain**. If it needs to resolve a variable, it looks in the current scope. If it doesn't find it, it moves up to the parent scope, continuing this process until it reaches the Global Scope. If it still isn't found, it throws a `ReferenceError`.
+
+## 📝 Syntax
+
+JavaScript has 3 main types of scope:
+
+1. **Global Scope**: Variables declared outside any function or block.
+2. **Function/Local Scope**: Variables declared inside a function.
+3. **Block Scope**: Variables declared inside `{ ... }` using `let` or `const` (introduced in ES6).
+
+## 💡 Beginner Example
+
+```javascript
+const globalVar = "I am global";
+
+function checkScope() {
+  const functionVar = "I am local";
+  console.log(globalVar); // Accessible
+}
+
+checkScope();
+console.log(functionVar); // ReferenceError: functionVar is not defined
+```
+
+## 🚀 Advanced Example
+
+**Block Scope vs Function Scope:**
+
+```javascript
+function testScope() {
+  if (true) {
+    var functionScoped = "Visible everywhere in function";
+    let blockScoped = "Visible only in this IF block";
+  }
+
+  console.log(functionScoped); // "Visible everywhere in function"
+  console.log(blockScoped); // ReferenceError!
+}
+```
+
+## 🏢 Production Example
+
+Using immediately invoked function expressions (IIFE) to create private scope and prevent global namespace pollution (common before ES6 modules).
+
+```javascript
+(function () {
+  var privateVariable = "Cannot access from outside";
+  window.myLibrary = {
+    getVar: () => privateVariable
+  };
+})();
+
+console.log(privateVariable); // Error
+console.log(window.myLibrary.getVar()); // Works
+```
+
+## ⚛️ React Example
+
+In React, component state is function-scoped. Each time a component renders, it's a new function call, creating a brand new scope for `useState` variables. This is why closures in `useEffect` can capture "stale" values if dependency arrays are not managed correctly.
+
+## ⚡ Performance
+
+Deeply nested scopes can have a minor performance hit because the JavaScript engine has to traverse the scope chain all the way up to find a variable. Variables in the local scope are always accessed the fastest.
+
+## 🧠 Memory
+
+When a function finishes execution, its local scope is usually destroyed, and the variables are garbage-collected. However, if an inner function is returned (Closure), the scope is preserved in memory.
+
+## ❌ Common Mistakes
+
+Accidental Global Variables: If you forget to use `var`, `let`, or `const` (in non-strict mode), JavaScript will automatically attach the variable to the global object!
+
+```javascript
+function oops() {
+  mistake = "I am global now!"; // Missing let/const
+}
+oops();
+console.log(mistake); // "I am global now!"
+```
+
+## ✅ Best Practices
+
+1. **Always use strict mode (`"use strict";`)** to prevent accidental global variables.
+2. **Prefer `const` and `let`** over `var` to utilize block scoping and avoid hoisting confusion.
+3. **Keep variables as local as possible**. Don't declare variables globally if they are only used inside one function.
+
+## 🆚 Comparison
+
+| Scope Type   | Created by            | Applies to                        |
+| ------------ | --------------------- | --------------------------------- |
+| **Global**   | Root of document      | All code                          |
+| **Function** | `function() {}`       | `var`, `let`, `const`, `function` |
+| **Block**    | `{}` (if, for, while) | `let`, `const`                    |
+
+## ❓ Interview Questions
+
+1. **What is Lexical Scoping?**
+   - _Answer_: Lexical scoping means that scope is determined by where variables and blocks are physically placed in the code by the author at write-time.
+2. **What is the Scope Chain?**
+   - _Answer_: The hierarchy of scopes. If a variable isn't found locally, the engine checks the outer scope, traversing up to the global scope.
+
+## 🔄 Follow-up Questions
+
+**"Can a child scope modify a variable in the parent scope?"**
+
+- _Answer_: Yes. If a child scope reassigns a variable (without redeclaring it with `let/const`), it will modify the variable in the parent scope.
+
+## 💻 Coding Questions
+
+**Fix the bug using scope:**
+
+```javascript
+for (var i = 0; i < 3; i++) {
+  setTimeout(() => console.log(i), 100);
+}
+// Outputs: 3, 3, 3
+```
+
+_Solution_: Use `let` instead of `var`. `let` creates a new block scope for every iteration of the loop.
+
+```javascript
+for (let i = 0; i < 3; i++) {
+  setTimeout(() => console.log(i), 100);
+}
+// Outputs: 0, 1, 2
+```
+
+## 🧩 Output-Based Questions
+
+```javascript
+var a = 10;
+function outer() {
+  var a = 20;
+  function inner() {
+    console.log(a);
+  }
+  inner();
+}
+outer();
+```
+
+_Output_: `20`. The `inner` function looks in its local scope (not found), then looks at `outer`'s scope (finds `a = 20`).
+
+## 🐞 Debugging Questions
+
+**Why does this throw an error?**
+
+```javascript
+if (true) {
+  const API_KEY = "12345";
+}
+console.log(API_KEY);
+```
+
+_Fix_: `const` is block-scoped, so `API_KEY` dies at the end of the `if` block. Move the declaration outside the block if it needs to be accessed globally.
+
+## 📄 Cheat Sheet
+
+- **Global**: Visible everywhere.
+- **Function/Local**: Visible only inside the function.
+- **Block**: Visible only inside `{}` (only for `let/const`).
+- **Lexical Scope**: Scope is determined by code placement, not invocation.
+
+## ⚡ 2-Minute Revision
+
+Scope dictates variable visibility. JavaScript uses lexical scoping. `var` is function-scoped, making it prone to bugs in loops and blocks. `let` and `const` are block-scoped, providing safer, more predictable code encapsulation.
+
+## 🔗 Related Topics
+
+- [Closures](/topic/javascript/closures)
+- [Hoisting](/topic/javascript/hoisting)

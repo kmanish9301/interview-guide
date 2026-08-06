@@ -1,0 +1,257 @@
+---
+title: Interfaces
+category: TypeScript
+difficulty: Beginner
+interviewFrequency: High
+experienceLevel: Entry-Level
+estimatedReadTime: 7
+tags: [typescript, interfaces, types, oop]
+companies:
+  - Microsoft
+  - Amazon
+  - Meta
+---
+
+# Interfaces
+
+## 📖 What are Interfaces?
+
+In TypeScript, an **Interface** is a way to define the exact shape of an object. It acts as a strict contract that an object must adhere to, specifying what properties and methods the object must have, and what types those properties must be.
+
+## 🤔 Why do we need Interfaces?
+
+JavaScript is a dynamically typed language, meaning objects can change their shape at runtime. This causes countless runtime errors (e.g., `Cannot read property 'name' of undefined`). Interfaces provide compile-time type checking, ensuring that the objects you pass around your application match the expected structure before the code even runs.
+
+## ⚙️ Internal Working
+
+Interfaces are **entirely erased during compilation**. They do not exist in the final JavaScript output. They are strictly a tool for the TypeScript compiler (and your IDE) to catch errors during development.
+
+## 🧠 How TypeScript Engine Handles It
+
+TypeScript uses **Structural Typing** (often called Duck Typing). This means if an object has the required properties of an interface, it is considered valid, even if the object wasn't explicitly created _from_ that interface. ("If it walks like a duck and quacks like a duck, it's a duck").
+
+## 📝 Syntax
+
+```typescript
+interface User {
+  id: number;
+  name: string;
+  email?: string; // Optional property
+  readonly createdAt: Date; // Cannot be reassigned
+  greet(): string; // Method signature
+}
+```
+
+## 💡 Beginner Example
+
+```typescript
+interface Car {
+  make: string;
+  model: string;
+  year: number;
+}
+
+// Error: Property 'year' is missing
+const myCar: Car = {
+  make: "Toyota",
+  model: "Corolla"
+};
+
+// Valid
+const yourCar: Car = {
+  make: "Honda",
+  model: "Civic",
+  year: 2022
+};
+```
+
+## 🚀 Advanced Example
+
+**Extending Interfaces**:
+Interfaces can inherit from other interfaces, allowing you to build complex shapes from smaller, reusable contracts.
+
+```typescript
+interface Animal {
+  name: string;
+}
+
+interface Dog extends Animal {
+  breed: string;
+  bark(): void;
+}
+
+const myDog: Dog = {
+  name: "Rex",
+  breed: "German Shepherd",
+  bark: () => console.log("Woof!")
+};
+```
+
+## 🏢 Production Example
+
+**Declaration Merging**:
+A unique feature of Interfaces (unlike Type Aliases) is that you can declare the same interface multiple times, and TypeScript will automatically merge them. This is heavily used when extending third-party libraries (like extending the global `Window` object).
+
+```typescript
+// Third-party library defines:
+interface Window {
+  title: string;
+}
+
+// In your app, you can add to it:
+interface Window {
+  myCustomGlobalVariable: boolean;
+}
+
+// Now Window requires both 'title' and 'myCustomGlobalVariable'
+window.myCustomGlobalVariable = true; // Valid!
+```
+
+## ⚛️ React Example
+
+Defining props for a React component using an Interface:
+
+```tsx
+interface ButtonProps {
+  label: string;
+  onClick: () => void;
+  disabled?: boolean;
+}
+
+const Button = ({ label, onClick, disabled = false }: ButtonProps) => {
+  return (
+    <button onClick={onClick} disabled={disabled}>
+      {label}
+    </button>
+  );
+};
+```
+
+## ⚡ Performance
+
+Because interfaces are erased at compile time, they have **zero** impact on runtime performance or bundle size.
+
+## 🧠 Memory
+
+Interfaces consume no memory at runtime. They exist purely in the TypeScript compiler's memory during development.
+
+## ❌ Common Mistakes
+
+**Confusing `readonly` with `const`**:
+
+- `const` is for variables. It prevents a variable reference from being reassigned.
+- `readonly` is for interface properties. It prevents the property of an object from being modified.
+
+```typescript
+interface Config {
+  readonly apiUrl: string;
+}
+const myConfig: Config = { apiUrl: "v1.com" };
+myConfig.apiUrl = "v2.com"; // Error! Cannot assign to 'apiUrl' because it is a read-only property.
+```
+
+## ✅ Best Practices
+
+1. Name interfaces clearly without prefixes. (Use `User` instead of `IUser`). Prefixing with "I" is a C# convention, not a TypeScript one.
+2. Use `readonly` for properties that should never change after initialization.
+3. Use `?` for properties that might legitimately be omitted.
+
+## 🆚 Comparison
+
+| Feature                 | `interface`       | `type` Alias                |
+| ----------------------- | ----------------- | --------------------------- | -------- |
+| **Declaration Merging** | Yes               | No (Throws an error)        |
+| **Object Shapes**       | Yes               | Yes                         |
+| **Primitives/Unions**   | No                | Yes (e.g. `type ID = string | number`) |
+| **Extensibility**       | `extends` keyword | `&` (Intersection)          |
+
+## ❓ Interview Questions
+
+1. **What is the difference between an Interface and a Type Alias?**
+   - _Answer_: Interfaces are specifically for defining object shapes and support "Declaration Merging". Type aliases can define object shapes, but can also define primitives, unions, and tuples. Type aliases use intersections (`&`) to combine, whereas interfaces use `extends`.
+2. **Does an object have to explicitly declare it implements an interface?**
+   - _Answer_: No. TypeScript uses Structural Typing. If an object happens to have the exact shape defined by the interface, TypeScript considers it compatible.
+
+## 🔄 Follow-up Questions
+
+**"Can a class implement an interface?"**
+
+- _Answer_: Yes. You can use the `implements` keyword to force a class to adhere to a specific interface contract.
+
+```typescript
+interface Pingable {
+  ping(): void;
+}
+class Sonar implements Pingable {
+  ping() {
+    console.log("ping!");
+  }
+}
+```
+
+## 💻 Coding Questions
+
+**Fix the error in this code:**
+
+```typescript
+interface Point {
+  x: number;
+  y: number;
+}
+const p: Point = { x: 10, y: 20, z: 30 }; // Error: Object literal may only specify known properties
+```
+
+_Solution_: Because `p` is an object literal assigned directly to a `Point`, TS does strict excess property checking. To fix it, either add `z?: number` to the interface, or assign it to a variable first: `const obj = {x:10, y:20, z:30}; const p: Point = obj;`
+
+## 🧩 Output-Based Questions
+
+```typescript
+interface A {
+  x: number;
+}
+interface A {
+  y: number;
+}
+const obj: A = { x: 1 };
+```
+
+_What happens when this compiles?_
+_Answer_: It throws a compile error. Because of declaration merging, interface `A` requires both `x` and `y`. The `obj` is missing `y`.
+
+## 🐞 Debugging Questions
+
+**Why is TypeScript throwing an error on my dynamic key access?**
+
+```typescript
+interface Cache {
+  user: string;
+}
+const myCache: Cache = { user: "Alice" };
+myCache.session = "123"; // Error!
+```
+
+_Fix_: Interfaces are sealed by default. If you want an interface to accept arbitrary dynamic keys, you must add an **Index Signature**:
+
+```typescript
+interface Cache {
+  user: string;
+  [key: string]: string; // Allows any string key with a string value
+}
+```
+
+## 📄 Cheat Sheet
+
+- **Define**: `interface Name { prop: type }`
+- **Optional**: `prop?: type`
+- **Read-Only**: `readonly prop: type`
+- **Extend**: `interface B extends A {}`
+- **Implement**: `class X implements Name {}`
+
+## ⚡ 2-Minute Revision
+
+Interfaces are the bread and butter of TypeScript. They allow you to define strict contracts for the shapes of your objects, ensuring you don't access properties that don't exist. They support inheritance via `extends` and declaration merging. Unlike classes, interfaces are completely erased when compiled to JavaScript.
+
+## 🔗 Related Topics
+
+- [Type Alias](/topic/typescript/type-alias)
+- [Utility Types](/topic/typescript/utility-types)

@@ -1,0 +1,205 @@
+---
+title: Temporal Dead Zone
+category: JavaScript
+difficulty: Beginner
+interviewFrequency: High
+experienceLevel: Entry-Level
+estimatedReadTime: 7
+tags: [javascript, tdz, scope, hoisting]
+companies:
+  - Microsoft
+  - Apple
+  - Meta
+---
+
+# Temporal Dead Zone (TDZ)
+
+## 📖 What is the Temporal Dead Zone?
+
+The **Temporal Dead Zone (TDZ)** is a specific period in the execution of JavaScript code where variables declared with `let` and `const` exist in memory but cannot be accessed or used. If you try to access a variable while it is in the TDZ, JavaScript will throw a `ReferenceError`.
+
+## 🤔 Why do we need the TDZ?
+
+The TDZ was introduced in ES6 (along with `let` and `const`) to catch errors early. Before ES6, variables declared with `var` were initialized with `undefined` during hoisting, which led to silent and extremely confusing bugs when variables were used before they were explicitly assigned a value. The TDZ forces developers to write cleaner, more predictable code by enforcing declaration before usage.
+
+## ⚙️ Internal Working
+
+When a block of code (like a function or an `if` statement) is entered, the JavaScript engine allocates memory for all `let` and `const` variables inside that block (Hoisting). However, unlike `var`, it does _not_ initialize them with `undefined`. They remain in an uninitialized state until the engine evaluates the line of code where the actual declaration is written. The time between entering the block and evaluating the declaration is the TDZ.
+
+## 🧠 How JavaScript Engine Handles It
+
+Because the engine physically knows the variable exists (due to hoisting), it blocks access to any outer scope variables with the same name. It explicitly guards the uninitialized memory space with a ReferenceError until initialization.
+
+## 📝 Syntax
+
+There is no syntax to trigger the TDZ; it is an inherent behavioral rule in JavaScript blocks.
+
+```javascript
+{
+  // TDZ for 'age' starts here
+  console.log(age); // ReferenceError!
+
+  let age = 25; // TDZ for 'age' ends here
+  console.log(age); // 25
+}
+```
+
+## 💡 Beginner Example
+
+```javascript
+console.log(name); // ReferenceError: Cannot access 'name' before initialization
+let name = "Alice";
+```
+
+Compare this to `var`:
+
+```javascript
+console.log(city); // undefined (No TDZ, just confusing behavior)
+var city = "London";
+```
+
+## 🚀 Advanced Example
+
+**The TDZ is Temporal (Time-based), not Spatial (Location-based)**.
+It doesn't matter where the variable is accessed physically in the code, it matters _when_ it is accessed in time.
+
+```javascript
+let myFunc = () => console.log(myVar); // Accessing myVar physically before declaration
+
+// TDZ for myVar starts
+let myVar = 10;
+// TDZ for myVar ends
+
+myFunc(); // Outputs 10. Works perfectly because myFunc is invoked AFTER the TDZ ends!
+```
+
+## 🏢 Production Example
+
+In large codebases, the TDZ prevents global state pollution.
+
+```javascript
+const API_URL = "https://api.v1.com";
+
+function setCustomApi() {
+  // Developer tries to use outer API_URL, but accidentally declares a local one below.
+  // The local 'const' is hoisted, shadowing the global one, triggering the TDZ.
+  console.log("Connecting to:", API_URL); // ReferenceError!
+
+  const API_URL = "https://api.v2.com";
+}
+```
+
+## ⚛️ React Example
+
+In React, you rarely hit TDZ issues inside components because standard data flow runs top-to-bottom. However, you can hit it if you try to use a state setter or ref before initializing it.
+
+```jsx
+const MyComponent = () => {
+  // ERROR: Cannot access 'count' before initialization
+  console.log(count);
+  const [count, setCount] = useState(0);
+};
+```
+
+## ⚡ Performance
+
+The TDZ has zero performance overhead. It is purely a compilation-phase strictness rule enforced by the JavaScript engine.
+
+## 🧠 Memory
+
+Variables in the TDZ are fully allocated in memory during the Creation Phase; they are just flagged as "uninitialized", preventing the runtime from reading or writing to that memory address until the declaration line executes.
+
+## ❌ Common Mistakes
+
+Thinking that `typeof` is always safe. Before ES6, `typeof undeclaredVar` would safely return `"undefined"`. However, if you use `typeof` on a variable currently in the TDZ, it throws an error!
+
+```javascript
+console.log(typeof someVar); // ReferenceError!
+let someVar = 5;
+```
+
+## ✅ Best Practices
+
+1. **Always declare variables at the top of their scope.** This manually shrinks the TDZ to zero lines of code.
+2. Stop using `var`. The strictness of the TDZ is a massive feature, not a bug. It prevents logic errors.
+
+## 🆚 Comparison
+
+| Variable Type   | Hoisted? | Initialized as  | Has TDZ? |
+| --------------- | -------- | --------------- | -------- |
+| `var`           | Yes      | `undefined`     | **No**   |
+| `let` / `const` | Yes      | Uninitialized   | **Yes**  |
+| `function`      | Yes      | Actual Function | **No**   |
+
+## ❓ Interview Questions
+
+1. **Are `let` and `const` hoisted?**
+   - _Answer_: Yes, they are absolutely hoisted to the top of their block. However, they are not initialized. Because they are not initialized, accessing them invokes the Temporal Dead Zone, throwing an error.
+2. **Why is it called "Temporal"?**
+   - _Answer_: Because the dead zone depends on the _time_ of execution, not the physical placement of the code. A function referencing a `let` variable above its declaration works fine, as long as the function is _invoked_ after the declaration.
+
+## 🔄 Follow-up Questions
+
+**"Does `const` behave differently in the TDZ than `let`?"**
+
+- _Answer_: No. Both `let` and `const` have the exact same TDZ behavior. The only difference is that `const` must be initialized immediately when declared and cannot be reassigned later.
+
+## 💻 Coding Questions
+
+**Fix the bug in this code:**
+
+```javascript
+function greet(name = defaultName) {
+  let defaultName = "Guest";
+  console.log("Hello " + name);
+}
+greet();
+```
+
+_Solution_: The default parameter `name = defaultName` is evaluated in the parameter scope _before_ the inner scope's `let defaultName` executes. It looks for `defaultName` in the outer scope, which doesn't exist, or hits the TDZ if it was declared via `let` in the global scope.
+_Fix_: Move the default variable outside the function or assign it inside the body.
+
+## 🧩 Output-Based Questions
+
+```javascript
+let x = "global";
+function test() {
+  console.log(x);
+  let x = "local";
+}
+test();
+```
+
+_Output_: `ReferenceError: Cannot access 'x' before initialization`.
+_Explanation_: The inner `let x` is hoisted to the top of `test()`. This completely shadows the global `x`. When `console.log(x)` runs, it tries to access the inner `x` which is currently trapped in the TDZ.
+
+## 🐞 Debugging Questions
+
+**Why does this code throw an error?**
+
+```javascript
+class Person extends Animal {
+  constructor() {
+    this.name = "John";
+    super();
+  }
+}
+```
+
+_Fix_: In a derived class (using `extends`), `this` is placed in a Temporal Dead Zone until `super()` is called! You cannot access or assign `this` before calling `super()`.
+
+## 📄 Cheat Sheet
+
+- **TDZ**: The gap between variable scope entry and variable initialization.
+- **Affected**: `let`, `const`, `class`, `super()`.
+- **Result**: Throws a `ReferenceError`.
+- **Purpose**: Prevents using uninitialized variables (a huge improvement over `var`).
+
+## ⚡ 2-Minute Revision
+
+The Temporal Dead Zone is the JavaScript engine protecting you from yourself. By throwing an error when you try to use `let` or `const` before they are initialized, it prevents the silent logic bugs that used to plague older `var`-based codebases. Always declare variables at the top of their blocks to minimize the TDZ.
+
+## 🔗 Related Topics
+
+- [Hoisting](/topic/javascript/hoisting)
+- [Scope](/topic/javascript/scope)

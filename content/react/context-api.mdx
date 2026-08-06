@@ -1,0 +1,246 @@
+---
+title: Context API
+category: React
+difficulty: Intermediate
+interviewFrequency: High
+experienceLevel: Mid-Level
+estimatedReadTime: 10
+tags: [react, state, context, hooks]
+companies:
+  - Netflix
+  - Uber
+  - Amazon
+---
+
+# Context API
+
+## 📖 What is the Context API?
+
+The **Context API** is a built-in React feature that provides a way to share values (state, functions, etc.) across the entire component tree without having to explicitly pass props down manually at every level.
+
+## 🤔 Why do we need the Context API?
+
+In React, data flows "top-down" (parent to child) via props. If you have a deeply nested component tree and a component at level 10 needs data from level 1, you would have to pass that data through levels 2-9, even if those middle components don't need the data. This anti-pattern is called **Prop Drilling**. Context completely eliminates prop drilling by allowing child components to subscribe directly to a data source higher up in the tree.
+
+## ⚙️ Internal Working
+
+Context involves three main parts:
+
+1. `createContext()`: Creates the Context object.
+2. `Context.Provider`: A wrapper component that "provides" the value to its children.
+3. `useContext(Context)`: A hook used by a child component to "consume" the value.
+
+## 🧠 How React Engine Handles It
+
+When the `value` prop of a `Provider` changes, React will instantly bypass `React.memo` and `shouldComponentUpdate` to re-render _every single component_ that consumes that context via `useContext()`.
+
+## 📝 Syntax
+
+```jsx
+import { createContext, useContext, useState } from "react";
+
+// 1. Create it
+const ThemeContext = createContext("light");
+
+function App() {
+  // 2. Provide it
+  return (
+    <ThemeContext.Provider value="dark">
+      <Navbar />
+    </ThemeContext.Provider>
+  );
+}
+
+function Navbar() {
+  // 3. Consume it
+  const theme = useContext(ThemeContext);
+  return <div>Current theme is {theme}</div>;
+}
+```
+
+## 💡 Beginner Example
+
+Providing user authentication state across an app:
+
+```jsx
+const AuthContext = createContext(null);
+
+export function AuthProvider({ children }) {
+  const [user, setUser] = useState({ name: "Alice", role: "admin" });
+
+  return (
+    <AuthContext.Provider value={{ user, setUser }}>
+      {children}
+    </AuthContext.Provider>
+  );
+}
+
+// Any child component can now get the user!
+function Profile() {
+  const { user } = useContext(AuthContext);
+  return <h1>Welcome, {user.name}</h1>;
+}
+```
+
+## 🚀 Advanced Example
+
+**Splitting Contexts to Prevent Re-renders**:
+If you provide an object with both `data` and a `setData` function, any child that only needs the `setData` function will still re-render when `data` changes. Advanced architectures split these into two contexts.
+
+```jsx
+const DataContext = createContext(null);
+const DispatchContext = createContext(null);
+
+function Provider({ children }) {
+  const [data, setData] = useState({});
+
+  return (
+    <DataContext.Provider value={data}>
+      <DispatchContext.Provider value={setData}>
+        {children}
+      </DispatchContext.Provider>
+    </DataContext.Provider>
+  );
+}
+```
+
+## 🏢 Production Example
+
+In modern React apps, developers usually abstract the Context implementation into a custom hook. This keeps the codebase extremely clean and allows for error handling if the context is used outside its provider.
+
+```jsx
+const ThemeContext = createContext(undefined);
+
+// Custom Hook!
+export function useTheme() {
+  const context = useContext(ThemeContext);
+  if (context === undefined) {
+    throw new Error("useTheme must be used within a ThemeProvider");
+  }
+  return context;
+}
+```
+
+## ⚛️ React Example
+
+**Combining Context with `useReducer`**:
+Context is for passing data deep down, and `useReducer` is for managing complex state transitions. Using them together is a lightweight, built-in alternative to Redux.
+You provide the `dispatch` function via context so any child can dispatch an action.
+
+## ⚡ Performance
+
+Context is notoriously dangerous for performance if used incorrectly.
+If you provide an object directly inline: `<Provider value={{ a: 1, b: 2 }}>`, React creates a brand new object in memory on _every render_ of the Provider. This forces every consumer to re-render, even if the actual data hasn't changed.
+**Always use `useMemo` for the Provider value!**
+
+## 🧠 Memory
+
+Contexts themselves don't consume much memory, but they do establish hard dependencies. Components tightly coupled to a Context are harder to reuse in other applications or test in isolation without wrapping them in mock Providers.
+
+## ❌ Common Mistakes
+
+**The Inline Object Anti-Pattern:**
+
+```jsx
+function App() {
+  const [count, setCount] = useState(0);
+
+  // BAD: A new object { count, setCount } is created every render!
+  // All consumers will re-render, killing performance.
+  return <Context.Provider value={{ count, setCount }}>...</Context.Provider>;
+}
+```
+
+## ✅ Best Practices
+
+1. **Memoize Context Values**: `const value = useMemo(() => ({ count, setCount }), [count])`.
+2. **Don't use Context for everything**: If data is only needed 2 levels deep, just use props. Context is for global data (theme, auth, language).
+3. **Split Contexts**: Create different contexts for different domains (e.g., `ThemeContext`, `AuthContext`) rather than one massive `GlobalContext`.
+
+## 🆚 Comparison
+
+| Feature         | Context API                          | Redux                         |
+| --------------- | ------------------------------------ | ----------------------------- |
+| **Setup**       | Native, zero config                  | Requires boilerplate / RTK    |
+| **Performance** | Triggers re-renders on all consumers | Granular selector re-renders  |
+| **Best For**    | Low-frequency updates (Theme, Auth)  | High-frequency, complex state |
+
+## ❓ Interview Questions
+
+1. **How does Context solve Prop Drilling?**
+   - _Answer_: Prop drilling forces intermediate components to pass props they don't use. Context allows child components to hook directly into a Provider higher up the tree, bypassing the intermediate components completely.
+2. **Does using Context replace Redux?**
+   - _Answer_: Not entirely. Context is a _dependency injection_ mechanism, not a state management tool. It doesn't handle complex state logic, middleware, or granular re-renders like Redux does.
+
+## 🔄 Follow-up Questions
+
+**"If a component is wrapped in `React.memo` but consumes a Context that updates, will it re-render?"**
+
+- _Answer_: Yes. Context updates bypass `React.memo`. If the context value changes, the component will re-render regardless of its memoization status.
+
+## 💻 Coding Questions
+
+**Fix the bug in this Context implementation:**
+
+```jsx
+const MyContext = React.createContext();
+
+function App() {
+  return (
+    <MyContext value="Hello">
+      <Child />
+    </MyContext>
+  );
+}
+```
+
+_Solution_: `MyContext` is just the context object. You must use `.Provider` to wrap the children: `<MyContext.Provider value="Hello">`.
+
+## 🧩 Output-Based Questions
+
+```jsx
+const NameContext = createContext("Guest");
+
+function App() {
+  return (
+    <NameContext.Provider value="Alice">
+      <NameContext.Provider value="Bob">
+        <Child />
+      </NameContext.Provider>
+    </NameContext.Provider>
+  );
+}
+```
+
+_What does Child consume?_
+_Answer_: `"Bob"`. A consumer always reads the value from the _closest_ matching Provider above it in the tree.
+
+## 🐞 Debugging Questions
+
+**Why is my context value returning `undefined`?**
+
+```jsx
+const UserContext = createContext();
+
+function Child() {
+  const user = useContext(UserContext); // returns undefined
+}
+```
+
+_Fix_: The `Child` component was likely rendered _outside_ of the `<UserContext.Provider>` tree in the DOM hierarchy. If a consumer is outside the provider, it receives the default value passed to `createContext()`.
+
+## 📄 Cheat Sheet
+
+- **Create**: `const Ctx = createContext(defaultVal)`
+- **Provide**: `<Ctx.Provider value={data}>`
+- **Consume**: `const data = useContext(Ctx)`
+- **Optimization**: Memoize the `value` object!
+
+## ⚡ 2-Minute Revision
+
+The Context API eliminates prop drilling by allowing you to broadcast data across your component tree. It requires a Provider to hold the data and a Consumer (via `useContext`) to read it. Use it for global, low-frequency updates like themes and user authentication, but be careful with inline objects as they cause mass re-renders!
+
+## 🔗 Related Topics
+
+- [useReducer](/topic/react/usereducer)
+- [Redux](/topic/react/redux)

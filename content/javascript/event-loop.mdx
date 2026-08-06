@@ -1,0 +1,211 @@
+---
+title: Event Loop
+category: JavaScript
+difficulty: Advanced
+interviewFrequency: Very High
+experienceLevel: Mid-Level
+estimatedReadTime: 12
+tags: [javascript, event-loop, async, core]
+companies:
+  - Amazon
+  - Adobe
+  - Microsoft
+  - Google
+  - Netflix
+---
+
+# Event Loop
+
+## 📖 What is the Event Loop?
+
+The **Event Loop** is the secret behind JavaScript's asynchronous behavior. JavaScript is a single-threaded language, meaning it can only execute one task at a time. The Event Loop is a mechanism that continuously checks the Call Stack and the Task Queues, moving asynchronous callbacks into the Call Stack when it's empty, giving the illusion of multi-threading.
+
+## 🤔 Why do we need the Event Loop?
+
+Since JavaScript is single-threaded, a long-running synchronous task (like a heavy calculation) would "block" the main thread, freezing the UI. The Event Loop allows Node.js and the browser to perform non-blocking I/O operations (like fetching data, timers, and UI events) by offloading these operations to the system kernel or Web APIs and then executing their callbacks when the main thread is free.
+
+## ⚙️ Internal Working
+
+The Event Loop relies on several components:
+
+1. **Call Stack**: Where your synchronous code is executed.
+2. **Web APIs / C++ APIs**: Browser/Node features (DOM, setTimeout, fetch) that handle async work in the background.
+3. **Microtask Queue**: Holds callbacks from Promises (`.then`, `.catch`), `MutationObserver`, and `queueMicrotask`. (Highest priority).
+4. **Macrotask Queue (Callback Queue)**: Holds callbacks from `setTimeout`, `setInterval`, DOM events, and I/O.
+
+## 🧠 How JavaScript Engine Handles It
+
+When the call stack is empty, the Event Loop first checks the **Microtask Queue**. It will process _all_ tasks in the Microtask Queue until it is completely empty (even if new microtasks are added during processing).
+Only after the Microtask Queue is entirely empty will it process _one_ task from the **Macrotask Queue**, and then check the Microtask queue again.
+
+## 📝 Syntax
+
+There is no direct syntax for the Event Loop, as it happens under the hood, but it dictates how `setTimeout` and `Promises` behave:
+
+```javascript
+console.log("1");
+setTimeout(() => console.log("2"), 0);
+Promise.resolve().then(() => console.log("3"));
+console.log("4");
+```
+
+## 💡 Beginner Example
+
+```javascript
+console.log("Start");
+
+setTimeout(() => {
+  console.log("Timer");
+}, 0);
+
+console.log("End");
+
+// Output:
+// Start
+// End
+// Timer
+```
+
+Even though the timer is set to 0, it is sent to the Web API and its callback goes to the Macrotask Queue. It must wait until the synchronous code in the Call Stack finishes.
+
+## 🚀 Advanced Example
+
+```javascript
+console.log("A");
+
+setTimeout(() => console.log("B"), 0);
+
+Promise.resolve().then(() => {
+  console.log("C");
+  setTimeout(() => console.log("D"), 0);
+});
+
+Promise.resolve().then(() => console.log("E"));
+
+console.log("F");
+
+// Output:
+// A
+// F
+// C
+// E
+// B
+// D
+```
+
+## 🏢 Production Example
+
+In a React app, making an API call and updating state without blocking the UI:
+
+```javascript
+async function fetchUserData() {
+  // Synchronous setup
+  setIsLoading(true);
+
+  // Offloaded to Web APIs, thread is free to render loading state
+  const response = await fetch("/api/user");
+  const data = await response.json();
+
+  // Back in Microtask queue
+  setUserData(data);
+  setIsLoading(false);
+}
+```
+
+## ⚛️ React Example
+
+React 18's Concurrent Mode and `startTransition` leverage yielding back to the Event Loop so that the browser can paint high-priority UI updates (like typing in an input) before rendering heavy, low-priority components.
+
+## ⚡ Performance
+
+If you write a microtask that schedules another microtask recursively, you will block the Event Loop indefinitely, causing the browser to freeze because the Macrotask queue (and rendering) will never be reached.
+
+## 🧠 Memory
+
+Not clearing intervals (`setInterval`) or leaving unresolved promises can cause memory leaks because the Event Loop retains references to their callbacks indefinitely.
+
+## ❌ Common Mistakes
+
+Thinking `setTimeout(fn, 1000)` guarantees execution exactly at 1000ms. It actually guarantees the _minimum_ delay. If the Call Stack is busy, it might execute much later.
+
+## ✅ Best Practices
+
+- Avoid blocking the main thread with heavy synchronous calculations. Offload them to Web Workers.
+- Use `Promises` or `async/await` for async logic instead of deep callback chains to keep code readable.
+
+## 🆚 Comparison
+
+| Feature       | Microtask Queue               | Macrotask Queue              |
+| ------------- | ----------------------------- | ---------------------------- |
+| **Priority**  | High                          | Low                          |
+| **Examples**  | Promises, MutationObserver    | setTimeout, setInterval, I/O |
+| **Execution** | Emptied completely every tick | Executes one at a time       |
+
+## ❓ Interview Questions
+
+1. **What is the difference between the Microtask and Macrotask queue?**
+   - _Answer_: Microtasks have higher priority. The event loop empties the entire microtask queue before picking up the next macrotask.
+2. **Can JavaScript be multi-threaded?**
+   - _Answer_: Native JS is single-threaded, but you can achieve multi-threading using Web Workers.
+
+## 🔄 Follow-up Questions
+
+**"What happens if a microtask creates another microtask infinitely?"**
+
+- _Answer_: The Call Stack will never clear, the Macrotask queue will never be processed, and the browser UI will freeze.
+
+## 💻 Coding Questions
+
+**Write a function that blocks the event loop for exactly 2 seconds without using setTimeout.**
+_Solution_:
+
+```javascript
+function blockEventLoop() {
+  const start = Date.now();
+  while (Date.now() - start < 2000) {
+    // Blocking the main thread
+  }
+  console.log("Unblocked!");
+}
+```
+
+## 🧩 Output-Based Questions
+
+```javascript
+setTimeout(() => console.log(1), 0);
+Promise.resolve().then(() => console.log(2));
+Promise.resolve().then(() => setTimeout(() => console.log(3), 0));
+console.log(4);
+```
+
+_Output_: `4, 2, 1, 3`
+
+## 🐞 Debugging Questions
+
+**Why is this UI unresponsive when clicking the button?**
+
+```javascript
+document.getElementById("btn").onclick = () => {
+  let count = 0;
+  for (let i = 0; i < 10000000000; i++) count++;
+  console.log(count);
+};
+```
+
+_Fix_: The massive `for` loop blocks the Call Stack synchronously. It should be offloaded to a Web Worker, or chunked using `setTimeout` to allow the UI to paint between chunks.
+
+## 📄 Cheat Sheet
+
+- **Call Stack**: Sync code. LIFO.
+- **Microtasks**: Promises. High priority.
+- **Macrotasks**: Timers, Events. Low priority.
+- **Rule**: Stack -> Microtasks (all) -> 1 Macrotask -> Repeat.
+
+## ⚡ 2-Minute Revision
+
+JavaScript is single-threaded. The Event Loop makes async operations possible by offloading tasks to Web APIs. When they finish, their callbacks queue up. The Event Loop continuously checks if the Call Stack is empty. If it is, it pushes callbacks from the Microtask queue, then the Macrotask queue.
+
+## 🔗 Related Topics
+
+- [Promises](/topic/javascript/promises)
+- [Async Await](/topic/javascript/async-await)

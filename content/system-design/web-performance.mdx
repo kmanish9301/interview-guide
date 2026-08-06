@@ -1,0 +1,83 @@
+---
+title: Web Performance
+category: System Design
+difficulty: Advanced
+interviewFrequency: Very High
+experienceLevel: Senior
+estimatedReadTime: 10
+tags: [system design, performance, optimization, critical-rendering-path]
+companies:
+  - Google
+  - Amazon
+  - Uber
+---
+
+# Web Performance
+
+## 📖 What is Web Performance?
+
+Web performance refers to how fast a web page loads, becomes interactive, and responds to user inputs. In modern system design, performance isn't an afterthought—it is a core architectural requirement. Amazon famously found that every 100ms of latency cost them 1% in sales.
+
+## ⚙️ The Critical Rendering Path (CRP)
+
+To optimize performance, you must understand the sequence of steps the browser takes to convert HTML, CSS, and JS into pixels on the screen.
+
+1. **DOM**: Browser parses HTML to create the Document Object Model.
+2. **CSSOM**: Browser parses CSS to create the CSS Object Model.
+3. **Render Tree**: Browser combines DOM and CSSOM.
+4. **Layout (Reflow)**: Browser calculates exact geometry (x/y coordinates, width/height) of every node.
+5. **Paint**: Browser fills in pixels (colors, images, text).
+6. **Composite**: Browser draws different layers in the correct order.
+
+## 🚀 Optimization Strategies
+
+### 1. JavaScript Optimization
+
+JavaScript is the most expensive resource on the web. It must be downloaded, parsed, compiled, and executed.
+
+- **Code Splitting**: Don't send a 2MB bundle. Split code by routes or components (using `React.lazy` or Webpack dynamic imports) so users only download the JS needed for the current page.
+- **Tree Shaking**: Ensure your bundler eliminates dead/unused code.
+- **Defer / Async**: Use `<script defer>` for non-critical JS so it doesn't block the HTML parser.
+
+### 2. CSS Optimization
+
+CSS is render-blocking. The browser will not paint anything until the CSSOM is built.
+
+- **Critical CSS**: Inline the CSS required for the above-the-fold content directly in the `<head>`, and load the rest asynchronously.
+- **Avoid complex selectors**: Deeply nested selectors (`div > ul > li > a:hover`) take longer to calculate.
+
+### 3. Image Optimization
+
+Images typically account for 70% of a page's total weight.
+
+- **Formats**: Use modern formats like WebP or AVIF instead of JPEG/PNG.
+- **Lazy Loading**: Use `<img loading="lazy">` so images outside the viewport aren't downloaded until the user scrolls near them.
+- **Responsive Images**: Use `srcset` to serve smaller images to mobile devices.
+
+### 4. Network Optimization
+
+- **CDN**: Use Content Delivery Networks to serve assets from servers geographically closer to the user.
+- **HTTP/2 & HTTP/3**: Enable multiplexing to download multiple assets over a single connection simultaneously.
+- **Preloading/Prefetching**:
+  - `<link rel="preload">`: Tell the browser to fetch critical assets (like fonts) ASAP.
+  - `<link rel="prefetch">`: Tell the browser to fetch assets that _might_ be needed on the next page during idle time.
+
+## ❌ Common Mistakes
+
+**Animating Layout Properties**:
+Animating `width`, `height`, `margin`, or `top/left` triggers a **Reflow** (Layout recalculation) on every single frame. This will cause lag.
+_Fix_: ONLY animate `transform` and `opacity`. These are handed off to the GPU and skip the Layout/Paint phases entirely (using only Compositing).
+
+## ❓ Interview Questions
+
+1. **What is the difference between `defer` and `async` in script tags?**
+   - _Answer_: Both download the script in the background without blocking the HTML parser. However, `async` executes the script the moment it finishes downloading (which pauses HTML parsing). `defer` waits until the entire HTML document is parsed before executing, making it safer for scripts that rely on the DOM.
+2. **How do you prevent a layout thrashing?**
+   - _Answer_: Layout thrashing occurs when JavaScript repeatedly reads a layout property (like `offsetWidth`) and then writes a layout property, forcing the browser to synchronously recalculate the layout over and over. You prevent it by batching DOM reads and DOM writes, using `requestAnimationFrame`, or using tools like `FastDOM`.
+
+## 📄 Cheat Sheet
+
+- **Render Blocking**: HTML, CSS, synchronous JS.
+- **Safe Animations**: `transform` and `opacity`.
+- **Preload**: "I need this asset NOW for the current page."
+- **Prefetch**: "I might need this asset LATER for the next page."

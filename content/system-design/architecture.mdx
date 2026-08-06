@@ -1,0 +1,79 @@
+---
+title: Frontend Architecture
+category: System Design
+difficulty: Expert
+interviewFrequency: Medium
+experienceLevel: Senior
+estimatedReadTime: 12
+tags: [system design, architecture, micro-frontends, state-management]
+companies:
+  - Meta
+  - Netflix
+  - Spotify
+---
+
+# Frontend Architecture
+
+## 📖 What is Frontend Architecture?
+
+Frontend Architecture is the process of designing the high-level structure of a web application. As frontend apps have grown from simple jQuery scripts into massive, stateful applications matching the complexity of backend systems, architecture has become crucial to maintain scalability, performance, and team velocity.
+
+## 🏗️ Core Architectural Paradigms
+
+### 1. Monolithic SPA (Single Page Application)
+
+The entire application is built as a single, cohesive codebase (e.g., one massive React/Redux app).
+
+- **Pros**: Easy to set up, unified tooling, simple to share components and state globally.
+- **Cons**: As the app grows, the bundle size skyrockets. Build times slow down. Hard for multiple teams to work on simultaneously without stepping on toes.
+
+### 2. Micro-Frontends
+
+Inspired by backend microservices. The frontend is split into smaller, independent applications that are stitched together into a single cohesive UI.
+
+- **How it works**:
+  - _Build-time integration_: Publishing components as NPM packages.
+  - _Run-time integration via Iframes_: Isolates CSS and JS completely, but terrible for performance and UX.
+  - _Run-time integration via Webpack Module Federation_: The modern standard. Apps dynamically load JavaScript chunks from other apps over the network at runtime.
+- **Pros**: Independent deployments (Team A can deploy the Cart app without rebuilding the Checkout app). Framework agnostic (can mix React and Vue, though not recommended).
+- **Cons**: Extremely complex CI/CD setup. Risk of downloading React 5 times if shared dependencies aren't configured perfectly. Hard to share global state (like user auth).
+
+### 3. Component-Driven Architecture
+
+Building UIs from the bottom up. Starting with atomic components (buttons, inputs), combining them into molecules (forms), and finally pages. Heavily relies on tools like **Storybook**.
+
+- **Pros**: Enforces maximum reusability and visual consistency.
+- **Cons**: Requires strict discipline to prevent components from becoming bloated with business logic.
+
+## 🗃️ State Management Architecture
+
+Deciding _where_ state lives is the most difficult part of frontend architecture.
+
+1. **Local State**: Exists only within a single component (e.g., `useState` for a dropdown toggle).
+2. **Global Client State**: Data that must be accessed everywhere (e.g., Theme preference, User Auth context). Use lightweight tools like **Zustand** or Context API. Avoid putting everything here.
+3. **Server State**: Data fetched from the DB (e.g., User Profile info, Product List). This is asynchronous, requires caching, deduping, and retry logic. **NEVER** put this in Redux or Zustand. Use specialized tools like **React Query**, SWR, or Apollo.
+4. **URL State**: Data that should be shareable or survive a page refresh (e.g., Search filters, pagination page). Store this directly in the URL search params!
+
+## 🛡️ Designing for Scalability
+
+When designing a system in an interview (e.g., "Design Facebook Newsfeed"), follow this structure:
+
+1. **Requirements Gathering**: Functional (Infinite scroll, Like button) and Non-Functional (Fast loading, Offline support).
+2. **Component Architecture**: Draw the UI tree. What is dumb (presentational) and what is smart (container)?
+3. **Data Model**: What does the JSON from the API look like?
+4. **API Design**: REST vs GraphQL? Pagination strategies (Cursor vs Offset)?
+5. **State Management**: Where does the data live? How is cache invalidation handled?
+6. **Performance Optimizations**: Virtualization (for massive lists), Lazy Loading, Debouncing.
+
+## ❓ Interview Questions
+
+1. **When would you choose a Micro-Frontend architecture?**
+   - _Answer_: You should only choose micro-frontends when scaling the _organization_, not the technology. If you have 50+ frontend developers split across multiple autonomous teams (e.g., a Cart team, a User Profile team, a Search team) and they need independent deployment lifecycles, micro-frontends make sense. For small or medium teams, it introduces unnecessary infrastructure complexity.
+2. **Where would you store the currently selected tab in a multi-tab UI?**
+   - _Answer_: It depends on the requirement. If the user should be able to copy the URL and send it to a friend so they see the exact same tab, it MUST be stored in the URL Search Params. If it's just a temporary UI state that doesn't need to be shareable, local component state (`useState`) is perfect.
+
+## 📄 Cheat Sheet
+
+- **Micro-frontends**: Solves organizational scaling, introduces technical complexity. Module Federation is the standard.
+- **Server State**: Use React Query. Don't build cache logic yourself.
+- **URL State**: The most underutilized state manager. Use it for filters and active UI views.

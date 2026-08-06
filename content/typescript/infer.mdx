@@ -1,0 +1,199 @@
+---
+title: infer
+category: TypeScript
+difficulty: Advanced
+interviewFrequency: Medium
+experienceLevel: Senior
+estimatedReadTime: 8
+tags: [typescript, infer, types, conditional-types]
+companies:
+  - Meta
+  - Google
+  - Stripe
+---
+
+# infer
+
+## 📖 What is `infer`?
+
+The `infer` keyword is an advanced TypeScript feature used **exclusively within Conditional Types** (`T extends U ? X : Y`). It allows you to declare a new, temporary type variable inside the condition, tell TypeScript to figure out (infer) what that type is based on the input, and then extract that type so you can use it in the true/false branches.
+
+## 🤔 Why do we need `infer`?
+
+Sometimes you are handed a complex type (like an Array, a Promise, or a Function), and you need to "unwrap" it to get the type _inside_ it. For example, if you have `Promise<string>`, how do you programmatically extract just the `string`? `infer` allows you to pattern-match against types and extract their internal pieces.
+
+## ⚙️ Internal Working
+
+`infer` acts as a placeholder during type evaluation. When TypeScript evaluates `T extends SomeStructure<infer U>`, it tries to match the shape of `T` against `SomeStructure`. If it matches, it assigns the inner type to `U`. You can then return `U`.
+
+## 📝 Syntax
+
+```typescript
+// The basic pattern of a Conditional Type using 'infer'
+type ExtractType<T> = T extends SomePattern<infer U> ? U : FallbackType;
+```
+
+## 💡 Beginner Example
+
+**Unwrapping an Array**:
+If we pass an array of numbers (`number[]`), we want to extract the type of the element (`number`).
+
+```typescript
+// If T is an array of SOME type (infer Item), return Item.
+// Otherwise, just return T.
+type UnpackArray<T> = T extends Array<infer Item> ? Item : T;
+
+type A = UnpackArray<string[]>; // Evaluates to: string
+type B = UnpackArray<boolean[]>; // Evaluates to: boolean
+type C = UnpackArray<number>; // Evaluates to: number (Not an array, hits the fallback)
+```
+
+## 🚀 Advanced Example
+
+**Unwrapping a Promise (`Awaited`)**:
+Before TypeScript 4.5 introduced the built-in `Awaited` utility, developers had to write their own utility using `infer` to extract the value a Promise resolves to.
+
+```typescript
+type UnwrapPromise<T> = T extends Promise<infer Res> ? Res : T;
+
+type ResponseData = UnwrapPromise<Promise<{ id: number }>>;
+// Evaluates to: { id: number }
+```
+
+_(Note: Real `Awaited` is more complex because it recursively unwraps nested Promises, e.g. `Promise<Promise<string>>` -> `string`)._
+
+## 🏢 Production Example
+
+**Extracting Function Arguments**:
+Imagine you are using a third-party library that exports a function, but they forgot to export the Type interface for the arguments that function accepts. You can use `infer` to extract them yourself!
+
+```typescript
+// Third party library
+const complexFunction = (data: { id: string; payload: number[] }) => {
+  /* ... */
+};
+
+// Your code:
+// If T is a function that takes arguments (...args), infer those arguments as 'Args'.
+type GetArgs<T> = T extends (...args: infer Args) => any ? Args : never;
+
+// Extract the arguments type as a Tuple
+type FunctionArgs = GetArgs<typeof complexFunction>;
+// Evaluates to: [{ id: string, payload: number[] }]
+
+// Extract just the first argument
+type FirstArg = FunctionArgs[0];
+```
+
+_(Note: TypeScript provides a built-in utility type for this exact scenario called `Parameters<T>`!)_
+
+## ⚛️ React Example
+
+**Extracting Component Props**:
+Similar to extracting function arguments, you can extract the exact Props a React component expects.
+
+```tsx
+import React from "react";
+
+// If T is a React Component, infer its props as P
+type ExtractProps<T> = T extends React.ComponentType<infer P> ? P : never;
+
+const Button = ({ title, disabled }: { title: string; disabled: boolean }) => (
+  <button></button>
+);
+
+// Evaluates to: { title: string, disabled: boolean }
+type ExtractedBtnProps = ExtractProps<typeof Button>;
+```
+
+_(Note: React provides `React.ComponentProps<typeof Button>` for this!)_
+
+## ⚡ Performance
+
+`infer` is a heavy type-level operator. Deeply nested conditional types with multiple `infer` statements can significantly slow down compilation times and IDE autocomplete responsiveness in massive projects.
+
+## 🧠 Memory
+
+No runtime memory footprint.
+
+## ❌ Common Mistakes
+
+**Using `infer` outside of a Conditional Type**:
+
+```typescript
+// Error: 'infer' declarations are only permitted in the 'extends' clause of a conditional type.
+type MyType<T> = Array<infer U>;
+```
+
+_Fix_: You can ONLY use `infer` immediately to the right of an `extends` keyword inside a ternary `? :` operation.
+
+## ✅ Best Practices
+
+1. Only use `infer` when you cannot achieve the result with standard generics or built-in utility types (`ReturnType`, `Parameters`, `Awaited`).
+2. Always provide a safe fallback (often `never` or the original type `T`) in the false branch of the conditional type.
+
+## 🆚 Comparison
+
+| Concept          | Goal                                             |
+| ---------------- | ------------------------------------------------ |
+| Generics (`<T>`) | Passing a known type _into_ a function/type.     |
+| `infer`          | Extracting an unknown type _out of_ a structure. |
+
+## ❓ Interview Questions
+
+1. **What is `infer` used for?**
+   - _Answer_: `infer` is used inside Conditional Types to declare a temporary type variable. It pattern-matches against a structure (like an Array, Promise, or Function) and extracts the inner type so it can be returned or manipulated.
+2. **How does `ReturnType<T>` work under the hood?**
+   - _Answer_: It uses a conditional type and `infer`. It checks if `T` extends a function signature `(...args: any[]) => infer R`. If it does, it returns `R` (the inferred return type). If not, it returns `any`.
+
+## 💻 Coding Questions
+
+**Write a type that extracts the Return Type of a function.**
+_Solution_:
+
+```typescript
+type MyReturnType<T> = T extends (...args: any[]) => infer ReturnVal
+  ? ReturnVal
+  : never;
+
+const getGreeting = () => "Hello World";
+type GreetType = MyReturnType<typeof getGreeting>; // string
+```
+
+## 🧩 Output-Based Questions
+
+```typescript
+type ExtractString<T> = T extends `prefix_${infer Rest}` ? Rest : never;
+
+type Result = ExtractString<"prefix_hello_world">;
+```
+
+_What is the value of `Result`?_
+_Answer_: `"hello_world"`. `infer` works with Template Literal Types too! It matched the `prefix_` part, and inferred the remaining string into `Rest`.
+
+## 🐞 Debugging Questions
+
+**Why does this infer `unknown`?**
+
+```typescript
+type GetPromiseValue<T> = T extends Promise<infer U> ? U : never;
+type Val = GetPromiseValue<string>;
+```
+
+_Fix_: Because `string` does not extend `Promise<any>`, the condition evaluates to false, hitting the fallback `never`. `infer U` is never reached.
+
+## 📄 Cheat Sheet
+
+- **Location**: ONLY inside `T extends Pattern ? True : False`.
+- **Purpose**: Pattern matching and extracting types.
+- **Example Array**: `T extends Array<infer U> ? U : never`
+- **Example Func**: `T extends () => infer U ? U : never`
+
+## ⚡ 2-Minute Revision
+
+`infer` is the most powerful tool for advanced TypeScript gymnastics. It allows you to unwrap nested types (like Arrays, Promises, and Functions) by telling the compiler to pattern-match the structure and assign the inner piece to a temporary variable. It is the engine behind almost all advanced built-in Utility Types like `Parameters`, `ReturnType`, and `Awaited`.
+
+## 🔗 Related Topics
+
+- [Utility Types](/topic/typescript/utility-types)
+- [Generics](/topic/typescript/generics)

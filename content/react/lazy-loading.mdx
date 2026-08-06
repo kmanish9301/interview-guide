@@ -1,0 +1,253 @@
+---
+title: Lazy Loading
+category: React
+difficulty: Intermediate
+interviewFrequency: High
+experienceLevel: Mid-Level
+estimatedReadTime: 8
+tags: [react, lazy-loading, performance, code-splitting]
+companies:
+  - Amazon
+  - Netflix
+  - Google
+---
+
+# Lazy Loading
+
+## 📖 What is Lazy Loading?
+
+**Lazy Loading** is an optimization technique where you delay the loading of non-critical resources (like components, images, or libraries) at page load time. Instead, these resources are loaded only when they are actually needed. In React, this is primarily achieved using **Code Splitting** via `React.lazy`.
+
+## 🤔 Why do we need Lazy Loading?
+
+By default, Webpack or Vite bundles your entire React application into one massive JavaScript file. If your app has an Admin Dashboard, a User Profile, and a complex charting library, a standard user visiting the homepage is forced to download all of that code, resulting in a slow initial page load. Lazy loading splits the code into smaller chunks, downloading only the chunk needed for the current screen.
+
+## ⚙️ Internal Working
+
+`React.lazy()` takes a function that must call a dynamic `import()`. This must return a Promise which resolves to a module with a `default` export containing a React component.
+
+## 🧠 How React Engine Handles It
+
+When React encounters a lazy-loaded component, it throws a Promise that is caught by the nearest `<Suspense>` boundary. The boundary displays a fallback UI while the browser downloads the JavaScript chunk over the network. Once downloaded, the component is rendered.
+
+## 📝 Syntax
+
+```jsx
+import { lazy, Suspense } from "react";
+
+// The dynamic import() tells the bundler to split this code into a separate file.
+const LazyComponent = lazy(() => import("./LazyComponent"));
+
+function App() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <LazyComponent />
+    </Suspense>
+  );
+}
+```
+
+## 💡 Beginner Example
+
+**Route-Based Code Splitting**:
+The most effective place to introduce lazy loading is at the route level. Users don't need the code for the `/settings` page if they are on the `/home` page.
+
+```jsx
+import { lazy, Suspense } from "react";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+
+const Home = lazy(() => import("./pages/Home"));
+const Settings = lazy(() => import("./pages/Settings"));
+
+function App() {
+  return (
+    <BrowserRouter>
+      {/* A single Suspense boundary handles all route transitions */}
+      <Suspense fallback={<div className="spinner"></div>}>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/settings" element={<Settings />} />
+        </Routes>
+      </Suspense>
+    </BrowserRouter>
+  );
+}
+```
+
+## 🚀 Advanced Example
+
+**Lazy Loading based on User Interaction**:
+You can lazy load heavy components (like a complex interactive modal or a PDF viewer) only when the user actually clicks a button.
+
+```jsx
+import { useState, lazy, Suspense } from "react";
+
+// This 500kb charting library is completely hidden from the initial load!
+const HeavyChart = lazy(() => import("./HeavyChart"));
+
+function Dashboard() {
+  const [showChart, setShowChart] = useState(false);
+
+  return (
+    <div>
+      <h1>Dashboard</h1>
+      <button onClick={() => setShowChart(true)}>View Analytics</button>
+
+      {/* Network request for the JS file only happens after button click */}
+      {showChart && (
+        <Suspense fallback={<p>Loading chart engine...</p>}>
+          <HeavyChart />
+        </Suspense>
+      )}
+    </div>
+  );
+}
+```
+
+## 🏢 Production Example
+
+In Next.js, `React.lazy` is abstracted away. Next.js provides `next/dynamic` which handles both client-side lazy loading and SSR seamlessly.
+
+```jsx
+import dynamic from "next/dynamic";
+
+const DynamicMap = dynamic(() => import("../components/Map"), {
+  loading: () => <p>Loading map...</p>,
+  ssr: false // Useful for libraries that rely on 'window' (like Leaflet/Mapbox)
+});
+```
+
+## ⚛️ React Example
+
+**Named Exports Issue**:
+`React.lazy` currently only supports **default exports**. If the module you want to import uses named exports, you must create an intermediate module that reexports it as the default, or use a workaround.
+
+```jsx
+// Workaround for named exports:
+const LazyButton = lazy(() =>
+  import("./ui-library").then((module) => ({ default: module.Button }))
+);
+```
+
+## ⚡ Performance
+
+Lazy loading dramatically reduces the **Time to Interactive (TTI)** and the initial bundle size. It is the single most effective performance optimization for large Single Page Applications (SPAs).
+
+## 🧠 Memory
+
+By downloading smaller chunks of JavaScript, the browser engine has less code to parse, compile, and store in memory during the initial load, freeing up resources for smoother animations and UI rendering.
+
+## ❌ Common Mistakes
+
+**Putting `React.lazy` inside another component:**
+
+```jsx
+function App() {
+  // BAD: The component is redefined and re-downloaded on EVERY render!
+  const BadLazy = lazy(() => import("./MyComponent"));
+
+  return (
+    <Suspense>
+      <BadLazy />
+    </Suspense>
+  );
+}
+```
+
+_Fix_: Always declare `React.lazy` at the top level of your module, outside of any React components.
+
+## ✅ Best Practices
+
+1. **Route-level splitting**: Always start by lazy loading your routes. It provides the highest ROI for effort.
+2. **Heavy libraries**: Lazy load components that rely on massive third-party libraries (like D3.js, Three.js, or PDF.js).
+3. **Preloading**: If you know a user is about to click a link, you can trigger the `import()` function on hover to eliminate the loading time.
+
+## 🆚 Comparison
+
+| Technique           | What it does                        | When to use                   |
+| ------------------- | ----------------------------------- | ----------------------------- |
+| **Standard Import** | Bundles everything into one file    | Core UI (Navbars, Layouts)    |
+| **React.lazy**      | Downloads JS over network on demand | Routes, Modals, Heavy Widgets |
+
+## ❓ Interview Questions
+
+1. **How do you implement Code Splitting in React?**
+   - _Answer_: By using dynamic `import()` wrapped inside `React.lazy()`, and rendering that component inside a `<Suspense>` boundary to handle the loading state while the JS chunk is downloaded.
+2. **Why can't you use `React.lazy` inside a component?**
+   - _Answer_: Because it creates a new component type on every render. React will unmount the old component and remount the new one, losing all state and causing severe performance issues.
+
+## 🔄 Follow-up Questions
+
+**"What happens if the network fails while downloading the lazy-loaded chunk?"**
+
+- _Answer_: The Promise thrown by the dynamic import will reject. To handle this, you must wrap the `<Suspense>` boundary in an `<ErrorBoundary>` component to catch the network error and display a fallback UI (like "Failed to load module").
+
+## 💻 Coding Questions
+
+**Implement a hover-preload mechanism.**
+_Solution_:
+
+```jsx
+const modulePromise = null;
+const LazyComponent = lazy(() => {
+  if (!modulePromise) modulePromise = import("./MyComponent");
+  return modulePromise;
+});
+
+function App() {
+  const [show, setShow] = useState(false);
+
+  const handleHover = () => {
+    // Pre-trigger the network request!
+    if (!modulePromise) modulePromise = import("./MyComponent");
+  };
+
+  return (
+    <div>
+      <button onMouseEnter={handleHover} onClick={() => setShow(true)}>
+        Show Component
+      </button>
+      {show && (
+        <Suspense>
+          <LazyComponent />
+        </Suspense>
+      )}
+    </div>
+  );
+}
+```
+
+## 🧩 Output-Based Questions
+
+If a user navigates to a lazy-loaded route while offline, what does the UI show?
+_Answer_: The app crashes unless there is an Error Boundary above the Suspense component. The dynamic import fails, the Promise rejects, and the unhandled error bubbles up.
+
+## 🐞 Debugging Questions
+
+**Why is my lazy component throwing an error about a missing default export?**
+
+```jsx
+// components/Heading.js
+export const Heading = () => <h1>Hello</h1>;
+
+// App.js
+const LazyHeading = lazy(() => import("./components/Heading"));
+```
+
+_Fix_: `React.lazy` expects the module to have a `default` export. Either change `export const` to `export default`, or map the named export manually in the import promise.
+
+## 📄 Cheat Sheet
+
+- **Import**: `import { lazy, Suspense } from 'react';`
+- **Definition**: `const Cmp = lazy(() => import('./Cmp'));` (Must be outside other components).
+- **Usage**: Wrap in `<Suspense fallback={<Loader/>}>`.
+- **Primary Goal**: Reduce initial bundle size (Code Splitting).
+
+## ⚡ 2-Minute Revision
+
+Lazy loading and Code Splitting save your users from downloading code they don't need right away. Using `React.lazy` and `Suspense`, you can effortlessly split your app into smaller chunks, downloading complex routes or heavy components only when the user actually navigates to them, drastically improving performance.
+
+## 🔗 Related Topics
+
+- [Suspense](/topic/react/suspense)
+- [Error Boundary](/topic/react/error-boundary)

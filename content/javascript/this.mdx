@@ -1,0 +1,236 @@
+---
+title: this Keyword
+category: JavaScript
+difficulty: Advanced
+interviewFrequency: Very High
+experienceLevel: Mid-Level
+estimatedReadTime: 12
+tags: [javascript, this, context, core]
+companies:
+  - Amazon
+  - Adobe
+  - Microsoft
+  - Meta
+---
+
+# this Keyword
+
+## 📖 What is `this`?
+
+In JavaScript, the `this` keyword refers to an object. Which object it refers to depends strictly on **how** a function is called (its execution context), not where it was defined. It behaves differently in strict mode and non-strict mode.
+
+## 🤔 Why do we need `this`?
+
+The `this` keyword allows us to reuse functions across different contexts. It lets methods access and manipulate the properties of the object they belong to, enabling Object-Oriented Programming (OOP) patterns in JavaScript.
+
+## ⚙️ Internal Working
+
+When a function is executed, an Execution Context is created. Part of this context is the `this` binding. The JavaScript engine determines the value of `this` dynamically at runtime based on the call site (where the function is invoked).
+
+## 🧠 How JavaScript Engine Handles It
+
+There are 4 main rules the engine uses to determine `this`:
+
+1. **Implicit Binding**: If a function is called as a method on an object (`obj.method()`), `this` is `obj`.
+2. **Explicit Binding**: Using `.call()`, `.apply()`, or `.bind()`, you force `this` to be a specific object.
+3. **new Binding**: When a function is called with the `new` keyword, `this` refers to the newly created instance object.
+4. **Default Binding**: If none of the above apply, `this` defaults to the global object (`window` in browsers), or `undefined` in Strict Mode.
+
+## 📝 Syntax
+
+```javascript
+const person = {
+  name: "Alice",
+  greet: function () {
+    console.log(`Hello, my name is ${this.name}`);
+  }
+};
+
+person.greet(); // 'this' points to 'person'
+```
+
+## 💡 Beginner Example
+
+```javascript
+function showThis() {
+  console.log(this);
+}
+
+showThis(); // In a browser (non-strict), logs the 'window' object.
+```
+
+## 🚀 Advanced Example
+
+**Arrow Functions**: Arrow functions do NOT have their own `this` binding. They inherit `this` from their enclosing lexical scope.
+
+```javascript
+const obj = {
+  name: "John",
+  regularFunc: function () {
+    console.log(this.name); // "John"
+
+    const arrowFunc = () => {
+      console.log(this.name); // "John" (lexically inherited)
+    };
+    arrowFunc();
+  },
+  arrowMethod: () => {
+    // Inherits 'this' from the global scope, not 'obj'
+    console.log(this.name); // undefined
+  }
+};
+
+obj.regularFunc();
+obj.arrowMethod();
+```
+
+## 🏢 Production Example
+
+Using `.bind()` to fix lost context in React class components (or standard DOM event listeners):
+
+```javascript
+class Button {
+  constructor() {
+    this.text = "Click Me";
+    // Fix the context so 'this' inside handleClick points to the instance
+    this.handleClick = this.handleClick.bind(this);
+  }
+
+  handleClick() {
+    console.log(this.text);
+  }
+}
+
+const btn = new Button();
+const detachedClick = btn.handleClick;
+detachedClick(); // Would fail without .bind(this)
+```
+
+## ⚛️ React Example
+
+In modern React (using Functional Components), we rarely use `this` because Hooks maintain state lexically. However, if you maintain legacy Class Components, `this.state` and `this.setState` are ubiquitous, and missing `.bind(this)` on event handlers is the #1 cause of bugs.
+
+## ⚡ Performance
+
+Using `.bind()` creates a brand new function in memory. Doing this repeatedly inside a `render` function (or a loop) can cause performance issues because it triggers unnecessary garbage collection.
+
+## 🧠 Memory
+
+Arrow functions created inside class constructors (or methods) create a new copy of the function for every single instance, consuming more memory than putting a standard function on the prototype.
+
+## ❌ Common Mistakes
+
+**Losing `this` in callbacks:**
+
+```javascript
+const user = {
+  name: "Bob",
+  sayHi() {
+    console.log(this.name);
+  }
+};
+
+// setTimeout uses default binding, so 'this' becomes window/undefined
+setTimeout(user.sayHi, 1000); // Logs: undefined
+```
+
+_Fix_: `setTimeout(() => user.sayHi(), 1000)` or `setTimeout(user.sayHi.bind(user), 1000)`
+
+## ✅ Best Practices
+
+1. Use **Arrow functions** for callbacks (like `map`, `filter`, `setTimeout`) to preserve lexical context.
+2. Use **Regular functions** for object methods so they can properly access the object via `this`.
+
+## 🆚 Comparison
+
+| Binding Rule | Triggered By        | Example          |
+| ------------ | ------------------- | ---------------- |
+| **Implicit** | Object dot notation | `obj.func()`     |
+| **Explicit** | call, apply, bind   | `func.call(obj)` |
+| **new**      | `new` keyword       | `new Func()`     |
+| **Default**  | Direct invocation   | `func()`         |
+
+## ❓ Interview Questions
+
+1. **Does `this` inside an arrow function point to the object that called it?**
+   - _Answer_: No. Arrow functions do not bind their own `this`. They look up the scope chain to find `this` in the enclosing lexical context.
+2. **What is the difference between `.call()` and `.apply()`?**
+   - _Answer_: Both explicitly bind `this`. `.call()` takes comma-separated arguments, while `.apply()` takes an array of arguments.
+
+## 🔄 Follow-up Questions
+
+**"Can you change the `this` context of an arrow function using `.bind()`?"**
+
+- _Answer_: No. An arrow function's `this` is lexically bound permanently. `.bind()`, `.call()`, and `.apply()` will have no effect on an arrow function.
+
+## 💻 Coding Questions
+
+**Fix the code so it works correctly:**
+
+```javascript
+const person = {
+  firstName: "Jane",
+  printName: function () {
+    setTimeout(function () {
+      console.log(this.firstName);
+    }, 100);
+  }
+};
+person.printName(); // prints undefined
+```
+
+_Solution_:
+Change the inner function to an arrow function: `setTimeout(() => { console.log(this.firstName); }, 100);`
+
+## 🧩 Output-Based Questions
+
+```javascript
+const obj = {
+  name: "Batman",
+  getName: function () {
+    return this.name;
+  }
+};
+
+const getName = obj.getName;
+console.log(getName());
+console.log(obj.getName());
+```
+
+_Output_:
+`undefined` (or error in strict mode)
+`Batman`
+
+## 🐞 Debugging Questions
+
+**Why is `this` undefined in this React component?**
+
+```javascript
+class MyComponent extends React.Component {
+  handleClick() {
+    console.log(this.props);
+  }
+  render() {
+    return <button onClick={this.handleClick}>Click</button>;
+  }
+}
+```
+
+_Fix_: Because the method is passed as a reference to `onClick`, it loses its implicit binding. Fix by binding it in the constructor: `this.handleClick = this.handleClick.bind(this);` or by using an arrow function property: `handleClick = () => { ... }`.
+
+## 📄 Cheat Sheet
+
+- **Method Call**: `this` = object before the dot.
+- **Standalone Call**: `this` = `window` / `global` (or `undefined` in strict).
+- **new Call**: `this` = newly created object.
+- **Explicit Call**: `this` = argument passed to `call/apply/bind`.
+- **Arrow Function**: `this` = lexical parent's `this`.
+
+## ⚡ 2-Minute Revision
+
+`this` is arguably the most confusing part of JavaScript. Just remember: it's all about **how** the function is called. Check the call site. Is there a dot? Is there a `new`? Is it an arrow function? Answering these questions tells you exactly what `this` is.
+
+## 🔗 Related Topics
+
+- [Scope](/topic/javascript/scope)
+- [Prototype](/topic/javascript/prototype)

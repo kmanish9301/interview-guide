@@ -1,0 +1,274 @@
+---
+title: useRef
+category: React
+difficulty: Beginner
+interviewFrequency: High
+experienceLevel: Entry-Level
+estimatedReadTime: 8
+tags: [react, hooks, dom, references]
+companies:
+  - Google
+  - Amazon
+  - Apple
+---
+
+# useRef
+
+## 📖 What is useRef?
+
+`useRef` is a React Hook that lets you reference a value that’s not needed for rendering. It returns a mutable object with a single property: `.current`. Unlike state, modifying the `.current` property does **not** trigger a re-render of the component.
+
+## 🤔 Why do we need useRef?
+
+There are two main reasons we need `useRef`:
+
+1. **Accessing DOM Elements**: Sometimes you need to interact with a DOM element directly (e.g., focusing an input, scrolling to a div, or measuring an element's size).
+2. **Storing Mutable Values**: You need a place to store data that changes over time (like a timer ID or previous state), but you _don't_ want the component to re-render when that data changes.
+
+## ⚙️ Internal Working
+
+`useRef` allocates a plain JavaScript object `{ current: initialValue }`. React guarantees that it will give you the exact same object reference on every render for the lifetime of the component.
+
+## 🧠 How React Engine Handles It
+
+When you mutate `ref.current = newValue`, React does absolutely nothing in response. It doesn't schedule a render, it doesn't run reconciliation. It acts as an "escape hatch" out of the standard React data flow.
+
+## 📝 Syntax
+
+```jsx
+const myRef = useRef(initialValue);
+
+// Accessing the value
+console.log(myRef.current);
+
+// Mutating the value
+myRef.current = "new value";
+```
+
+## 💡 Beginner Example
+
+**Focusing an input field on mount:**
+
+```jsx
+import { useRef, useEffect } from "react";
+
+function FocusInput() {
+  const inputRef = useRef(null);
+
+  useEffect(() => {
+    // Access the raw DOM node via .current and call standard JS focus()
+    inputRef.current.focus();
+  }, []);
+
+  return <input ref={inputRef} placeholder="I focus automatically!" />;
+}
+```
+
+## 🚀 Advanced Example
+
+**Tracking Previous State:**
+React doesn't provide a built-in hook to get the previous state, but we can easily build one using `useRef` because refs survive renders.
+
+```jsx
+import { useState, useEffect, useRef } from "react";
+
+function Counter() {
+  const [count, setCount] = useState(0);
+  const prevCountRef = useRef(0);
+
+  useEffect(() => {
+    // This runs AFTER the render, storing the current count for the NEXT render.
+    prevCountRef.current = count;
+  }, [count]);
+
+  return (
+    <div>
+      <p>
+        Now: {count}, before: {prevCountRef.current}
+      </p>
+      <button onClick={() => setCount(count + 1)}>Increment</button>
+    </div>
+  );
+}
+```
+
+## 🏢 Production Example
+
+**Storing Timer IDs to prevent memory leaks:**
+
+```jsx
+function Stopwatch() {
+  const [seconds, setSeconds] = useState(0);
+  const timerRef = useRef(null);
+
+  const start = () => {
+    if (timerRef.current !== null) return;
+
+    // We store the interval ID in the ref.
+    // It doesn't trigger a re-render, which is perfect.
+    timerRef.current = setInterval(() => {
+      setSeconds((s) => s + 1);
+    }, 1000);
+  };
+
+  const stop = () => {
+    clearInterval(timerRef.current);
+    timerRef.current = null;
+  };
+
+  return (
+    <div>
+      {seconds}s<button onClick={start}>Start</button>
+      <button onClick={stop}>Stop</button>
+    </div>
+  );
+}
+```
+
+## ⚛️ React Example
+
+**`forwardRef`**:
+By default, you cannot pass a `ref` down to a custom functional component. React will ignore it. You must wrap the child component in `forwardRef` to expose its internal DOM nodes to the parent.
+
+```jsx
+import { forwardRef, useRef } from "react";
+
+// Wrap child in forwardRef
+const CustomInput = forwardRef((props, ref) => {
+  return <input {...props} ref={ref} className="fancy-input" />;
+});
+
+function Parent() {
+  const inputRef = useRef(null);
+
+  return (
+    <div>
+      <CustomInput ref={inputRef} />
+      <button onClick={() => inputRef.current.focus()}>Focus Child</button>
+    </div>
+  );
+}
+```
+
+## ⚡ Performance
+
+`useRef` is incredibly fast. Because updating it does not trigger a re-render, it is the perfect place to store high-frequency data, such as `requestAnimationFrame` IDs, mouse coordinates, or scroll positions, without destroying the app's framerate.
+
+## 🧠 Memory
+
+Data stored in `useRef.current` stays in memory for the entire lifespan of the component. If you store massive arrays or detached DOM nodes in a ref, you could create a memory leak. Clear it out (`ref.current = null`) when unmounting if holding heavy data.
+
+## ❌ Common Mistakes
+
+**Using Refs for Derived Data or UI State:**
+
+```jsx
+// BAD: Mutating a ref and expecting the UI to update.
+const countRef = useRef(0);
+
+return (
+  <button onClick={() => countRef.current++}>
+    Clicked {countRef.current} times {/* UI will NOT update! */}
+  </button>
+);
+```
+
+_Fix_: If it affects the UI, it must be `useState`.
+
+## ✅ Best Practices
+
+1. **Don't overuse it**: Don't use refs to manually update DOM properties (`ref.current.style.color = 'red'`) when standard React state can do it declaratively.
+2. **Treat `.current` as mutable**: Unlike state, you can and should mutate `.current` directly.
+3. Don't read or write `ref.current` during the _render phase_ (inside the main body of the function). Only do it in event handlers or `useEffect`.
+
+## 🆚 Comparison
+
+| Feature         | `useState`             | `useRef`                       |
+| --------------- | ---------------------- | ------------------------------ |
+| **Updates**     | Triggers Re-render     | No Re-render                   |
+| **Mutability**  | Immutable (use setter) | Mutable (assign to `.current`) |
+| **Primary Use** | UI Data                | DOM Nodes, Background Timers   |
+
+## ❓ Interview Questions
+
+1. **What is the difference between `useState` and `useRef`?**
+   - _Answer_: Changing a state variable triggers a component re-render. Changing a ref's `.current` property does not. Refs are for escaping the render cycle.
+2. **How do you access a DOM element in React?**
+   - _Answer_: Create a ref using `useRef()`, attach it to the element's `ref` prop (`<div ref={myRef}>`), and then access the native DOM node via `myRef.current`.
+
+## 🔄 Follow-up Questions
+
+**"Can you pass a ref to a child component as a normal prop, like `innerRef`?"**
+
+- _Answer_: Yes, you can pass a ref as a standard prop (e.g., `<Child myRef={ref} />`). However, standard convention uses the `ref` prop combined with `forwardRef` to keep the API consistent with native HTML elements.
+
+## 💻 Coding Questions
+
+**Fix the bug in this uncontrolled component:**
+
+```jsx
+function Form() {
+  const inputRef = useRef();
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log(inputRef.value);
+  };
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <input ref={inputRef} />
+    </form>
+  );
+}
+```
+
+_Solution_: A ref always returns an object with a `.current` property. The DOM node is inside `.current`. Change it to `inputRef.current.value`.
+
+## 🧩 Output-Based Questions
+
+```jsx
+function App() {
+  const countRef = useRef(0);
+  const [render, setRender] = useState(false);
+
+  countRef.current++;
+
+  return <div>{countRef.current}</div>;
+}
+```
+
+_What happens if you click a button that triggers `setRender(!render)`?_
+_Answer_: The UI will display `1`, then `2`, then `3`...
+Because `countRef.current++` is placed directly in the render body, it mutates on every render (this is an anti-pattern, but it works).
+
+## 🐞 Debugging Questions
+
+**Why is `ref.current` null?**
+
+```jsx
+function App() {
+  const divRef = useRef(null);
+  console.log(divRef.current); // Output: null
+  return <div ref={divRef}>Hello</div>;
+}
+```
+
+_Fix_: During the initial render, the DOM hasn't been painted yet, so the ref is empty. The ref is only populated _after_ the render phase completes. If you want to use the DOM node, do it inside a `useEffect` or an event handler.
+
+## 📄 Cheat Sheet
+
+- **Import**: `import { useRef } from 'react';`
+- **Hook**: `const val = useRef(null);`
+- **Access**: `val.current`
+- **Rules**: Mutating it does _not_ trigger a re-render.
+- **Use Case**: DOM manipulation, timers, previous state.
+
+## ⚡ 2-Minute Revision
+
+`useRef` is React's "escape hatch". It allows you to hold onto a mutable value that survives re-renders without causing re-renders when it changes. We primarily use it to grab native DOM elements or store background data like timer intervals that the UI doesn't need to strictly monitor.
+
+## 🔗 Related Topics
+
+- [useState](/topic/react/use-state)
+- [useEffect](/topic/react/use-effect)

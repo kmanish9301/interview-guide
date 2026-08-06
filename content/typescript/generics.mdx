@@ -1,0 +1,245 @@
+---
+title: Generics
+category: TypeScript
+difficulty: Intermediate
+interviewFrequency: Very High
+experienceLevel: Mid-Level
+estimatedReadTime: 10
+tags: [typescript, generics, types, advanced]
+companies:
+  - Google
+  - Microsoft
+  - Netflix
+---
+
+# Generics
+
+## 📖 What are Generics?
+
+**Generics** allow you to write reusable, flexible code that works with a variety of types, rather than a single specific type. They act like "variables for types". Instead of passing a value (like a string or a number) to a function, you pass a _Type_ to a function, class, or interface.
+
+## 🤔 Why do we need Generics?
+
+Without Generics, if you wanted a function to accept any type of data, you would have to use the dreaded `any` type. However, using `any` completely destroys TypeScript's type checking. Generics allow you to accept any type _while preserving the type information_.
+
+## ⚙️ Internal Working
+
+Generics use angle brackets `<T>`. The letter `T` (which stands for Type) is conventionally used as the placeholder, but you can use any valid identifier name (like `<Item>`, `<ResponseData>`, etc.).
+
+## 🧠 How TypeScript Engine Handles It
+
+When you call a generic function, the TypeScript compiler looks at the data you passed in, infers its type, and implicitly replaces the `<T>` placeholder with that actual type throughout the entire function signature.
+
+## 📝 Syntax
+
+```typescript
+// Define a generic function
+function identity<T>(arg: T): T {
+  return arg;
+}
+
+// Explicitly providing the type
+const result1 = identity<string>("Hello");
+
+// Letting TypeScript infer the type automatically
+const result2 = identity(42); // TS knows this is a number!
+```
+
+## 💡 Beginner Example
+
+**Arrays are Generic:**
+You use generics all the time in TypeScript without realizing it. The built-in `Array` type is generic!
+
+```typescript
+// These two are completely equivalent:
+const numbers: number[] = [1, 2, 3];
+const moreNumbers: Array<number> = [1, 2, 3]; // Array is a Generic!
+```
+
+## 🚀 Advanced Example
+
+**Generic Constraints (`extends`)**:
+Sometimes you don't want a generic to accept _literally anything_. You want it to accept any type, _as long as_ that type has certain properties. You can constrain generics using the `extends` keyword.
+
+```typescript
+interface HasLength {
+  length: number;
+}
+
+// T can be anything, AS LONG AS it has a 'length' property
+function logLength<T extends HasLength>(arg: T): void {
+  console.log(arg.length);
+}
+
+logLength("Hello"); // Valid (Strings have .length)
+logLength([1, 2, 3]); // Valid (Arrays have .length)
+logLength(42); // Error! Numbers do not have a .length property.
+```
+
+## 🏢 Production Example
+
+**Generic API Responses**:
+A classic enterprise use-case is defining a standard wrapper for API responses, where the payload data structure changes depending on the endpoint, but the metadata (`status`, `message`) remains the same.
+
+```typescript
+interface ApiResponse<DataT> {
+  status: number;
+  message: string;
+  data: DataT; // The type of data changes based on the generic passed!
+}
+
+interface User {
+  name: string;
+}
+interface Product {
+  price: number;
+}
+
+// Using the Generic
+const userResponse: ApiResponse<User> = {
+  status: 200,
+  message: "Success",
+  data: { name: "Alice" }
+};
+
+const productResponse: ApiResponse<Product> = {
+  status: 200,
+  message: "Success",
+  data: { price: 99 }
+};
+```
+
+## ⚛️ React Example
+
+**`useState` is Generic**:
+When you initialize state in React with a null value, TypeScript has no idea what it will eventually become, so it assigns `never` or `any`. You must explicitly provide a generic type.
+
+```tsx
+import { useState } from "react";
+
+interface User {
+  id: string;
+  name: string;
+}
+
+function Profile() {
+  // We tell useState: "This will eventually hold a User object, or null"
+  const [user, setUser] = useState<User | null>(null);
+
+  // Later...
+  setUser({ id: "1", name: "Alice" });
+}
+```
+
+## ⚡ Performance
+
+Generics exist purely at compile-time. They are completely erased when compiled to JavaScript, resulting in zero runtime performance penalty.
+
+## 🧠 Memory
+
+No runtime memory impact. However, heavily nested, complex generic constraints can increase compile times in massive monorepos.
+
+## ❌ Common Mistakes
+
+**Using `any` instead of Generics**:
+
+```typescript
+// BAD: We lose type safety. It returns 'any'.
+function badReturn(item: any): any {
+  return item;
+}
+
+// GOOD: Type safety is preserved. If we pass a string, it returns a string.
+function goodReturn<T>(item: T): T {
+  return item;
+}
+```
+
+## ✅ Best Practices
+
+1. **Let TS Infer**: You rarely need to write `func<string>("hello")`. Just write `func("hello")` and let TypeScript infer `<T>`.
+2. **Use Descriptive Names**: If you have multiple generics, stop using `T`, `U`, `V`. Use descriptive names like `<Key, Value>` or `<Request, Response>`.
+3. **Constrain Early**: Use `extends` to constrain generics so you get better autocomplete inside the generic function.
+
+## 🆚 Comparison
+
+| Feature              | `any`                     | Generics (`<T>`)               |
+| -------------------- | ------------------------- | ------------------------------ |
+| **Type Safety**      | Destroyed                 | Preserved                      |
+| **IDE Autocomplete** | None                      | Full support                   |
+| **Use Case**         | Quick prototyping / Hacks | Production-grade reusable code |
+
+## ❓ Interview Questions
+
+1. **What is the difference between `any` and a Generic `<T>`?**
+   - _Answer_: `any` disables type checking completely. If a function accepts `any` and returns `any`, the compiler loses all track of what the variable actually is. A Generic captures the type of the argument provided, preserves it, and enforces it on the return type or other arguments.
+2. **How do you restrict what types a Generic can accept?**
+   - _Answer_: By using Generic Constraints with the `extends` keyword (e.g., `<T extends object>`).
+
+## 🔄 Follow-up Questions
+
+**"Can you have default types for Generics?"**
+
+- _Answer_: Yes! Just like default parameters in functions, you can provide a default type using `=`: `<T = string>`. If the user doesn't provide a type, it falls back to string.
+
+## 💻 Coding Questions
+
+**Write a generic function that merges two objects.**
+_Solution_:
+
+```typescript
+// T and U must be objects
+function mergeObjects<T extends object, U extends object>(
+  obj1: T,
+  obj2: U
+): T & U {
+  return { ...obj1, ...obj2 };
+}
+
+const merged = mergeObjects({ name: "Alice" }, { age: 25 });
+// 'merged' is heavily typed as { name: string } & { age: number }
+```
+
+## 🧩 Output-Based Questions
+
+```typescript
+function getBox<T>(item: T) {
+  return { value: item };
+}
+
+const box = getBox("Book");
+box.value = 100; // Does this compile?
+```
+
+_Answer_: No, it throws a compile error. TypeScript inferred `T` as `string` from the argument `"Book"`. Therefore, `box.value` is strictly typed as a `string`, and you cannot assign the number `100` to it.
+
+## 🐞 Debugging Questions
+
+**Why is this JSX throwing an arrow function parsing error?**
+
+```tsx
+// Inside a .tsx file
+const identity = <T>(arg: T): T => {
+  return arg;
+};
+```
+
+_Fix_: In `.tsx` files, the TS compiler confuses the `<T>` syntax with an HTML tag (like `<div>`). To fix it, add a comma to explicitly tell TS it's a generic, or use `extends unknown`:
+`const identity = <T,>(arg: T): T => ...`
+
+## 📄 Cheat Sheet
+
+- **Function**: `function name<T>(arg: T): T`
+- **Interface**: `interface Box<T> { val: T }`
+- **Constraint**: `<T extends string>`
+- **Default**: `<T = number>`
+- **Arrow in TSX**: `<T,>(arg: T) => ...`
+
+## ⚡ 2-Minute Revision
+
+Generics are type variables. Instead of locking a function or interface to a specific type (like `number`), you use `<T>` so it can accept _any_ type while retaining strict type safety. They are the backbone of reusable utilities, ensuring that what goes into a function is correctly typed when it comes back out.
+
+## 🔗 Related Topics
+
+- [Interfaces](/topic/typescript/interfaces)
+- [Utility Types](/topic/typescript/utility-types)

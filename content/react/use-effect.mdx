@@ -1,0 +1,241 @@
+---
+title: useEffect
+category: React
+difficulty: Intermediate
+interviewFrequency: Very High
+experienceLevel: Mid-Level
+estimatedReadTime: 12
+tags: [react, hooks, lifecycle, side-effects]
+companies:
+  - Amazon
+  - Adobe
+  - Google
+  - Netflix
+---
+
+# useEffect
+
+## 📖 What is useEffect?
+
+`useEffect` is a React Hook that lets you synchronize a component with an external system. It is used to handle **side effects** in functional components, such as fetching data from an API, manually updating the DOM, setting up subscriptions, or working with timers.
+
+## 🤔 Why do we need useEffect?
+
+A React component's primary job is to take props and state, and return JSX (the UI). This render phase must be pure (no side effects). If you fetch data or mutate the DOM directly inside the render body, you will cause infinite loops and bugs. `useEffect` allows us to safely execute these impure side effects _after_ React has updated the DOM.
+
+## ⚙️ Internal Working
+
+`useEffect` takes two arguments:
+
+1. A **setup function** containing the side effect logic (which can optionally return a cleanup function).
+2. An optional **dependency array** `[deps]`.
+
+React runs the setup function after the initial render. On subsequent renders, it compares the values in the dependency array with their previous values. If any value has changed, it runs the cleanup function (if provided) from the previous render, and then runs the setup function again.
+
+## 🧠 How React Engine Handles It
+
+Effects run asynchronously after the browser has painted the screen. This ensures that heavy side effects don't block the UI from updating, providing a smooth user experience. (If you _must_ block the paint, you use `useLayoutEffect` instead).
+
+## 📝 Syntax
+
+```jsx
+useEffect(() => {
+  // 1. Setup code (Side effect)
+  const timer = setInterval(() => console.log("Tick"), 1000);
+
+  // 2. Cleanup function (Optional)
+  return () => {
+    clearInterval(timer);
+  };
+}, []); // 3. Dependency array
+```
+
+## 💡 Beginner Example
+
+Fetching data on component mount:
+
+```jsx
+import { useState, useEffect } from "react";
+
+function UserProfile({ userId }) {
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    // This runs when the component mounts, AND whenever 'userId' changes.
+    fetch(`/api/users/${userId}`)
+      .then((res) => res.json())
+      .then((data) => setUser(data));
+  }, [userId]); // Dependency array
+
+  if (!user) return <p>Loading...</p>;
+  return <h1>{user.name}</h1>;
+}
+```
+
+## 🚀 Advanced Example
+
+**Race Conditions in Data Fetching**:
+When a dependency changes rapidly, the API response of an older request might arrive _after_ a newer request, overwriting the correct state. You must handle this in the cleanup function.
+
+```jsx
+useEffect(() => {
+  let isCurrent = true; // Flag to track if the request is still relevant
+
+  fetchData(query).then((result) => {
+    if (isCurrent) {
+      setData(result); // Only set state if the component/query hasn't changed
+    }
+  });
+
+  return () => {
+    // Cleanup runs when 'query' changes or component unmounts
+    isCurrent = false;
+  };
+}, [query]);
+```
+
+## 🏢 Production Example
+
+**Subscribing to a WebSocket / Event Listener**:
+
+```jsx
+useEffect(() => {
+  const connection = createConnection(serverUrl, roomId);
+  connection.connect();
+
+  connection.on("message", handleNewMessage);
+
+  // CRITICAL: Always clean up external subscriptions
+  return () => {
+    connection.disconnect();
+  };
+}, [serverUrl, roomId]);
+```
+
+## ⚛️ React Example
+
+**The 3 rules of the Dependency Array:**
+
+1. **No array**: Runs after _every single render_.
+2. **Empty array `[]`**: Runs _only once_ (on mount).
+3. **Array with values `[a, b]`**: Runs on mount, and whenever `a` or `b` changes.
+
+## ⚡ Performance
+
+If you omit the dependency array, your effect runs on every re-render, which can lead to catastrophic infinite loops if you update state inside that effect.
+Furthermore, putting objects or arrays directly into the dependency array without memoizing them will cause the effect to fire on every render because their memory reference changes (`[] !== []`).
+
+## 🧠 Memory
+
+Forgetting to return a cleanup function for timers (`setInterval`), event listeners (`window.addEventListener`), or subscriptions causes massive memory leaks. The component might unmount, but the event listener will remain active in the background forever.
+
+## ❌ Common Mistakes
+
+**The Infinite Loop:**
+
+```jsx
+function BadComponent() {
+  const [data, setData] = useState([]);
+
+  // NO DEPENDENCY ARRAY!
+  useEffect(() => {
+    fetch("/api/data")
+      .then((res) => res.json())
+      .then((data) => setData(data)); // Triggers re-render -> triggers effect -> triggers re-render...
+  });
+}
+```
+
+## ✅ Best Practices
+
+1. **Include ALL reactive values** (props, state, and variables derived from them) used inside the effect in the dependency array.
+2. If you don't need `useEffect`, don't use it. (e.g., Filtering a list doesn't require an effect, just calculate it during render).
+3. Always clean up event listeners and timers.
+
+## 🆚 Comparison
+
+| React Lifecycle (Classes) | `useEffect` equivalent          |
+| ------------------------- | ------------------------------- |
+| `componentDidMount`       | `useEffect(fn, [])`             |
+| `componentDidUpdate`      | `useEffect(fn, [deps])`         |
+| `componentWillUnmount`    | `return () => {}` inside effect |
+
+## ❓ Interview Questions
+
+1. **What happens if you leave out the dependency array?**
+   - _Answer_: The effect will run after the initial render and after _every single subsequent re-render_ of the component.
+2. **What is the difference between `useEffect` and `useLayoutEffect`?**
+   - _Answer_: `useEffect` is asynchronous and runs _after_ the browser paints. `useLayoutEffect` is synchronous and blocks the paint until it finishes. Use it only when measuring DOM elements to prevent visual flickering.
+
+## 🔄 Follow-up Questions
+
+**"In React 18 Strict Mode, why does `useEffect` run twice on mount?"**
+
+- _Answer_: React intentionally mounts, unmounts, and remounts components in development mode to help you catch bugs. It forces you to write proper cleanup functions. If your effect breaks because it ran twice, your code is buggy.
+
+## 💻 Coding Questions
+
+**How do you fetch data safely using `async/await` inside `useEffect`?**
+_Solution_: You cannot make the `useEffect` callback itself async. You must define an async function _inside_ the effect and call it.
+
+```jsx
+useEffect(() => {
+  const fetchMyData = async () => {
+    const res = await fetch("/api/data");
+    const data = await res.json();
+    setData(data);
+  };
+
+  fetchMyData();
+}, []);
+```
+
+## 🧩 Output-Based Questions
+
+```jsx
+function Timer() {
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    setInterval(() => {
+      setCount(count + 1);
+    }, 1000);
+  }, []);
+
+  return <div>{count}</div>;
+}
+```
+
+_What happens to the UI?_
+_Answer_: It increments to `1` and stops. Because the dependency array is empty `[]`, the closure captures the initial state `count = 0` forever. `setCount(0 + 1)` runs repeatedly, always setting it to `1`. (Fix: use `setCount(prev => prev + 1)`).
+
+## 🐞 Debugging Questions
+
+**Why does this effect run on every render?**
+
+```jsx
+const options = { method: "GET" }; // Created fresh on every render
+
+useEffect(() => {
+  fetch("/api", options);
+}, [options]);
+```
+
+_Fix_: Because `options` is an object declared inside the component, its memory address changes on every render. Move `options` outside the component, or wrap it in `useMemo`.
+
+## 📄 Cheat Sheet
+
+- **Setup**: The logic you want to run.
+- **Cleanup**: Runs before the effect re-runs, and on unmount.
+- **`[]`**: Run once.
+- **`[x]`**: Run when `x` changes.
+- **No array**: Run on every render.
+
+## ⚡ 2-Minute Revision
+
+`useEffect` is how React components step outside their pure rendering bubble to interact with the real world (APIs, DOM, Timers). It runs after the render. The dependency array controls _when_ it runs, and the return function dictates how to clean up the mess before it runs again or unmounts.
+
+## 🔗 Related Topics
+
+- [useState](/topic/react/usestate)
+- [useMemo](/topic/react/usememo)
