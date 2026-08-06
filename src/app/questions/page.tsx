@@ -16,6 +16,7 @@ import {
 type Question = {
   q: string;
   a: string;
+  deepDive?: string;
   category: string;
   topicTitle: string;
   permalink: string;
@@ -94,7 +95,7 @@ export default function QuestionsPage() {
                       <SearchIcon className="w-4 h-4 mr-2 text-primary" />
                       Interviewer Deep Dive
                     </h4>
-                    {item.deepDive.split("\n").map((line, i) => {
+                    {item.deepDive.split("\n").map((line: string, i: number) => {
                       const trimmed = line.trim();
                       if (!trimmed) return null;
                       if (
