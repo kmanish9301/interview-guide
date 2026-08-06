@@ -1,6 +1,10 @@
 import Link from "next/link";
-import { Search } from "@/components/search";
+import dynamic from "next/dynamic";
 import { ModeToggle } from "@/components/mode-toggle";
+
+const Search = dynamic(() => import("@/components/search").then((mod) => mod.Search), { 
+  loading: () => <div className="h-9 w-9 md:w-64 bg-muted animate-pulse rounded-md border border-input" />
+});
 
 export function Header() {
   return (

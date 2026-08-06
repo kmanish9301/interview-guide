@@ -1,62 +1,48 @@
-"use client";
-
-import { useState } from "react";
+import { Suspense } from "react";
 import { topics } from "#velite";
-import { TopicCard } from "@/components/topic-card";
-import { Button } from "@/components/ui/button";
+import { TopicsList, LightweightTopic } from "@/components/topics-list";
+import { Skeleton } from "@/components/ui/skeleton";
 
-export default function TopicsPage() {
-  const [activeCategory, setActiveCategory] = useState("All");
-
-  // Extract unique categories from topics
-  const categories = [
-    "All",
-    ...Array.from(new Set(topics.map((t) => t.category)))
-  ];
-
-  // Filter topics based on active category
-  const filteredTopics = topics.filter((topic) => {
-    if (activeCategory === "All") return true;
-    return topic.category === activeCategory;
-  });
-
-  // Sort filtered topics by category first, then by title
-  const sortedTopics = [...filteredTopics].sort((a, b) => {
-    if (a.category < b.category) return -1;
-    if (a.category > b.category) return 1;
-    return a.title.localeCompare(b.title);
-  });
-
+function TopicsSkeleton() {
   return (
-    <div className="container mx-auto py-12 px-4 md:px-8 max-w-6xl">
+    <>
       <div className="mb-12">
-        <h1 className="text-4xl font-extrabold tracking-tight mb-4">
-          All Topics
-        </h1>
-        <p className="text-muted-foreground text-xl max-w-2xl mb-8">
-          Browse the complete list of interview topics across JavaScript, React,
-          TypeScript, and more.
-        </p>
-
+        <Skeleton className="h-10 w-48 mb-4" />
+        <Skeleton className="h-6 w-full max-w-2xl mb-8" />
         <div className="flex flex-wrap gap-2">
-          {categories.map((category) => (
-            <Button
-              key={category}
-              variant={activeCategory === category ? "default" : "outline"}
-              onClick={() => setActiveCategory(category)}
-              className="rounded-full"
-            >
-              {category}
-            </Button>
+          {Array.from({ length: 5 }).map((_, i) => (
+            <Skeleton key={i} className="h-10 w-24 rounded-full" />
           ))}
         </div>
       </div>
-
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {sortedTopics.map((topic) => (
-          <TopicCard key={topic.slug} topic={topic} />
+        {Array.from({ length: 6 }).map((_, i) => (
+          <Skeleton key={i} className="h-[180px] w-full rounded-xl" />
         ))}
       </div>
+    </>
+  );
+}
+
+export default function TopicsPage() {
+  // Strip heavy MDX content (body, raw) before passing to client component
+  // This drastically reduces the initial JS bundle size.
+  const lightweightTopics: LightweightTopic[] = topics.map((t) => ({
+    slug: t.slug,
+    title: t.title,
+    category: t.category,
+    difficulty: t.difficulty,
+    interviewFrequency: t.interviewFrequency,
+    experienceLevel: t.experienceLevel,
+    estimatedReadTime: t.estimatedReadTime,
+    permalink: t.permalink,
+  }));
+
+  return (
+    <div className="container mx-auto py-12 px-4 md:px-8 max-w-6xl">
+      <Suspense fallback={<TopicsSkeleton />}>
+        <TopicsList initialTopics={lightweightTopics} />
+      </Suspense>
     </div>
   );
 }
