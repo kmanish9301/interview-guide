@@ -1,0 +1,90 @@
+---
+title: "Advanced & Performance"
+category: "JavaScript"
+difficulty: "Advanced"
+interviewFrequency: "High"
+experienceLevel: "Senior"
+estimatedReadTime: 20
+tags: ["javascript", "performance", "es6", "memory", "patterns"]
+---
+
+# Advanced & Performance
+
+For senior roles, passing the interview requires demonstrating an understanding of performance optimization, memory management, and advanced ES6+ features.
+
+## ❓ Interview Questions
+
+### 87. **What is debouncing?**
+- _Answer_: Debouncing is a performance optimization technique that limits the rate at which a function fires. It forces a function to wait a certain amount of time before running. If the function is called again during that wait time, the timer resets.
+
+**Concept:**
+Typically used for Search Inputs. You don't want to make an API call for every single keystroke. You debounce it so the API call only fires 300ms *after* the user stops typing.
+
+### 88. **What is throttling?**
+- _Answer_: Throttling is another optimization technique that ensures a function is called at most **once** within a specified time period, no matter how many times the event fires.
+
+**Concept:**
+Typically used for Window Resizing or Scrolling events. Instead of firing 100 times per second, you throttle it to only fire exactly once every 100ms.
+
+### 89. **What is memoization?**
+- _Answer_: Memoization is a caching technique used to speed up computer programs by storing the results of expensive function calls and returning the cached result when the exact same inputs occur again.
+
+### 90. **What is currying?**
+- _Answer_: Currying is a functional programming technique where a function that takes multiple arguments is transformed into a sequence of nested functions, each taking exactly one argument.
+
+**Concept:**
+```javascript
+// Normal function
+const add = (a, b) => a + b;
+
+// Curried function
+const curriedAdd = (a) => (b) => a + b;
+console.log(curriedAdd(5)(10)); // 15
+```
+
+### 91. **What is the difference between shallow equality and deep equality?**
+- _Answer_: Shallow equality (`===`) checks if two variables reference the exact same object in memory. Deep equality checks if the actual nested values/properties inside two distinct objects are identical.
+
+### 92. **What are ES6 modules?**
+- _Answer_: ES6 modules are the official standard format to package JavaScript code for reuse. They allow you to `export` variables, functions, or classes from one file and `import` them into another.
+
+### 93. **What is the difference between CommonJS and ES Modules?**
+- _Answer_: 
+- **CommonJS**: The older Node.js standard. Uses `require()` and `module.exports`. It is synchronous.
+- **ES Modules (ESM)**: The modern standard. Uses `import` and `export`. It is statically analyzable and asynchronous, allowing for better performance features like Tree Shaking.
+
+### 94. **What is garbage collection?**
+- _Answer_: Garbage collection is an automatic memory management process in JavaScript. The engine monitors memory allocation and automatically frees up memory that is no longer needed (when objects are no longer reachable or referenced by any variables).
+
+### 95. **What causes memory leaks in JavaScript?**
+- _Answer_: Memory leaks occur when the garbage collector fails to free memory because a piece of code is unintentionally holding onto a reference. Common causes include:
+1. Accidental global variables.
+2. Forgotten intervals or timeouts (`setInterval` not being cleared).
+3. Uncleared DOM event listeners.
+4. Improper use of closures that hold onto large objects.
+
+### 96. **What is optional chaining (?.)?**
+- _Answer_: Optional chaining is an ES2020 feature that allows you to safely read the value of a property located deep within a chain of connected objects without having to explicitly validate that each reference in the chain is valid. If a reference is nullish, the expression short-circuits with a return value of `undefined`.
+
+**Concept:**
+```javascript
+// Instead of:
+const zip = user && user.address && user.address.zipcode;
+
+// Use optional chaining:
+const zip = user?.address?.zipcode;
+```
+
+### 97. **What is nullish coalescing (??)?**
+- _Answer_: The nullish coalescing operator (`??`) is a logical operator that returns its right-hand side operand when its left-hand side operand is `null` or `undefined`. Unlike the OR operator (`||`), it does not trigger on falsy values like `0` or `""`.
+
+### 98. **What are default parameters?**
+- _Answer_: Introduced in ES6, default parameters allow you to initialize named parameters with default values if no value or `undefined` is passed into the function.
+
+### 99. **What are template literals?**
+- _Answer_: Template literals are string literals enclosed by backticks (` `` `) instead of quotes. They allow for multi-line strings and string interpolation (embedding variables and expressions directly into the string using `${}`).
+
+### 100. **What are Symbols and BigInt?**
+- _Answer_: 
+- **Symbol**: A primitive data type whose instances are unique and immutable. They are often used as unique identifiers for object properties to prevent naming collisions.
+- **BigInt**: A primitive data type that allows you to safely store and operate on massive integers beyond the safe integer limit for Numbers (`Number.MAX_SAFE_INTEGER`).

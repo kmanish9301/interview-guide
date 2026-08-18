@@ -1,0 +1,557 @@
+---
+title: "JS Problem Solving"
+category: "JavaScript"
+difficulty: "Advanced"
+interviewFrequency: "High"
+experienceLevel: "All Levels"
+estimatedReadTime: 9
+tags: ["interview", "questions", "js-problem-solving"]
+---
+
+# JS Problem Solving
+
+Here is the ultimate list of interview questions for JS Problem Solving.
+
+## ❓ Interview Questions
+
+### 1. **How to check whether a string is palindrome or not ?**
+
+const checkPallindrome = (str) =&gt; &#123;
+const len = str.length;
+for (let i = 0; i &lt; len/2; i++) &#123;
+if (str[i] !== str[len - i - 1]) &#123;
+return "Not pallindrome";
+&#125;
+&#125;
+return "pallindrome";
+&#125;;
+console.log(checkPallindrome("madam"));
+
+---
+
+### 2. **Find the factorial of given number ?**
+
+const findFactorial = (num) =&gt; &#123;
+if (num == 0 || num == 1) &#123;
+return 1;
+&#125; else &#123;
+return num * findFactorial(num - 1);
+&#125;
+&#125;;
+console.log(findFactorial(4));
+5. Program to find longest word in a given sentence
+?
+const findLongestWord = (sentence) =&gt; &#123;
+let wordsArray = sentence.split(" ");
+let longestWord = "";
+for (let i = 0; i &lt; wordsArray.length; i++) &#123;
+if (wordsArray[i].length &gt; longestWord.length) &#123;
+longestWord = wordsArray[i];
+&#125;
+&#125;
+console.log(longestWord);
+&#125;;
+findLongestWord("Hi Iam Saikrishna Iam a UI Developer");
+6. Write a JavaScript program to find the maximum number in
+an array.
+function findMax(arr) &#123;
+if (arr.length === 0) &#123;
+return undefined;
+// Handle empty array case
+&#125;
+let max = arr[0];
+// Initialize max with the first element
+for (let i = 1; i &lt; arr.length; i++) &#123;
+if (arr[i] &gt; max) &#123;
+max = arr[i];
+// Update max if current element is greater
+&#125;
+&#125;
+return max;
+&#125;
+// Example usage:
+const numbers = [1, 6, -33, 9, 4, 8, 2];
+console.log("Maximum number is:", findMax(numbers));
+Time complexity:  O(N)
+7. Write a JavaScript function to check if a given number is
+prime.
+function isPrime(number) &#123;
+if (number &lt;= 1) &#123;
+return false;
+// 1 and numbers less than 1 are not prime
+&#125;
+// Loop up to the square root of the number
+for (let i = 2; i &lt;= Math.sqrt(number); i++) &#123;
+if (number % i === 0) &#123;
+return false;
+// If divisible by any number, not prime
+&#125;
+&#125;
+return true;
+// If not divisible by any number, it's prime
+&#125;
+// Example usage:
+console.log(isPrime(17)); // true
+console.log(isPrime(19)); // false
+Time complexity:  O(N)
+8. Program to find Reverse of a string without using
+built-in method ?
+const findReverse = (sampleString) =&gt; &#123;
+let reverse = "";
+for (let i = sampleString.length - 1; i &gt;= 0; i--) &#123;
+reverse += sampleString[i];
+&#125;
+console.log(reverse);
+&#125;;
+findReverse("Hello Iam Saikrishna Ui Developer");
+
+---
+
+### 3. **Find the smallest word in a given sentence ?**
+
+function findSmallestWord() &#123;
+const sentence = "Find the smallest word";
+const words = sentence.split(' ');
+let smallestWord = words[0];
+for (let i = 1; i &lt; words.length; i++) &#123;
+if (words[i].length &lt; smallestWord.length) &#123;
+smallestWord = words[i];
+&#125;
+&#125;
+console.log(smallestWord);
+&#125;
+findSmallestWord();
+10. Write a function sumOfThirds(arr), which takes an
+array arr as an argument. This function should return a sum of
+every third number in the array, starting from the first one.
+𝐃𝐢𝐫𝐞𝐜𝐭𝐢𝐨𝐧𝐬:
+If the input array is empty or contains less than 3 numbers then return 0.
+The input array will contain only numbers.
+&#101;xport const sumOfThirds = (arr) =&gt; &#123;
+let sum = 0;
+for (let i = 0; i &lt; arr.length; i += 3) &#123;
+sum += arr[i];
+&#125;
+return sum;
+&#125;;
+11. Write a JavaScript function that returns the Fibonacci
+sequence up to a given number of terms.
+function fibonacciSequence(numTerms) &#123;
+if (numTerms &lt;= 0) &#123;
+return [];
+&#125; else if (numTerms === 1) &#123;
+return [0];
+&#125;
+const sequence = [0, 1];
+for (let i = 2; i &lt; numTerms; i++) &#123;
+const nextFibonacci = sequence[i - 1] + sequence[i - 2];
+sequence.push(nextFibonacci);
+&#125;
+return sequence;
+&#125;
+// Example usage:
+const numTerms = 10;
+const fibonacciSeries = fibonacciSequence(numTerms);
+console.log(fibonacciSeries);
+// Output: [0, 1, 1, 2, 3, 5, 8, 13, 21, 34]
+Time complexity:  O(N)
+12. Find the max count of consecutive 1’s in an array
+const findConsecutive = (array) =&gt; &#123;
+let maxCount = 0;
+let currentConsCount = 0;
+for (let i = 0; i &lt;= array.length - 1; i++) &#123;
+if (array[i] === 1) &#123;
+currentConsCount += 1;
+maxCount = Math.max(currentConsCount, maxCount);
+&#125; else &#123;
+currentConsCount = 0;
+&#125;
+&#125;
+console.log(maxCount);
+&#125;;
+findConsecutive([1, 1, 9, 1, 9, 19, 7, 1, 1, 1, 2, 5, 1]);
+// output: 3
+13. Given 2 arrays that are sorted [0,3,4,31] and [4,6,30].
+Merge them and sort [0,3,4,4,6,30,31] ?
+const sortedData = (arr1,arr2) =&gt; &#123;
+let i = 1;
+let j=1;
+let array1 = arr1[0];
+let array2 = arr2[0];
+let mergedArray = [];
+while(array1 || array2)&#123;
+if(array2 === undefined || array1 &lt; array2)&#123;
+mergedArray.push(array1);
+array1 = arr1[i];
+i++
+&#125;else&#123;
+mergedArray.push(array2);
+array2 = arr2[j];
+j++
+&#125;
+&#125;
+console.log(mergedArray)
+&#125;
+sortedData([1,3,4,5],[2,6,8,9])
+14. Create a function which will accepts two arrays arr1 and
+arr2. The function should return true if every value in arr1 has
+its corresponding value squared in array2. The frequency of
+values must be same. (Effecient)
+Inputs and outputs:
+=============
+[1,2,3],[4,1,9] ==&gt; true
+[1,2,3],[1,9] ====&gt; false
+[1,2,1],[4,4,1] ===&gt; false (must be same frequency)
+function isSameFrequency(arr1,arr2)&#123;
+if(arr1.length !== arr2.length)&#123;
+return false;
+&#125;
+let arrFreq1=&#123;&#125;;
+let arrFreq2=&#123;&#125;;
+for(let val of arr1)&#123;
+arrFreq1[val] = (arrFreq1[val] || 0) + 1;
+&#125;
+for(let val of arr2)&#123;
+arrFreq2[val] = (arrFreq2[val] || 0) + 1;
+&#125;
+for(let key in arrFreq1)&#123;
+if(!key*key in arrFreq2) return false;
+if(arrFreq1[key] !== arrFreq2[key*key])&#123;
+return false
+&#125;
+&#125;
+return true;
+&#125;
+console.log(isSameFrequency([1,2,5],[25,4,1]))
+15. Given two strings. Find if one string can be formed by
+rearranging the letters of other string.  (Effecient)
+Inputs and outputs:
+"aaz","zza" ==&gt; false
+"qwerty","qeywrt" ==&gt; true
+function isStringCreated(str1,str2)&#123;
+if(str1.length !== str2.length) return false
+let freq = &#123;&#125;;
+for(let val of str1)&#123;
+freq[val] = (freq[val] || 0) + 1;
+&#125;
+for(let val of str2)&#123;
+if(freq[val])&#123;
+freq[val] -= 1;
+&#125; else&#123;
+return false;
+&#125;
+&#125;
+return true;
+&#125;
+console.log(isStringCreated('anagram','nagaram'))
+
+---
+
+### 4. **Write logic to get unique objects from below array ?**
+
+I/P: [&#123;name: "sai"&#125;,&#123;name:"Nang"&#125;,&#123;name: "sai"&#125;,&#123;name:"Nang"&#125;,&#123;name:
+"111111"&#125;];
+O/P: [&#123;name: "sai"&#125;,&#123;name:"Nang"&#125;&#123;name: "111111"&#125;
+function getUniqueArr(array)&#123;
+const uniqueArr = [];
+const seen = &#123;&#125;;
+for(let i=0; i&lt;=array.length-1;i++)&#123;
+const currentItem = array[i].name;
+if(!seen[currentItem])&#123;
+uniqueArr.push(array[i]);
+seen[currentItem] = true;
+&#125;
+&#125;
+return uniqueArr;
+&#125;
+let arr = [&#123;name: "sai"&#125;,&#123;name:"Nang"&#125;,&#123;name: "sai"&#125;,
+&#123;name:"Nang"&#125;,&#123;name: "111111"&#125;];
+console.log(getUniqueArr(arr))
+17. Write a JavaScript program to find the largest element in a
+nested array.
+function findLargestElement(arr) &#123;
+let max = Number.NEGATIVE_INFINITY;
+// Initialize max to smallest possible number
+// Helper function to traverse nested arrays
+function traverse(arr) &#123;
+for (let i = 0; i &lt; arr.length; i++) &#123;
+if (Array.isArray(arr[i])) &#123;
+// If element is array,recursively call traverse function
+traverse(arr[i]);
+&#125; else &#123;
+// If element is not an array, update max if needed
+if (arr[i] &gt; max) &#123;
+max = arr[i];
+&#125;
+&#125;
+&#125;
+&#125;
+// Start traversing the input array
+traverse(arr);
+return max;
+&#125;
+// Example usage:
+const array = [
+[3, 4, 58],
+[709, 8, 9, [10, 11]], [111, 2]
+];
+console.log("Largest element:", findLargestElement(array));
+Time complexity:  O(N)
+18. Given a string, write a javascript function to count the
+occurrences of each character in the string.
+function countCharacters(str) &#123;
+// Object to store character counts
+const charCount = &#123;&#125;;
+const len = str.length;
+// Loop through string & count occurrences of each character
+for (let i = 0; i &lt; len; i++) &#123;
+const char = str[i];
+// Increment count for each character
+charCount[char] = (charCount[char] || 0) + 1;
+&#125;
+return charCount;
+&#125;
+// Example usage:
+const result = countCharacters("helaalo");
+console.log(result);
+// Output: &#123; h: 1, e: 1, l: 2, o: 1 &#125;
+Time complexity:  O(N)
+19. Write a javascript  function that sorts an array of numbers
+in ascending order.
+function quickSort(arr) &#123;
+// Check if the array is empty or has only one element
+if (arr.length &lt;= 1) &#123;
+return arr;
+&#125;
+// Select a pivot element
+const pivot = arr[0];
+// Divide the array into two partitions
+const left = [];
+const right = [];
+for (let i = 1; i &lt; arr.length; i++) &#123;
+if (arr[i] &lt; pivot) &#123;
+left.push(arr[i]);
+&#125; else &#123;
+right.push(arr[i]);
+&#125;
+&#125;
+// Recursively sort the partitions
+const sortedLeft = quickSort(left);
+const sortedRight = quickSort(right);
+// Concatenate sorted partitions with the pivot & return
+return sortedLeft.concat(pivot, sortedRight);
+&#125;
+// Example usage:
+const unsortedArray = [5, 2, 9, 1, 3, 6];
+const sortedArray = quickSort(unsortedArray);
+console.log(sortedArray);
+// Output: [1, 2, 3, 5, 6, 9]
+Time complexity:  O(n log n)
+20. Write a javascript  function that sorts an array of numbers
+in descending order.
+function quickSort(arr) &#123;
+if (arr.length &lt;= 1) &#123;
+return arr;
+&#125;
+const pivot = arr[0];
+const left = [];
+const right = [];
+for (let i = 1; i &lt; arr.length; i++) &#123;
+if (arr[i] &gt;= pivot) &#123;
+left.push(arr[i]);
+&#125; else &#123;
+right.push(arr[i]);
+&#125;
+&#125;
+return [...quickSort(left), pivot, ...quickSort(right)];
+&#125;
+const arr = [3, 1, 4, 1, 5, 9, 2, 6, 5];
+const sortedArr = quickSort(arr);
+console.log(sortedArr);
+// Output: [9, 6, 5, 5, 4, 3, 2, 1, 1]
+Time complexity:  O(n log n)
+21. Write a javascript function that reverses the order of words
+in a sentence without using the built-in reverse() method.
+const reverseWords = (sampleString) =&gt; &#123;
+let reversedSentence = "";
+let word = "";
+// Iterate over each character in the sampleString
+for (let i = 0; i &lt; sampleString.length; i++) &#123;
+/* If the character is not a space,
+append it to the current word */
+if (sampleString[i] !== ' ') &#123;
+word += sampleString[i];
+&#125; else &#123;
+/* If it's a space, prepend the current word
+to the reversed sentence and
+reset the word */
+reversedSentence = word + ' ' + reversedSentence;
+word = "";
+&#125;
+&#125;
+// Append the last word to the reversed sentence
+reversedSentence = word + ' ' + reversedSentence;
+// Trim any leading or trailing spaces and log the result
+console.log(reversedSentence.trim());
+&#125;;
+// Example usage
+reverseWords("ChatGPT is awesome");
+//"awesome is ChatGPT"
+function reverseWords(sentence) &#123;
+// Split the sentence into words
+let words = [];
+let wordStart = 0;
+for (let i = 0; i &lt; sentence.length; i++) &#123;
+if (sentence[i] === ' ') &#123;
+words.unshift(sentence.substring(wordStart, i));
+wordStart = i + 1;
+&#125; else if (i === sentence.length - 1) &#123;
+words.unshift(sentence.substring(wordStart,i+1));
+&#125;
+&#125;
+// Join the words to form the reversed sentence
+return words.join(' ');
+&#125;
+// Example usage
+const sentence = "ChatGPT is awesome";
+console.log(reverseWords(sentence));
+// Output: "awesome is ChatGPT"
+Time complexity:  O(N)
+22. Implement a javascript function that flattens a nested array
+into a single-dimensional array.
+function flattenArray(arr) &#123;
+const stack = [...arr];
+const result = [];
+while (stack.length) &#123;
+const next = stack.pop();
+if (Array.isArray(next)) &#123;
+stack.push(...next);
+&#125; else &#123;
+result.push(next);
+&#125;
+&#125;
+return result.reverse();
+// Reverse the result to maintain original order
+&#125;
+// Example usage:
+const nestedArray = [1, [2, [3, 4], [7,5]], 6];
+const flattenedArray = flattenArray(nestedArray);
+console.log(flattenedArray);
+// Output: [1, 2, 3, 4, 5, 6]
+23. Write a function which converts string input into an object
+// stringToObject("a.b.c", "someValue");
+// output -&gt; &#123;a: &#123;b: &#123;c: "someValue"&#125;&#125;&#125;
+function stringToObject(str, finalValue) &#123;
+const keys = str.split('.');
+let result = &#123;&#125;;
+let current = result;
+for (let i = 0; i &lt; keys.length; i++) &#123;
+const key = keys[i];
+current[key] = (i === keys.length - 1) ? finalValue : &#123;&#125;;
+current = current[key];
+&#125;
+return result;
+&#125;
+// Test the function
+const output = stringToObject("a.b.c", "someValue");
+console.log(output);
+// Output: &#123;a: &#123;b: &#123;c: "someValue"&#125;&#125;&#125;
+24. Given an array, return an array where the each value is the
+product of the next two items: E.g.  [3, 4, 5]  -&gt;  [20, 15, 12]
+function productOfNextTwo(arr) &#123;
+const result = [];
+for (let i = 0; i &lt; arr.length; i++) &#123;
+if (i &lt; arr.length - 1) &#123;
+result.push(arr[i + 1] * arr[i + 2]);
+&#125; else &#123;
+result.push(arr[0] * arr[1]);
+&#125;
+&#125;
+return result;
+&#125;
+// Example usage:
+const inputArray = [3, 4, 5];
+const outputArray = productOfNextTwo(inputArray);
+console.log(outputArray); // Output: [20, 15, 12]
+
+---
+
+### 5. **Find the 2nd largest element from a given array ?**
+
+[100,20,112,22]
+function findSecondLargest(arr) &#123;
+if (arr.length &lt; 2) &#123;
+throw new Error(`Array must contain
+at least two elements.`);
+&#125;
+let largest = -Infinity;
+let secondLargest = -Infinity;
+for (let i = 0; i &lt; arr.length; i++) &#123;
+if (arr[i] &gt; largest) &#123;
+secondLargest = largest;
+largest = arr[i];
+&#125; else if (arr[i] &gt; secondLargest && arr[i] &lt; largest) &#123;
+secondLargest = arr[i];
+&#125;
+&#125;
+if (secondLargest === -Infinity) &#123;
+throw new Error(`There is no second largest
+element in the array.`);
+&#125;
+return secondLargest;
+&#125;
+// Example usage:
+const array = [10, 5, 20, 8, 12];
+console.log(findSecondLargest(array)); // Output: 12
+
+---
+
+### 6. **Program challenge: Find the pairs from given input ?**
+
+input1 = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+input2 = 10;
+output = [[4, 6], [3, 7], [2, 8], [1, 9]]
+function findPairs(input1, input2) &#123;
+const pairs = [];
+const seen = new Set();
+for (const num of input1) &#123;
+const complement = input2 - num;
+if (seen.has(complement)) &#123;
+pairs.push([complement, num]);
+&#125;
+seen.add(num);
+&#125;
+return pairs;
+&#125;
+const input1 = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+const input2 = 10;
+const output = findPairs(input1, input2);
+console.log(output);
+// [[1, 9], [2, 8], [3, 7], [4, 6], [5, 5]]
+27. Write a javascript program to get below output from given
+input ?
+I/P: abbcccddddeea
+O/P: 1a2b3c4d2e1a
+function encodeString(input) &#123;
+if (input.length === 0) return "";
+let result = "";
+let count = 1;
+for (let i = 1; i &lt; input.length; i++) &#123;
+if (input[i] === input[i - 1]) &#123;
+count++;
+&#125; else &#123;
+result += count + input[i - 1];
+count = 1;
+&#125;
+&#125;
+// Add the last sequence
+result += count + input[input.length - 1];
+return result;
+&#125;
+const input = "abbcccddddeea";
+const output = encodeString(input);
+console.log(output);
+// Outputs: 1a2b3c4d2e1a
+
+---
+

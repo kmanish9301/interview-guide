@@ -1,0 +1,113 @@
+---
+title: "Objects & Arrays"
+category: "JavaScript"
+difficulty: "Intermediate"
+interviewFrequency: "Very High"
+experienceLevel: "All Levels"
+estimatedReadTime: 25
+tags: ["javascript", "objects", "arrays", "destructuring", "methods"]
+---
+
+# Objects & Arrays
+
+Mastering JavaScript's primary data structures (Objects and Arrays) and their built-in methods is absolutely essential. You will be tested on these in almost every interview.
+
+## ❓ Interview Questions
+
+### 26. **What is an object in JavaScript?**
+- _Answer_: An object is a standalone entity, with properties and type. It is a collection of key-value pairs where keys are strings (or Symbols) and values can be any data type, including other objects or functions.
+
+### 27. **How do you create an object?**
+- _Answer_: The most common way is using Object Literal syntax. You can also use the `new Object()` constructor, `Object.create()`, or ES6 Classes.
+
+**Concept:**
+```javascript
+// Object Literal (Preferred)
+const user = { name: "Alice", age: 25 };
+
+// Object Constructor
+const obj = new Object();
+obj.name = "Bob";
+
+// Object.create (Creates object with specific prototype)
+const child = Object.create(user);
+```
+
+### 28. **What is the difference between dot notation and bracket notation?**
+- _Answer_: Dot notation (`obj.key`) is cleaner but requires the key to be a valid identifier known at compile time. Bracket notation (`obj["key"]`) allows you to use variables as keys, or keys that contain spaces and special characters.
+
+### 29. **What is destructuring?**
+- _Answer_: Destructuring is an ES6 expression that makes it possible to unpack values from arrays, or properties from objects, into distinct, individual variables.
+
+### 30. **What is the spread operator (...)?**
+- _Answer_: The spread operator allows an iterable (like an array or string) or an object to be expanded in places where zero or more arguments or elements are expected.
+
+**Concept:**
+```javascript
+const arr1 = [1, 2];
+const arr2 = [...arr1, 3, 4]; // [1, 2, 3, 4]
+const user = { name: "Alice" };
+const updatedUser = { ...user, age: 25 }; // { name: "Alice", age: 25 }
+```
+
+### 31. **What is the rest operator (...)?**
+- _Answer_: The rest operator uses the exact same syntax as the spread operator, but does the exact opposite. It collects multiple elements and condenses them into a single array.
+
+**Concept:**
+```javascript
+function sum(first, ...restOfNumbers) {
+  console.log(restOfNumbers); // Array of remaining arguments
+}
+sum(1, 2, 3, 4); // logs [2, 3, 4]
+```
+
+### 32. **What is the difference between spread and rest operators?**
+- _Answer_: Spread "expands" an array/object into individual elements. Rest "collects" multiple individual elements into a single array. Spread is usually used in function calls or array literals, while rest is used in function parameters and destructuring.
+
+### 33. **What is shallow copy vs deep copy?**
+- _Answer_: A shallow copy duplicates the top-level properties of an object, but nested objects still share the same reference (memory address). A deep copy creates a completely independent clone, including all nested objects.
+
+### 34. **How do you clone an object?**
+- _Answer_: For a shallow copy, use the spread operator (`{...obj}`) or `Object.assign()`. For a deep copy, use `structuredClone(obj)`, or the older `JSON.parse(JSON.stringify(obj))` method (which drops functions and undefined values).
+
+**Concept:**
+```javascript
+const original = { a: 1, nested: { b: 2 } };
+
+const shallow = { ...original };
+shallow.nested.b = 99; // Mutates original.nested too!
+
+const deep = structuredClone(original); // Modern deep copy
+```
+
+### 35. **What is object destructuring?**
+- _Answer_: Extracting specific properties from an object into local variables.
+```javascript
+const user = { id: 1, name: "Alice" };
+const { id, name } = user; // id = 1, name = "Alice"
+```
+
+### 36. **What is array destructuring?**
+- _Answer_: Extracting items from an array based on their index.
+```javascript
+const colors = ["red", "green", "blue"];
+const [first, second] = colors; // first = "red", second = "green"
+```
+
+### 37. **What is the difference between map(), filter(), and reduce()?**
+- _Answer_: 
+- `map()`: Transforms every element in an array and returns a **new array of the same length**.
+- `filter()`: Returns a **new array** containing only elements that pass a given condition.
+- `reduce()`: Accumulates an array into a **single value** (e.g., a number, string, or a single object).
+
+### 38. **What is the difference between forEach() and map()?**
+- _Answer_: `map()` returns a completely new array populated with the results of the callback, and it can be chained. `forEach()` simply executes a function for each element, returns `undefined`, and is primarily used for side effects.
+
+### 39. **What is the difference between find() and filter()?**
+- _Answer_: `find()` returns the **first element** that matches the condition and then stops iterating. `filter()` returns an **array of all elements** that match the condition.
+
+### 40. **What is the difference between slice() and splice()?**
+- _Answer_: `slice(start, end)` returns a shallow copy of a portion of an array without modifying the original array. `splice(start, count, items...)` changes the contents of the original array by removing, replacing, or adding elements.
+
+### 41. **What is the difference between some() and every()?**
+- _Answer_: `some()` returns `true` if **at least one** element in the array passes the test. `every()` returns `true` only if **all** elements in the array pass the test. Both short-circuit when they find a definitive answer.

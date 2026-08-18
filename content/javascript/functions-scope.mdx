@@ -1,0 +1,99 @@
+---
+title: "Functions & Scope"
+category: "JavaScript"
+difficulty: "Intermediate"
+interviewFrequency: "High"
+experienceLevel: "All Levels"
+estimatedReadTime: 18
+tags: ["javascript", "functions", "scope", "closures"]
+---
+
+# Functions & Scope
+
+Understanding functions and scope in JavaScript is often considered the most important hurdle to crossing from a junior to an intermediate developer. 
+
+## ❓ Interview Questions
+
+### 14. **What is a function in JavaScript?**
+- _Answer_: A function is a reusable block of code designed to perform a particular task. Functions in JavaScript are first-class citizens, meaning they are objects that can be assigned to variables, passed as arguments, or returned from other functions.
+
+### 15. **What is the difference between function declaration and function expression?**
+- _Answer_: A Function Declaration defines a named function and is hoisted to the top of its scope. A Function Expression defines a function inside a variable assignment and is not hoisted (cannot be called before it is defined).
+
+**Concept:**
+```javascript
+// Function Declaration (Hoisted)
+greet(); // Works!
+function greet() { console.log("Hello"); }
+
+// Function Expression (Not Hoisted)
+sayHi(); // ReferenceError!
+const sayHi = function() { console.log("Hi"); };
+```
+
+### 16. **What are arrow functions?**
+- _Answer_: Arrow functions are a concise syntax for writing function expressions introduced in ES6. They use the `=>` token and do not bind their own `this`, `arguments`, `super`, or `new.target`.
+
+### 17. **What is the difference between regular functions and arrow functions?**
+- _Answer_: Regular functions bind their own `this` dynamically based on how they are called, whereas arrow functions lexically bind `this` based on where they are defined. Additionally, arrow functions cannot be used as constructors (with the `new` keyword) and do not have an `arguments` object.
+
+### 18. **What is scope?**
+- _Answer_: Scope is the current context of execution. It dictates the visibility and accessibility of variables, objects, and functions in various parts of the code.
+
+### 19. **What is global scope, function scope, and block scope?**
+- _Answer_: 
+1. **Global Scope**: Variables declared outside any function or block are globally accessible.
+2. **Function Scope**: Variables declared with `var` inside a function are only accessible within that function.
+3. **Block Scope**: Variables declared with `let` or `const` inside curly braces `{}` (like in an `if` statement or `for` loop) are only accessible within those braces.
+
+### 20. **What is lexical scope?**
+- _Answer_: Lexical scope (or static scope) means that inner functions have access to variables declared in their outer (parent) scopes. The scope is defined by the physical placement of the function in the source code.
+
+### 21. **What is a closure?**
+- _Answer_: A closure is the combination of a function bundled together with references to its surrounding state (the lexical environment). In other words, a closure gives a function access to its outer scope even after the outer function has returned.
+
+**Concept:**
+```javascript
+function makeCounter() {
+  let count = 0; // Private variable
+  return function() {
+    count++;
+    return count;
+  };
+}
+const counter = makeCounter();
+console.log(counter()); // 1
+console.log(counter()); // 2
+```
+
+### 22. **What is an IIFE?**
+- _Answer_: IIFE stands for Immediately Invoked Function Expression. It is a function that runs as soon as it is defined.
+
+**Concept:**
+It is commonly used to create a private scope to avoid polluting the global namespace.
+```javascript
+(function() {
+  const privateVar = "I am secret";
+  console.log(privateVar);
+})();
+```
+
+### 23. **What are higher-order functions?**
+- _Answer_: A higher-order function is a function that either takes one or more functions as arguments (callbacks) OR returns a function as its result.
+
+**Concept:**
+Common examples in JavaScript include Array methods like `.map()`, `.filter()`, and `.reduce()`.
+
+### 24. **What are callback functions?**
+- _Answer_: A callback is a function passed as an argument to another function, which is then invoked inside the outer function to complete some kind of routine or action.
+
+**Concept:**
+Callbacks are commonly used in asynchronous operations like event listeners or API requests.
+```javascript
+setTimeout(() => {
+  console.log("This arrow function is a callback!");
+}, 1000);
+```
+
+### 25. **What is a pure function?**
+- _Answer_: A pure function is a function that always returns the exact same output for the same input and produces absolutely no side effects (e.g., it does not modify global variables, mutate its arguments, or make network requests).

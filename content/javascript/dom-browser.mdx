@@ -1,0 +1,73 @@
+---
+title: "DOM & Browser APIs"
+category: "JavaScript"
+difficulty: "Intermediate"
+interviewFrequency: "High"
+experienceLevel: "All Levels"
+estimatedReadTime: 18
+tags: ["javascript", "dom", "browser", "events", "storage"]
+---
+
+# DOM & Browser APIs
+
+While React and modern frameworks abstract away direct DOM manipulation, a deep understanding of the DOM, browser APIs, and event propagation is still heavily tested in interviews.
+
+## ❓ Interview Questions
+
+### 73. **What is Promise.any()?**
+- _Answer_: `Promise.any()` takes an array of Promises and returns a single Promise that resolves as soon as **any one** of the Promises fulfills, returning that value. It only rejects if **all** of the given promises are rejected.
+
+### 74. **What is the difference between microtasks and macrotasks?**
+- _Answer_: In the Event Loop, the Microtask queue has higher priority than the Macrotask queue. 
+- **Microtasks**: Promise callbacks (`.then`, `.catch`), `MutationObserver`. These run immediately after the current synchronous code finishes.
+- **Macrotasks**: `setTimeout`, `setInterval`, DOM events. These run only after the Microtask queue is completely empty.
+
+### 75. **What are Web APIs?**
+- _Answer_: Web APIs are APIs provided by the browser (not the JavaScript engine itself). They provide extra functionality like DOM manipulation (`document`), timers (`setTimeout`), network requests (`fetch`), and storage (`localStorage`).
+
+### 76. **What is the DOM?**
+- _Answer_: The Document Object Model (DOM) is a programming interface for web documents. It represents the page so that programs can change the document structure, style, and content. The DOM represents the document as nodes and objects (a tree structure).
+
+### 77. **What is the difference between DOM and BOM?**
+- _Answer_: 
+- **DOM (Document Object Model)**: Deals specifically with the HTML content (the `document` object).
+- **BOM (Browser Object Model)**: Deals with browser components outside of the document, like the window itself, history, location, and screen (the `window` object).
+
+### 78. **How do you select an HTML element using JavaScript?**
+- _Answer_: The modern and most versatile methods are `document.querySelector(selector)` (which returns the first match) and `document.querySelectorAll(selector)` (which returns a NodeList of all matches). Older methods include `getElementById()`, `getElementsByClassName()`, and `getElementsByTagName()`.
+
+### 79. **What is event bubbling?**
+- _Answer_: Event bubbling is the default phase of event propagation. When an event fires on an element, it first runs the handlers on that element, then bubbles up to its parent, then its grandparent, and so on, all the way up to the `document`.
+
+### 80. **What is event capturing?**
+- _Answer_: Event capturing (or trickling) is the opposite of bubbling. The event trickles down from the root `document` through the ancestors down to the specific target element. It is rarely used but can be enabled by passing `{ capture: true }` to `addEventListener`.
+
+### 81. **What is event delegation?**
+- _Answer_: Event delegation is a performance optimization pattern where you attach a single event listener to a parent element instead of attaching multiple listeners to its children. It relies on event bubbling to catch events from the children.
+
+**Concept:**
+```javascript
+document.getElementById("parent-list").addEventListener("click", function(e) {
+  if (e.target && e.target.nodeName === "LI") {
+    console.log("List item clicked: ", e.target.id);
+  }
+});
+```
+
+### 82. **What is preventDefault()?**
+- _Answer_: `e.preventDefault()` stops the browser's default behavior for a specific event. For example, it stops a `<form>` from refreshing the page upon submission, or a link `<a>` from navigating to a new URL.
+
+### 83. **What is stopPropagation()?**
+- _Answer_: `e.stopPropagation()` prevents an event from continuing to bubble up (or trickle down) the DOM tree. It stops parent event listeners from being triggered.
+
+### 84. **What is the difference between localStorage, sessionStorage, and cookies?**
+- _Answer_:
+- **localStorage**: Stores data with no expiration date (persists after the browser is closed). Holds up to ~5MB.
+- **sessionStorage**: Stores data only for a single session (cleared when the tab is closed). Holds up to ~5MB.
+- **cookies**: Small strings of data (up to 4KB) that are sent back and forth to the server with every HTTP request. Usually used for authentication.
+
+### 85. **What is CORS?**
+- _Answer_: Cross-Origin Resource Sharing (CORS) is a security mechanism enforced by browsers. It prevents a malicious script on one domain (e.g., `hacker.com`) from making unauthorized network requests to a different domain (e.g., `bank.com`) unless the destination server explicitly allows it via CORS headers.
+
+### 86. **What is the Fetch API?**
+- _Answer_: The Fetch API provides a modern, Promise-based interface for fetching resources (including across the network). It is a cleaner and more powerful alternative to the older `XMLHttpRequest`.

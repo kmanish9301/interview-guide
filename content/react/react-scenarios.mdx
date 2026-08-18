@@ -1,0 +1,2146 @@
+---
+title: "React Scenarios"
+category: "React"
+difficulty: "Advanced"
+interviewFrequency: "High"
+experienceLevel: "All Levels"
+estimatedReadTime: 49
+tags: ["interview", "questions", "react-scenarios"]
+---
+
+# React Scenarios
+
+Here is the ultimate list of interview questions for React Scenarios.
+
+## ❓ Interview Questions
+
+### 1. **How to send the data from parent component to**
+
+child component in react ?
+Ans. To send data from a parent component to a child component in React,  We
+will use props (short for "properties"). Here's a step-by-step explanation with
+examples:
+a. Pass Data via Props in the Parent Component
+Include the child component in the parent's JSX.
+Attach data to it as a custom attribute (e.g.,  dataName=&#123;value&#125; ).
+// ParentComponent.jsx
+&#105;mport ChildComponent from './ChildComponent';
+function ParentComponent() &#123;
+const message = "Hello from Parent!";// Data to send
+const user = &#123; name: "Alice", age: 30 &#125;;
+return (
+&lt;div&gt;
+&#123;/* Pass data as props */&#125;
+&lt;ChildComponent text=&#123;message&#125; userData=&#123;user&#125; isAdmin=&#123;false&#125;/&gt;
+&lt;/div&gt;);
+&#125;
+b. Access Props in the Child Component
+The child receives data via its  props  parameter (or via destructuring).
+Method A: Using  props  Directly
+// ChildComponent.jsx
+function ChildComponent(props) &#123;
+return (
+&lt;div&gt;
+&lt;h1&gt;&#123;props.text&#125;&lt;/h1&gt;
+&lt;p&gt;Name: &#123;props.userData.name&#125;, Age: &#123;props.userData.age&#125;&lt;/p&gt;
+&#123;props.isAdmin && &lt;button&gt;Admin Panel&lt;/button&gt;&#125;
+&lt;/div&gt;);
+&#125;
+Method B: Destructuring Props
+// ChildComponent.jsx (cleaner with destructuring)
+function ChildComponent(&#123; text, userData, isAdmin &#125;) &#123;
+return (
+&lt;div&gt;
+&lt;h1&gt;&#123;text&#125;&lt;/h1&gt;
+&lt;p&gt;Name: &#123;userData.name&#125;, Age: &#123;userData.age&#125;&lt;/p&gt;
+&#123;isAdmin && &lt;button&gt;Admin Panel&lt;/button&gt;&#125;
+&lt;/div&gt;);
+&#125;
+
+---
+
+### 2. **How to call parent component method from child**
+
+component in reactjs ?
+To call a parent component's method from a child component in React, follow
+these steps:
+1. Pass the Parent's Method as a Prop to the Child
+In the parent component, pass the method as a prop (e.g.,  onAction ).
+In the child component, invoke the prop when needed (e.g., on a button click).
+Example with Functional Components:
+// ParentComponent.jsx
+&#105;mport React from 'react';
+&#105;mport ChildComponent from './ChildComponent';
+function ParentComponent() &#123;
+const handleChildAction = (data) =&gt; &#123;
+console.log('Method called from child!', data);
+&#125;;
+return (
+&lt;div&gt;
+&lt;ChildComponent onAction=&#123;handleChildAction&#125; /&gt;
+&lt;/div&gt;);
+&#125;
+// ChildComponent.jsx
+&#105;mport React from 'react';
+function ChildComponent(&#123; onAction &#125;) &#123;
+const handleClick = () =&gt; &#123;
+// Call parent method with data
+onAction('Hello from child');
+&#125;;
+return &lt;button onClick=&#123;handleClick&#125;&gt;
+Trigger Parent Method
+&lt;/button&gt;;
+&#125;
+Example with Class Components:
+// ParentComponent.jsx
+&#105;mport React from 'react';
+&#105;mport ChildComponent from './ChildComponent';
+class ParentComponent extends React.Component &#123;
+handleChildAction = (data) =&gt; &#123;
+console.log('Method called from child!', data);
+&#125;;
+render() &#123;
+return &lt;ChildComponent onAction=&#123;this.handleChildAction&#125; /&gt;;
+&#125;
+&#125;
+// ChildComponent.jsx
+&#105;mport React from 'react';
+class ChildComponent extends React.Component &#123;
+render() &#123;
+return (
+&lt;button onClick=&#123;() =&gt;
+this.props.onAction('Hello from child')&#125;
+&gt;
+Trigger Parent Method
+&lt;/button&gt;);
+&#125;
+&#125;
+3.How to bind array/array of objects to dropdown in
+react ?
+Step 1: Define Array or Array of Objects in your component
+&#105;mport React, &#123; useState &#125; from 'react';
+const DropdownExample = () =&gt; &#123;
+// Simple Array
+const fruits = ['Apple', 'Banana', 'Orange'];
+// Array of objects
+const countries = [
+&#123; id: 1, name: 'India' &#125;,
+&#123; id: 2, name: 'USA' &#125;,
+&#123; id: 3, name: 'Canada' &#125;,
+];
+// State hooks for selected values
+const [selectedFruit, setSelectedFruit] = useState('');
+const [selectedCountryId, setSelectedCountryId] = useState('');
+return (
+&lt;div&gt;
+&#123;/* Dropdown using simple array */&#125;
+&lt;select value=&#123;selectedFruit&#125; onChange=&#123;(e) =&gt; setSelectedFruit(e.target.
+value)&#125;&gt;
+&lt;option value="" disabled&gt;Select Fruit&lt;/option&gt;
+&#123;fruits.map((fruit, index) =&gt; (
+&lt;option key=&#123;index&#125; value=&#123;fruit&#125;&gt;
+&#123;fruit&#125;
+&lt;/option&gt;
+))&#125;
+&lt;/select&gt;
+&lt;p&gt;Selected Fruit: &#123;selectedFruit&#125;&lt;/p&gt;
+&#123;/* Dropdown using array of objects */&#125;
+&lt;select value=&#123;selectedCountryId&#125; onChange=&#123;(e) =&gt; setSelectedCountryI
+d(e.target.value)&#125;&gt;
+&lt;option value="" disabled&gt;Select Country&lt;/option&gt;
+&#123;countries.map((country) =&gt; (
+&lt;option key=&#123;country.id&#125; value=&#123;country.id&#125;&gt;
+&#123;country.name&#125;
+&lt;/option&gt;
+))&#125;
+&lt;/select&gt;
+&lt;p&gt;Selected Country ID: &#123;selectedCountryId&#125;&lt;/p&gt;
+&lt;/div&gt;
+);
+&#125;;
+&#101;xport default DropdownExample;
+📌 Explanation:
+Mapping ( array.map ): Used to loop through the array and render options.
+Keys ( key ): Essential for React to track each rendered item.
+State ( useState ): Maintains selected values.
+onChange handler: Updates the selected values in the state.
+🖥️ Output Example:
+Selecting Banana sets selectedFruit to 'Banana' .
+Selecting India sets selectedCountryId to 1 .
+
+---
+
+### 3. **Create a lazy loaded component in react ?**
+
+1. Create your Lazy Loaded Component (e.g., MyComponent.jsx )
+// MyComponent.jsx
+&#105;mport React from 'react';
+const MyComponent = () =&gt; &#123;
+return &lt;div&gt;This is a lazy loaded component!&lt;/div&gt;;
+&#125;;
+&#101;xport default MyComponent;
+2. Lazy load this component in your main application file (e.g., App.jsx )
+// App.jsx
+&#105;mport React, &#123; lazy, Suspense &#125; from 'react';
+const LazyMyComponent = lazy(() =&gt; import('./MyComponent'));
+const App = () =&gt; &#123;
+return (
+&lt;div&gt;
+&lt;h1&gt;Main App Component&lt;/h1&gt;
+&lt;Suspense fallback=&#123;&lt;div&gt;Loading component...&lt;/div&gt;&#125;&gt;
+&lt;LazyMyComponent /&gt;
+&lt;/Suspense&gt;
+&lt;/div&gt;
+);
+&#125;;
+&#101;xport default App;
+Explanation:
+lazy : This function allows you to dynamically import a component.
+Suspense : Wraps lazy-loaded components and provides a fallback UI (e.g., a
+spinner or loader) while the component loads.
+
+---
+
+### 4. **How to display data entered by the user in another**
+
+textbox ?
+Step-by-step code:
+&#105;mport React, &#123; useState &#125; from 'react';
+const DisplayInputExample = () =&gt; &#123;
+const [inputValue, setInputValue] = useState('');
+const handleChange = (event) =&gt; &#123;
+setInputValue(event.target.value);
+&#125;;
+return (
+&lt;div&gt;
+&lt;inputtype="text"
+placeholder="Enter something..."
+value=&#123;inputValue&#125;
+onChange=&#123;handleChange&#125;
+/&gt;
+&lt;br /&gt;&lt;br /&gt;
+&lt;inputtype="text"
+placeholder="Displayed value..."
+value=&#123;inputValue&#125;
+readOnly
+/&gt;
+&lt;/div&gt;
+);
+&#125;;
+&#101;xport default DisplayInputExample;
+Explanation:
+useState hook manages the entered value.
+The first input captures user input via onChange .
+The second input displays the entered text, set as readOnly to prevent manual
+editing.
+This allows you to see the entered text mirrored immediately in another textbox.
+
+---
+
+### 5. **How to conditionally render an element or text in**
+
+react ?
+You can conditionally render elements or text in React using these common
+approaches:
+Using the ternary ( ? : ) operator:
+function MyComponent(&#123; isLoggedIn &#125;) &#123;
+return (
+&lt;div&gt;
+&#123;isLoggedIn ? &lt;p&gt;Welcome back!&lt;/p&gt; : &lt;p&gt;Please log in.&lt;/p&gt;&#125;
+&lt;/div&gt;
+);
+&#125;
+Using logical AND ( && ) operator:
+function MyComponent(&#123; showMessage &#125;) &#123;
+return (
+&lt;div&gt;
+&#123;showMessage && &lt;p&gt;This message appears if true.&lt;/p&gt;&#125;
+&lt;/div&gt;
+);
+&#125;
+Conditional rendering via variables:
+function MyComponent(&#123; isAdmin &#125;) &#123;
+let content;
+if (isAdmin) &#123;
+content = &lt;p&gt;Admin Dashboard&lt;/p&gt;;
+&#125; else &#123;
+content = &lt;p&gt;User Dashboard&lt;/p&gt;;
+&#125;
+return &lt;div&gt;&#123;content&#125;&lt;/div&gt;;
+&#125;
+Inline conditional rendering (short-circuiting):
+function MyComponent(&#123; notifications &#125;) &#123;
+return (
+&lt;div&gt;
+&#123;notifications.length &gt; 0 && &lt;p&gt;You have notifications!&lt;/p&gt;&#125;
+&lt;/div&gt;
+);
+&#125;
+Choose the approach based on clarity and complexity of your conditions.
+
+---
+
+### 6. **How to perform debouncing in react ?**
+
+Step-by-step example:
+&#105;mport React, &#123; useState, useEffect, useRef &#125; from 'react';
+function DebounceExample() &#123;
+const [inputValue, setInputValue] = useState('');
+const [debouncedValue, setDebouncedValue] = useState('');
+const timerRef = useRef(null);
+const handleInputChange = (event) =&gt; &#123;
+setInputValue(event.target.value);
+&#125;;
+useEffect(() =&gt; &#123;
+// Clear the previous timer if inputValue changes
+if (timerRef.current) clearTimeout(timerRef.current);
+// Set new timer for debounce
+timerRef.current = setTimeout(() =&gt; &#123;
+setDebouncedValue(inputValue);
+&#125;, 500); // 500ms debounce interval
+// Cleanup function
+return () =&gt; clearTimeout(timerRef.current);
+&#125;, [inputValue]);
+return (
+&lt;div&gt;
+&lt;inputtype="text"
+value=&#123;inputValue&#125;
+placeholder="Type something..."
+onChange=&#123;handleInputChange&#125;
+/&gt;
+&lt;p&gt;Debounced Input: &#123;debouncedValue&#125;&lt;/p&gt;
+&lt;/div&gt;
+);
+&#125;
+&#101;xport default DebounceExample;
+Explanation:
+useState : Manages the immediate ( inputValue ) and debounced values
+( debouncedValue ).
+useRef : Stores the timer reference to clear previous timers effectively.
+useEffect : Triggers on each change to inputValue , resets the debounce timer, and
+updates debouncedValue only after the specified delay (500ms).
+This technique ensures actions are performed only after the user stops typing for
+a short period, optimizing performance and preventing unnecessary function
+calls.
+8. Create a component to fetch data from api in reactjs
+?
+&#105;mport React, &#123; useState, useEffect &#125; from "react";
+const DataFetcher = (&#123; apiUrl &#125;) =&gt; &#123;
+const [data, setData] = useState(null);
+const [loading, setLoading] = useState(true);
+const [error, setError] = useState(null);
+useEffect(() =&gt; &#123;
+setLoading(true);
+setError(null);
+fetch(apiUrl)
+.then((response) =&gt; &#123;
+if (!response.ok) &#123;
+throw new Error("Network response was not ok");
+&#125;
+return response.json();
+&#125;)
+.then((json) =&gt; &#123;
+setData(json);
+setLoading(false);
+&#125;)
+.catch((err) =&gt; &#123;
+setError(err.message || "Something went wrong");
+setLoading(false);
+&#125;);
+&#125;, [apiUrl]);
+if (loading) return &lt;p&gt;Loading...&lt;/p&gt;;
+if (error) return &lt;p&gt;Error: &#123;error&#125;&lt;/p&gt;;
+return (
+&lt;div&gt;
+&lt;pre&gt;&#123;JSON.stringify(data, null, 2)&#125;&lt;/pre&gt;
+&lt;/div&gt;
+);
+&#125;;
+&#101;xport default DataFetcher;
+Usage:
+&lt;DataFetcher apiUrl="https://jsonplaceholder.typicode.com/posts/1" /&gt;
+Explanation:
+Uses useEffect to fetch data when the component mounts or when apiUrl
+changes.
+Shows loading text while fetching.
+Handles and displays errors.
+Displays fetched data in a formatted JSON block.
+9. Given two dropdowns, select 2nd dropdown options
+based on value selected in one dropdown in reactjs ?
+(Load states based on country selected)
+&#105;mport React, &#123; useState &#125; from "react";
+const countries = [
+&#123; id: "in", name: "India" &#125;,
+&#123; id: "us", name: "USA" &#125;,
+];
+const states = &#123;
+in: [
+&#123; id: "mh", name: "Maharashtra" &#125;,
+&#123; id: "tg", name: "Telangana" &#125;,
+],
+us: [
+&#123; id: "ca", name: "California" &#125;,
+&#123; id: "ny", name: "New York" &#125;,
+],
+&#125;;
+const CountryStateDropdown = () =&gt; &#123;
+const [selectedCountry, setSelectedCountry] = useState("");
+const [selectedState, setSelectedState] = useState("");
+const handleCountryChange = (e) =&gt; &#123;
+setSelectedCountry(e.target.value);
+setSelectedState(""); // reset state on country change
+&#125;;
+const handleStateChange = (e) =&gt; &#123;
+setSelectedState(e.target.value);
+&#125;;
+return (
+&lt;div&gt;
+&lt;label&gt;
+Country:&#123;" "&#125;
+&lt;select value=&#123;selectedCountry&#125; onChange=&#123;handleCountryChange&#125;&gt;
+&lt;option value=""&gt;-- Select Country --&lt;/option&gt;
+&#123;countries.map((country) =&gt; (
+&lt;option key=&#123;country.id&#125; value=&#123;country.id&#125;&gt;
+&#123;country.name&#125;
+&lt;/option&gt;
+))&#125;
+&lt;/select&gt;
+&lt;/label&gt;
+&lt;br /&gt;
+&lt;label&gt;
+State:&#123;" "&#125;
+&lt;selectvalue=&#123;selectedState&#125;
+onChange=&#123;handleStateChange&#125;
+disabled=&#123;!selectedCountry&#125;
+&gt;
+&lt;option value=""&gt;-- Select State --&lt;/option&gt;
+&#123;selectedCountry &&
+states[selectedCountry]?.map((state) =&gt; (
+&lt;option key=&#123;state.id&#125; value=&#123;state.id&#125;&gt;
+&#123;state.name&#125;
+&lt;/option&gt;
+))&#125;
+&lt;/select&gt;
+&lt;/label&gt;
+&lt;/div&gt;
+);
+&#125;;
+&#101;xport default CountryStateDropdown;
+How it works:
+When you select a country, it updates selectedCountry .
+The second dropdown populates with states corresponding to the selected
+country.
+If no country is selected, the states dropdown is disabled.
+Selecting a new country resets the selected state.
+
+---
+
+### 7. **How to display dynamic html data in reactjs ?**
+
+To display dynamic HTML content (like a string containing HTML tags) safely in
+React, you use dangerouslySetInnerHTML .
+function DynamicHtml(&#123; htmlString &#125;) &#123;
+return (
+&lt;div dangerouslySetInnerHTML=&#123;&#123; __html: htmlString &#125;&#125; /&gt;
+);
+&#125;
+// Usage
+const someHtml = "&lt;p&gt;This is &lt;strong&gt;dynamic&lt;/strong&gt; HTML content.&lt;/p
+&gt;";
+&lt;DynamicHtml htmlString=&#123;someHtml&#125; /&gt;
+Important Notes:
+React escapes HTML by default to prevent XSS attacks.
+dangerouslySetInnerHTML bypasses React’s escaping, so only use it with trusted
+content.
+Always sanitize user-generated HTML before rendering with
+dangerouslySetInnerHTML .
+
+---
+
+### 8. **How to add data into useState array in functional**
+
+component in react ?
+To add data into a useState array in a React functional component, you update the
+state by creating a new array with the existing items plus the new item.
+&#105;mport React, &#123; useState &#125; from "react";
+function MyComponent() &#123;
+const [items, setItems] = useState([]);
+const addItem = (newItem) =&gt; &#123;
+setItems(prevItems =&gt; [...prevItems, newItem]);
+&#125;;
+return (
+&lt;&gt;&lt;button onClick=&#123;() =&gt; addItem("New item")&#125;&gt;Add Item&lt;/button&gt;
+&lt;ul&gt;
+&#123;items.map((item, idx) =&gt; (
+&lt;li key=&#123;idx&#125;&gt;&#123;item&#125;&lt;/li&gt;
+))&#125;
+&lt;/ul&gt;
+&lt;/&gt;
+);
+&#125;
+Explanation:
+Use the updater function form of setItems to get the latest state.
+Create a new array with the spread operator [...prevItems, newItem] to add the new
+item.
+This ensures immutability and triggers a re-render.
+12. Change focus/enable/disable textbox in child
+component based on parent component button click ?
+To change focus or enable/disable a textbox in a child component based on a
+button click in the parent component in React, you can use props and refs.
+Here’s a minimal example showing both:
+a. Parent controls enable/disable and focus on child's textbox
+&#105;mport React, &#123; useState, useRef, useEffect &#125; from "react";
+function Child(&#123; disabled, shouldFocus &#125;) &#123;
+const inputRef = useRef(null);
+useEffect(() =&gt; &#123;
+if (shouldFocus && inputRef.current) &#123;
+inputRef.current.focus();
+&#125;
+&#125;, [shouldFocus]);
+return (
+&lt;inputref=&#123;inputRef&#125;
+type="text"
+disabled=&#123;disabled&#125;
+placeholder=&#123;disabled ? "Disabled" : "Enabled"&#125;
+/&gt;
+);
+&#125;
+function Parent() &#123;
+const [disabled, setDisabled] = useState(true);
+const [focusRequest, setFocusRequest] = useState(false);
+const toggleDisabled = () =&gt; &#123;
+setDisabled(prev =&gt; !prev);
+&#125;;
+const focusInput = () =&gt; &#123;
+setFocusRequest(true);
+// reset the focus request after focusing to allow future focus
+setTimeout(() =&gt; setFocusRequest(false), 0);
+&#125;;
+return (
+&lt;&gt;&lt;button onClick=&#123;toggleDisabled&#125;&gt;
+&#123;disabled ? "Enable" : "Disable"&#125; Textbox
+&lt;/button&gt;
+&lt;button onClick=&#123;focusInput&#125; disabled=&#123;disabled&#125;&gt;
+Focus Textbox
+&lt;/button&gt;
+&lt;Child disabled=&#123;disabled&#125; shouldFocus=&#123;focusRequest&#125; /&gt;
+&lt;/&gt;
+);
+&#125;
+&#101;xport default Parent;
+How it works:
+disabled state in Parent controls whether the child input is enabled or disabled.
+shouldFocus prop signals the child to focus the textbox.
+The child uses useEffect to focus when shouldFocus changes to true .
+Parent resets focusRequest immediately so subsequent focus events can trigger
+again.
+
+---
+
+### 9. **How to display dropdown value selected by user in**
+
+another textbox ?
+&#105;mport React, &#123; useState &#125; from "react";
+function DropdownToTextbox() &#123;
+const [selectedValue, setSelectedValue] = useState("");
+const handleChange = (e) =&gt; &#123;
+setSelectedValue(e.target.value);
+&#125;;
+return (
+&lt;div&gt;
+&lt;select value=&#123;selectedValue&#125; onChange=&#123;handleChange&#125;&gt;
+&lt;option value=""&gt;Select an option&lt;/option&gt;
+&lt;option value="Apple"&gt;Apple&lt;/option&gt;
+&lt;option value="Banana"&gt;Banana&lt;/option&gt;
+&lt;option value="Orange"&gt;Orange&lt;/option&gt;
+&lt;/select&gt;
+&lt;input type="text" value=&#123;selectedValue&#125; readOnly /&gt;
+&lt;/div&gt;
+);
+&#125;
+&#101;xport default DropdownToTextbox;
+Explanation:
+The select element controls the selectedValue state.
+When the user selects a value, handleChange updates the state.
+The textbox’s value is set to the current selectedValue , showing the selected
+dropdown option.
+readOnly is used on the textbox so the user cannot edit it manually.
+
+---
+
+### 10. **How to display number of characters remaining**
+
+functionality for textarea using react useRef?
+React example showing how to display the number of characters remaining for a
+&lt;textarea&gt; using useRef :
+&#105;mport React, &#123; useRef, useState &#125; from "react";
+function TextareaWithCharCount() &#123;
+const maxLength = 100;
+const textareaRef = useRef(null);
+const [remaining, setRemaining] = useState(maxLength);
+const handleChange = () =&gt; &#123;
+const length = textareaRef.current.value.length;
+setRemaining(maxLength - length);
+&#125;;
+return (
+&lt;div&gt;
+&lt;textarearef=&#123;textareaRef&#125;
+maxLength=&#123;maxLength&#125;
+onChange=&#123;handleChange&#125;
+rows=&#123;4&#125;
+cols=&#123;40&#125;
+/&gt;
+&lt;div&gt;&#123;remaining&#125; characters remaining&lt;/div&gt;
+&lt;/div&gt;
+);
+&#125;
+&#101;xport default TextareaWithCharCount;
+How it works:
+textareaRef points to the textarea DOM node.
+On each onChange event, read textareaRef.current.value.length to get current length.
+Calculate remaining chars ( maxLength - length ) and update state.
+Display remaining count below the textarea.
+15. Create a search textbox filter in reactjs
+Here's a simple ReactJS example of a search textbox filter that filters a list of
+items as you type:
+&#105;mport React, &#123; useState &#125; from "react";
+const SearchFilter = () =&gt; &#123;
+const items = [
+"Apple",
+"Banana",
+"Orange",
+"Mango",
+"Pineapple",
+"Grapes",
+"Strawberry",
+];
+const [searchTerm, setSearchTerm] = useState("");
+// Filter items based on search term (case insensitive)
+const filteredItems = items.filter(item =&gt;
+item.toLowerCase().includes(searchTerm.toLowerCase())
+);
+return (
+&lt;div&gt;
+&lt;inputtype="text"
+placeholder="Search fruits..."
+value=&#123;searchTerm&#125;
+onChange=&#123;e =&gt; setSearchTerm(e.target.value)&#125;
+/&gt;
+&lt;ul&gt;
+&#123;filteredItems.length &gt; 0 ? (
+filteredItems.map((item, idx) =&gt; &lt;li key=&#123;idx&#125;&gt;&#123;item&#125;&lt;/li&gt;)
+) : (
+&lt;li&gt;No results found&lt;/li&gt;
+)&#125;
+&lt;/ul&gt;
+&lt;/div&gt;
+);
+&#125;;
+&#101;xport default SearchFilter;
+How it works:
+You type in the input box.
+searchTerm state updates on each keystroke.
+The list items is filtered to include only those matching the searchTerm .
+The filtered list displays below the input.
+16. Display radio button data selected by user in
+another textbox
+Here’s a simple React example showing how to display the selected radio button
+value inside a textbox:
+&#105;mport React, &#123; useState &#125; from "react";
+function RadioToTextbox() &#123;
+const [selectedOption, setSelectedOption] = useState("");
+const handleChange = (e) =&gt; &#123;
+setSelectedOption(e.target.value);
+&#125;;
+return (
+&lt;div&gt;
+&lt;h3&gt;Select an option:&lt;/h3&gt;
+&lt;label&gt;
+&lt;inputtype="radio"
+value="Option 1"
+checked=&#123;selectedOption === "Option 1"&#125;
+onChange=&#123;handleChange&#125;
+/&gt;
+Option 1
+&lt;/label&gt;
+&lt;br /&gt;
+&lt;label&gt;
+&lt;inputtype="radio"
+value="Option 2"
+checked=&#123;selectedOption === "Option 2"&#125;
+onChange=&#123;handleChange&#125;
+/&gt;
+Option 2
+&lt;/label&gt;
+&lt;br /&gt;
+&lt;br /&gt;
+&lt;label&gt;
+Selected option:
+&lt;input type="text" value=&#123;selectedOption&#125; readOnly /&gt;
+&lt;/label&gt;
+&lt;/div&gt;
+);
+&#125;
+&#101;xport default RadioToTextbox;
+
+---
+
+### 11. **Create an error boundary component in react ?**
+
+&#105;mport React from 'react';
+class ErrorBoundary extends React.Component &#123;
+constructor(props) &#123;
+super(props);
+this.state = &#123; hasError: false &#125;;
+&#125;
+static getDerivedStateFromError(/* error */) &#123;
+return &#123; hasError: true &#125;;
+&#125;
+componentDidCatch(error, info) &#123;
+if (this.props.onError) &#123;
+this.props.onError(error, info);
+&#125; else &#123;
+console.error(error, info);
+&#125;
+&#125;
+render() &#123;
+if (this.state.hasError) &#123;
+return this.props.fallback || &lt;div&gt;Something went wrong.&lt;/div&gt;;
+&#125;
+return this.props.children;
+&#125;
+&#125;
+&#101;xport default ErrorBoundary;
+Usage example:
+&#105;mport ErrorBoundary from './ErrorBoundary';
+&#105;mport MyComponent from './MyComponent';
+function App() &#123;
+return (
+&lt;ErrorBoundaryfallback=&#123;&lt;div&gt;Oops—an error occurred.&lt;/div&gt;&#125;
+onError=&#123;(error, info) =&gt; &#123;
+// send to logging service
+console.log('Logging error:', error, info);
+&#125;&#125;
+&gt;
+&lt;MyComponent /&gt;
+&lt;/ErrorBoundary&gt;
+);
+&#125;
+ErrorBoundary must be a class component.
+It resets to fallback UI when a child throws.
+You can pass a fallback prop (any JSX) and an onError callback.
+Wrap any tree under it to catch runtime errors in rendering/lifecycle.
+
+---
+
+### 12. **Create a counter component using useState ?**
+
+&#105;mport React, &#123; useState &#125; from 'react';
+function Counter() &#123;
+const [count, setCount] = useState(0);
+return (
+&lt;div&gt;
+&lt;h2&gt;Count: &#123;count&#125;&lt;/h2&gt;
+&lt;button onClick=&#123;() =&gt; setCount(count + 1)&#125;&gt;
+Increment
+&lt;/button&gt;
+&lt;button onClick=&#123;() =&gt; setCount(count - 1)&#125; disabled=&#123;count === 0&#125;&gt;
+Decrement
+&lt;/button&gt;
+&lt;button onClick=&#123;() =&gt; setCount(0)&#125;&gt;
+Reset
+&lt;/button&gt;
+&lt;/div&gt;
+);
+&#125;
+&#101;xport default Counter;
+
+---
+
+### 13. **Create a counter component using useReducer ?**
+
+1. Counter Component Implementation
+&#105;mport React, &#123; useReducer &#125; from 'react';
+// Reducer functionfunction counterReducer(state, action) &#123;
+switch (action.type) &#123;
+case 'INCREMENT':
+return &#123; count: state.count + 1 &#125;;
+case 'DECREMENT':
+return &#123; count: state.count - 1 &#125;;
+case 'RESET':
+return &#123; count: 0 &#125;;
+case 'SET_VALUE':
+return &#123; count: action.payload &#125;;
+default:
+return state;
+&#125;
+&#125;
+// Initial stateconst initialState = &#123; count: 0 &#125;;
+function Counter() &#123;
+const [state, dispatch] = useReducer(counterReducer, initialState);
+return (
+&lt;div style=&#123;&#123; textAlign: 'center', marginTop: '50px' &#125;&#125;&gt;
+&lt;h1&gt;Counter: &#123;state.count&#125;&lt;/h1&gt;
+&lt;div&gt;
+&lt;button onClick=&#123;() =&gt; dispatch(&#123; type: 'DECREMENT' &#125;)&#125;&gt;
+Decrement -
+&lt;/button&gt;
+&lt;button
+onClick=&#123;() =&gt; dispatch(&#123; type: 'RESET' &#125;)&#125;style=&#123;&#123; margin: '0 10px' &#125;&#125;&gt;
+Reset
+&lt;/button&gt;
+&lt;button onClick=&#123;() =&gt; dispatch(&#123; type: 'INCREMENT' &#125;)&#125;&gt;
+Increment +
+&lt;/button&gt;
+&lt;/div&gt;
+&lt;div style=&#123;&#123; marginTop: '20px' &#125;&#125;&gt;
+&lt;input
+type="number"value=&#123;state.count&#125;onChange=&#123;(e) =&gt;
+dispatch(&#123;
+type: 'SET_VALUE',
+payload: Number(e.target.value) || 0
+&#125;)
+&#125;style=&#123;&#123; padding: '5px', width: '60px' &#125;&#125;/&gt;
+&lt;/div&gt;
+&lt;/div&gt;);
+&#125;
+&#101;xport default Counter;
+2. Key Features
+1. Reducer Function:
+Handles state transitions based on action types
+Pure function that returns new state
+Handles increment, decrement, reset, and direct value setting
+2. Action Types:
+INCREMENT : Increases count by 1
+DECREMENT : Decreases count by 1
+RESET : Returns count to 0
+SET_VALUE : Sets count to a specific value from input
+3. useReducer Hook:
+const [state, dispatch] = useReducer(counterReducer, initialState);
+Provides current state and dispatch function to send actions
+4. UI Elements:
+Buttons for increment/decrement/reset
+Input field for direct value modification
+Real-time display of current count
+
+---
+
+### 14. **How to Use:**
+
+1. Create a new file  Counter.js  with the above code
+2. Import and use it in your main App component:
+// App.jsimport Counter from './Counter';
+function App() &#123;
+return (
+&lt;div className="App"&gt;
+&lt;Counter /&gt;
+&lt;/div&gt;);
+&#125;
+
+---
+
+### 15. **How to call a method on every rerender of a**
+
+component ?
+To call a method on every re-render of a React component, you use the useEffect
+hook without a dependency array.
+✅ Syntax:
+useEffect(() =&gt; &#123;
+// This runs after every render (initial + re-renders)
+yourMethod();
+&#125;);
+🔧 Example:
+&#105;mport React, &#123; useState, useEffect &#125; from 'react';
+function ReRenderExample() &#123;
+const [count, setCount] = useState(0);
+const logMessage = () =&gt; &#123;
+console.log('Component rendered. Current count:', count);
+&#125;;
+useEffect(() =&gt; &#123;
+logMessage();
+&#125;); // ⚠️ No dependency array → runs after every render
+return (
+&lt;div&gt;
+&lt;h2&gt;Count: &#123;count&#125;&lt;/h2&gt;
+&lt;button onClick=&#123;() =&gt; setCount(count + 1)&#125;&gt;Increment&lt;/button&gt;
+&lt;/div&gt;
+);
+&#125;
+&#101;xport default ReRenderExample;
+📌 Explanation:
+useEffect() without a dependency array runs after every render.
+Each time the component state or props change, it re-renders → triggering the
+useEffect .
+⚠️ Caution:
+Avoid expensive logic inside this useEffect since it runs frequently. Use
+dependencies wisely for performance.
+
+---
+
+### 16. **Create a pure component in reactjs ?**
+
+🔹 What is a Pure Component?
+A Pure Component in React is a component that doesn’t re-render unless its
+props or state actually change.
+It implements shouldComponentUpdate() with a shallow comparison of props and state
+out of the box.
+🔹 When to use?
+Use it when:
+You want to optimize performance.
+You know the component re-renders unnecessarily.
+Props/state are immutable and don't change deeply.
+✅ Example Using React.PureComponent
+&#105;mport React from 'react';
+class Counter extends React.PureComponent &#123;
+render() &#123;
+console.log('Counter rendered');
+return &lt;h1&gt;Count: &#123;this.props.count&#125;&lt;/h1&gt;;
+&#125;
+&#125;
+&#101;xport default Counter;
+✅ Usage:
+&#105;mport React, &#123; useState &#125; from 'react';
+&#105;mport Counter from './Counter';
+function App() &#123;
+const [count, setCount] = useState(0);
+const handleClick = () =&gt; &#123;
+// Updating with the same value won’t re-render &lt;Counter /&gt;
+setCount(prev =&gt; prev);
+&#125;;
+return (
+&lt;div&gt;
+&lt;Counter count=&#123;count&#125; /&gt;
+&lt;button onClick=&#123;handleClick&#125;&gt;Update Count&lt;/button&gt;
+&lt;/div&gt;
+);
+&#125;
+&#101;xport default App;
+✅ Functional Component Alternative
+In functional components, you use React.memo() for the same purpose:
+&#105;mport React from 'react';
+const Counter = React.memo((&#123; count &#125;) =&gt; &#123;
+console.log('Counter rendered');
+return &lt;h1&gt;Count: &#123;count&#125;&lt;/h1&gt;;
+&#125;);
+&#101;xport default Counter;
+22. Create a controlled and uncontrolled component in
+react ?
+In React, controlled and uncontrolled components refer to how form data is
+handled inside the component. Let's explore both with code examples and clear
+explanations.
+✅ 1. Controlled Component
+A controlled component is one where React state controls the input value. You
+use useState or any state management to store and update the input value.
+Example:
+&#105;mport React, &#123; useState &#125; from 'react';
+function ControlledInput() &#123;
+const [name, setName] = useState('');
+const handleChange = (e) =&gt; &#123;
+setName(e.target.value);
+&#125;;
+return (
+&lt;div&gt;
+&lt;h3&gt;Controlled Component&lt;/h3&gt;
+&lt;input type="text" value=&#123;name&#125; onChange=&#123;handleChange&#125; /&gt;
+&lt;p&gt;Entered Name: &#123;name&#125;&lt;/p&gt;
+&lt;/div&gt;
+);
+&#125;
+✅ Key Points:
+Input value is stored in React state.
+onChange updates the state.
+React is always in control of the input's value.
+❎ 2. Uncontrolled Component
+An uncontrolled component is one where the DOM controls the input value, and
+you access it using a ref .
+🔧 Example:
+&#105;mport React, &#123; useRef &#125; from 'react';
+function UncontrolledInput() &#123;
+const inputRef = useRef(null);
+const handleSubmit = () =&gt; &#123;
+alert('Entered Name: ' + inputRef.current.value);
+&#125;;
+return (
+&lt;div&gt;
+&lt;h3&gt;Uncontrolled Component&lt;/h3&gt;
+&lt;input type="text" ref=&#123;inputRef&#125; /&gt;
+&lt;button onClick=&#123;handleSubmit&#125;&gt;Show Value&lt;/button&gt;
+&lt;/div&gt;
+);
+&#125;
+✅ Key Points:
+No React state used to track input value.
+You directly interact with the DOM via ref .
+Useful for simple scenarios or performance-sensitive operations.
+📌 Summary
+Feature
+Controlled Component
+Uncontrolled Component
+Input value managed by
+React state
+DOM (via ref )
+Use case
+Complex forms, validation
+Simple inputs, quick forms
+Access value
+useState + value prop
+useRef().current.value
+React control
+Full control
+Minimal control
+
+---
+
+### 17. **Create a custom hook using reactjs ?**
+
+A custom hook in React is a JavaScript function whose name starts with use and
+lets you reuse logic across components. Instead of repeating code (e.g., useState ,
+useEffect setups) in multiple components, you can extract that logic into a custom
+hook.
+Use Case: useWindowWidth (Get the current window width)
+Step 1: Create the Custom Hook
+// useWindowWidth.js
+&#105;mport &#123; useState, useEffect &#125; from 'react';
+function useWindowWidth() &#123;
+const [width, setWidth] = useState(window.innerWidth);
+useEffect(() =&gt; &#123;
+const handleResize = () =&gt; setWidth(window.innerWidth);
+window.addEventListener('resize', handleResize);
+// Clean up on unmount
+return () =&gt; window.removeEventListener('resize', handleResize);
+&#125;, []);
+return width;
+&#125;
+&#101;xport default useWindowWidth;
+🔧 Step 2: Use it in a Component
+&#105;mport React from 'react';
+&#105;mport useWindowWidth from './useWindowWidth';
+function WindowWidthComponent() &#123;
+const width = useWindowWidth();
+return (
+&lt;div&gt;
+&lt;h2&gt;Custom Hook Example&lt;/h2&gt;
+&lt;p&gt;Current window width: &#123;width&#125;px&lt;/p&gt;
+&lt;/div&gt;
+);
+&#125;
+✅ Explanation
+useWindowWidth is a custom hook that:
+Uses useState to track the window width.
+Uses useEffect to listen to the resize event.
+Cleans up the event listener on unmount.
+This hook can now be reused in any component without duplicating logic.
+💡 When to Use Custom Hooks
+Fetching data ( useFetch )
+Managing timers ( useTimeout , useInterval )
+Reusable state behavior (e.g., form handlers, toggle logic)
+Subscribing to global events (scroll, resize, visibility)
+
+---
+
+### 18. **Give an emaple of optimization using useMemo ?**
+
+✅ Example of Optimization using useMemo in React
+Let’s say you have a component that performs a heavy calculation every time it
+renders. This is inefficient if the inputs to the calculation haven’t changed.
+Code Example
+&#105;mport React, &#123; useState, useMemo &#125; from 'react';
+function ExpensiveComponent() &#123;
+const [count, setCount] = useState(0);
+const [input, setInput] = useState('');
+// Heavy calculation
+const expensiveValue = useMemo(() =&gt; &#123;
+console.log('Calculating expensive value...');
+let total = 0;
+for (let i = 0; i &lt; 100000000; i++) &#123;
+total += i;
+&#125;
+return total;
+&#125;, []); // Only runs once, on initial render
+return (
+&lt;div&gt;
+&lt;h2&gt;Expensive Value: &#123;expensiveValue&#125;&lt;/h2&gt;
+&lt;inputtype="text"
+value=&#123;input&#125;
+onChange=&#123;(e) =&gt; setInput(e.target.value)&#125;
+placeholder="Type something"
+/&gt;
+&lt;button onClick=&#123;() =&gt; setCount(count + 1)&#125;&gt;Count: &#123;count&#125;&lt;/button&gt;
+&lt;/div&gt;
+);
+&#125;
+&#101;xport default ExpensiveComponent;
+🔍 Explanation
+useMemo(() =&gt; &#123;/* calculation */&#125;, [dependencies]) caches the result of a computation.
+In the example, the expensive loop is only run once because the dependency
+array is empty [] .
+Without useMemo , this loop would execute on every re-render, even if the
+result doesn't need to change.
+💡 When to Use useMemo
+Use it to optimize performance when:
+You have a heavy computation.
+The computation depends on certain variables.
+You want to avoid recalculating when those variables haven't changed.
+
+---
+
+### 19. **How to Share data between components using**
+
+context api ?
+The Context API allows you to create a global state or shared values that can be
+accessed by any component in the tree, without passing props manually at every
+level.
+✅ Use Case Example
+We want to share a user object between App , Navbar , and UserProfile .
+Step-by-Step Implementation
+1. Create a Context
+// UserContext.js
+&#105;mport &#123; createContext &#125; from 'react';
+&#101;xport const UserContext = createContext(null);
+2. Create a Provider Component
+// UserProvider.js
+&#105;mport React, &#123; useState &#125; from 'react';
+&#105;mport &#123; UserContext &#125; from './UserContext';
+const UserProvider = (&#123; children &#125;) =&gt; &#123;
+const [user, setUser] = useState(&#123; name: "Saikrishna", email: "sai@email.co
+m" &#125;);
+return (
+&lt;UserContext.Provider value=&#123;&#123; user, setUser &#125;&#125;&gt;
+&#123;children&#125;
+&lt;/UserContext.Provider&gt;
+);
+&#125;;
+&#101;xport default UserProvider;
+3. Wrap your app with the Provider
+// App.js
+&#105;mport React from 'react';
+&#105;mport UserProvider from './UserProvider';
+&#105;mport Navbar from './Navbar';
+&#105;mport UserProfile from './UserProfile';
+function App() &#123;
+return (
+&lt;UserProvider&gt;
+&lt;Navbar /&gt;
+&lt;UserProfile /&gt;
+&lt;/UserProvider&gt;
+);
+&#125;
+&#101;xport default App;
+4. Consume the Context in Any Component
+// Navbar.js
+&#105;mport React, &#123; useContext &#125; from 'react';
+&#105;mport &#123; UserContext &#125; from './UserContext';
+const Navbar = () =&gt; &#123;
+const &#123; user &#125; = useContext(UserContext);
+return &lt;div&gt;Welcome, &#123;user.name&#125;!&lt;/div&gt;;
+&#125;;
+&#101;xport default Navbar;
+// UserProfile.js
+&#105;mport React, &#123; useContext &#125; from 'react';
+&#105;mport &#123; UserContext &#125; from './UserContext';
+const UserProfile = () =&gt; &#123;
+const &#123; user, setUser &#125; = useContext(UserContext);
+return (
+&lt;div&gt;
+&lt;h2&gt;User Profile&lt;/h2&gt;
+&lt;p&gt;Email: &#123;user.email&#125;&lt;/p&gt;
+&lt;button onClick=&#123;() =&gt; setUser(&#123; ...user, name: 'Krishna' &#125;)&#125;&gt;
+Change Name
+&lt;/button&gt;
+&lt;/div&gt;
+);
+&#125;;
+&#101;xport default UserProfile;
+Summary:
+Create a context using createContext()
+Wrap your app with a Provider
+Use useContext() to consume the shared data in any component
+26. Which lifecycle hooks in class component are
+replaced with useEffect in functional components ?
+In React, the useEffect hook in functional components replaces several lifecycle
+methods from class components. Here's a clear breakdown:
+🔄 Class Component Lifecycle Methods vs useEffect
+Class Component Lifecycle
+Method
+Equivalent with useEffect
+Purpose
+componentDidMount()
+useEffect(() =&gt; &#123; ... &#125;, [])
+Runs once after initial render
+(mount)
+componentDidUpdate()
+useEffect(() =&gt; &#123; ... &#125;,
+[dependency])
+Runs after re-render when
+dependency changes
+componentWillUnmount()
+useEffect(() =&gt; &#123; return () =&gt; &#123;
+... &#125; &#125;, [])
+Runs cleanup code on
+unmount
+componentDidMount +
+componentDidUpdate
+useEffect(() =&gt; &#123; ... &#125;) (no
+dependency array)
+Runs after every render (not
+recommended often)
+✅ Examples for Better Understanding
+1. componentDidMount
+// Class
+componentDidMount() &#123;
+console.log('Component mounted');
+&#125;
+// Functional
+useEffect(() =&gt; &#123;
+console.log('Component mounted');
+&#125;, []);
+2. componentDidUpdate
+// Class
+componentDidUpdate(prevProps, prevState) &#123;
+if (prevProps.count !== this.props.count) &#123;
+console.log('Count updated');
+&#125;
+&#125;
+// Functional
+useEffect(() =&gt; &#123;
+console.log('Count updated');
+&#125;, [count]);
+3. componentWillUnmount
+// Class
+componentWillUnmount() &#123;
+console.log('Cleanup before unmount');
+&#125;
+// Functional
+useEffect(() =&gt; &#123;
+return () =&gt; &#123;
+console.log('Cleanup before unmount');
+&#125;;
+&#125;, []);
+💡 Summary
+The useEffect hook in functional components handles:
+Mounting
+Updating
+Unmounting
+All in one unified API — depending on how you use the dependency array and
+cleanup function.
+
+---
+
+### 20. **Create a popup using portal ?**
+
+✅ 1. Create the Popup component using portal
+// Popup.js
+&#105;mport React from 'react';
+&#105;mport ReactDOM from 'react-dom';
+const Popup = (&#123; children, onClose &#125;) =&gt; &#123;
+return ReactDOM.createPortal(
+&lt;div style=&#123;overlayStyle&#125;&gt;
+&lt;div style=&#123;popupStyle&#125;&gt;
+&lt;button onClick=&#123;onClose&#125; style=&#123;closeBtn&#125;&gt;X&lt;/button&gt;
+&#123;children&#125;
+&lt;/div&gt;
+&lt;/div&gt;,
+document.getElementById('popup-root')
+);
+&#125;;
+const overlayStyle = &#123;
+position: 'fixed',
+top: 0, left: 0, right: 0, bottom: 0,
+backgroundColor: 'rgba(0,0,0,0.5)',
+display: 'flex', alignItems: 'center', justifyContent: 'center',
+&#125;;
+const popupStyle = &#123;
+background: '#fff',
+padding: '20px',
+borderRadius: '10px',
+minWidth: '300px',
+position: 'relative'
+&#125;;
+const closeBtn = &#123;
+position: 'absolute',
+top: '10px',
+right: '10px',
+border: 'none',
+background: 'transparent',
+fontSize: '18px',
+cursor: 'pointer'
+&#125;;
+&#101;xport default Popup;
+✅ 2. Use the Popup in your App
+// App.js
+&#105;mport React, &#123; useState &#125; from 'react';
+&#105;mport Popup from './Popup';
+const App = () =&gt; &#123;
+const [showPopup, setShowPopup] = useState(false);
+return (
+&lt;div&gt;
+&lt;h1&gt;React Portal Popup&lt;/h1&gt;
+&lt;button onClick=&#123;() =&gt; setShowPopup(true)&#125;&gt;Open Popup&lt;/button&gt;
+&#123;showPopup && (
+&lt;Popup onClose=&#123;() =&gt; setShowPopup(false)&#125;&gt;
+&lt;h2&gt;This is a Portal Popup!&lt;/h2&gt;
+&lt;p&gt;You can close it by clicking the X button.&lt;/p&gt;
+&lt;/Popup&gt;
+)&#125;
+&lt;/div&gt;
+);
+&#125;;
+&#101;xport default App;
+✅ 3. Add a div in public/index.html for the portal
+&lt;!-- index.html --&gt;
+&lt;body&gt;
+&lt;div id="root"&gt;&lt;/div&gt;
+&lt;div id="popup-root"&gt;&lt;/div&gt; &lt;!-- required for ReactDOM.createPortal --&gt;
+&lt;/body&gt;
+
+---
+
+### 21. **How to call a method immediately after state is**
+
+updated or
+after component is rerendered  in reactjs
+✅ 1. Call a method immediately after state is updated
+Use useEffect and pass the specific state variable as a dependency.
+jsx
+CopyEdit
+&#105;mport React, &#123; useState, useEffect &#125; from 'react';
+function ExampleComponent() &#123;
+const [count, setCount] = useState(0);
+// Runs after 'count' is updated and the component is re-rendered
+useEffect(() =&gt; &#123;
+console.log('Count updated:', count);
+yourMethod();
+&#125;, [count]); // 👈 Dependency
+const yourMethod = () =&gt; &#123;
+console.log("Method called after state update");
+&#125;;
+return (
+&lt;div&gt;
+&lt;p&gt;Count: &#123;count&#125;&lt;/p&gt;
+&lt;button onClick=&#123;() =&gt; setCount(prev =&gt; prev + 1)&#125;&gt;Increment&lt;/button&gt;
+&lt;/div&gt;
+);
+&#125;
+✅ 2. Call a method after every re-render
+Pass no dependency array to useEffect .
+jsx
+CopyEdit
+useEffect(() =&gt; &#123;
+console.log("Runs after every render");
+yourMethod();
+&#125;);
+⚠️ Note:
+React state updates are asynchronous, so calling a function immediately
+after setState inside the same block won’t reflect the updated state.
+Always rely on useEffect for post-update logic.
+
+---
+
+### 22. **How to Force a component to rerender with out**
+
+using useState in react ?
+To force a React component to re-render without using useState , you can use the
+useReducer or useRef + forceUpdate trick.
+✅ Option 1: useReducer (Cleanest Way)
+&#105;mport React, &#123; useReducer &#125; from "react";
+const forceUpdateReducer = (x) =&gt; x + 1;
+function MyComponent() &#123;
+const [, forceUpdate] = useReducer(forceUpdateReducer, 0);
+return (
+&lt;div&gt;
+&lt;p&gt;Component content&lt;/p&gt;
+&lt;button onClick=&#123;forceUpdate&#125;&gt;Force Rerender&lt;/button&gt;
+&lt;/div&gt;
+);
+&#125;
+✅ Option 2: Using useRef + Manual forceUpdate
+&#105;mport React, &#123; useRef &#125; from "react";
+function MyComponent() &#123;
+const renderCount = useRef(0);
+const [, forceRerender] = React.useReducer((x) =&gt; x + 1, 0);
+const handleClick = () =&gt; &#123;
+renderCount.current++;
+forceRerender();
+&#125;;
+return (
+&lt;div&gt;
+&lt;p&gt;Render Count: &#123;renderCount.current&#125;&lt;/p&gt;
+&lt;button onClick=&#123;handleClick&#125;&gt;Force Rerender&lt;/button&gt;
+&lt;/div&gt;
+);
+&#125;
+✅ Option 3: Using this.forceUpdate() in Class Components
+class MyComponent extends React.Component &#123;
+force = () =&gt; &#123;
+this.forceUpdate();
+&#125;;
+render() &#123;
+return (
+&lt;div&gt;
+&lt;p&gt;Class Component&lt;/p&gt;
+&lt;button onClick=&#123;this.force&#125;&gt;Force Rerender&lt;/button&gt;
+&lt;/div&gt;
+);
+&#125;
+&#125;
+⚠️ Avoid forceUpdate tricks in production unless necessary.
+Prefer useState / useReducer for state-driven re-renders. Let me know your use case
+and I can recommend the cleanest solution.
+
+---
+
+### 23. **How to rerender a component on value change in**
+
+react ?
+To re-render a React component when a value changes, the most common and
+recommended way is to use useState or useEffect with props/state.
+✅ 1. Using useState (most common)
+The component re-renders automatically when state changes.
+&#105;mport React, &#123; useState &#125; from 'react';
+function Counter() &#123;
+const [count, setCount] = useState(0);
+return (
+&lt;div&gt;
+&lt;p&gt;Count is: &#123;count&#125;&lt;/p&gt;
+&lt;button onClick=&#123;() =&gt; setCount(count + 1)&#125;&gt;Increment&lt;/button&gt;
+&lt;/div&gt;
+);
+&#125;
+Every time setCount is called, React re-renders the component with the updated
+state.
+✅ 2. Using useEffect to respond to value changes (props or
+state)
+&#105;mport React, &#123; useEffect, useState &#125; from 'react';
+function Watcher(&#123; value &#125;) &#123;
+useEffect(() =&gt; &#123;
+console.log('Value changed:', value);
+// This will run every time `value` changes
+&#125;, [value]);
+return &lt;div&gt;Value is: &#123;value&#125;&lt;/div&gt;;
+&#125;
+If value is updated in a parent component, Watcher will re-render automatically.
+✅ 3. Using props — re-render happens automatically if props
+change
+function Parent() &#123;
+const [name, setName] = useState("John");
+return (
+&lt;&gt;&lt;Child name=&#123;name&#125; /&gt;
+&lt;button onClick=&#123;() =&gt; setName("Doe")&#125;&gt;Change Name&lt;/button&gt;
+&lt;/&gt;
+);
+&#125;
+function Child(&#123; name &#125;) &#123;
+return &lt;div&gt;Hello, &#123;name&#125;&lt;/div&gt;;
+&#125;
+When setName updates the name , Child component re-renders with the new prop.
+🧠 Summary:
+Trigger
+Causes Re-render?
+useState
+✅ Yes
+useReducer
+✅ Yes
+Changing
+props
+✅ Yes
+useRef
+❌ No
+useEffect
+⚠️ Used to react to
+changes, not
+trigger re-render
+itself
+31. Give an example of optimization using
+usecallbacks in react ?
+✅ Scenario
+Suppose you have a parent component that renders a child component. The
+child receives a function as a prop. If the parent re-renders, the function is re-
+created, causing the child to re-render unnecessarily.
+useCallback helps memoize the function so that its reference doesn't change unless
+its dependencies change.
+🔧 Example
+&#105;mport React, &#123; useState, useCallback &#125; from 'react';
+const Child = React.memo((&#123; handleClick &#125;) =&gt; &#123;
+console.log('Child rendered');
+return &lt;button onClick=&#123;handleClick&#125;&gt;Click Me&lt;/button&gt;;
+&#125;);
+const Parent = () =&gt; &#123;
+const [count, setCount] = useState(0);
+const [otherState, setOtherState] = useState(false);
+// Without useCallback, this function will be recreated on every render
+const handleClick = useCallback(() =&gt; &#123;
+setCount((prev) =&gt; prev + 1);
+&#125;, []);
+return (
+&lt;div&gt;
+&lt;h1&gt;Count: &#123;count&#125;&lt;/h1&gt;
+&lt;Child handleClick=&#123;handleClick&#125; /&gt;
+&lt;button onClick=&#123;() =&gt; setOtherState(!otherState)&#125;&gt;Toggle Other State&lt;/b
+utton&gt;
+&lt;/div&gt;
+);
+&#125;;
+&#101;xport default Parent;
+🧠 Explanation
+Without useCallback : The handleClick function gets re-created every time Parent
+renders. So Child sees a new handleClick prop and re-renders.
+With useCallback : The function is memoized, so Child won’t re-render unless the
+function actually changes (which only happens if its dependencies change).
+✅ Benefit
+Using useCallback avoids unnecessary re-renders of child components, especially
+when:
+The child is wrapped in React.memo() .
+The function doesn’t need to change on every render.
+Performance matters due to many children or heavy renders.
+
+---
+
+### 24. **How to call a method when component is rendered**
+
+for the first time in react ?
+To call a method when a component is rendered for the first time in React (i.e.,
+on component mount), you should use the useEffect hook with an empty
+dependency array [] .
+✅ Syntax:
+useEffect(() =&gt; &#123;
+// code here runs only once when the component mounts
+&#125;, []);
+✅ Example:
+&#105;mport React, &#123; useEffect &#125; from 'react';
+function MyComponent() &#123;
+useEffect(() =&gt; &#123;
+console.log('Component mounted');
+fetchData(); // method call
+&#125;, []); // empty array ensures it runs only once
+const fetchData = () =&gt; &#123;
+// Simulate API call
+console.log('Fetching data...');
+&#125;;
+return &lt;div&gt;Hello World&lt;/div&gt;;
+&#125;
+✅ Explanation:
+useEffect runs after the component is mounted.
+Passing [] as the second argument means it won’t re-run unless the
+component is unmounted and re-mounted.
+This is equivalent to componentDidMount() in class components.
+✅ Class Component Equivalent:
+class MyComponent extends React.Component &#123;
+componentDidMount() &#123;
+console.log('Component mounted');
+this.fetchData();
+&#125;
+fetchData = () =&gt; &#123;
+console.log('Fetching data...');
+&#125;;
+render() &#123;
+return &lt;div&gt;Hello World&lt;/div&gt;;
+&#125;
+&#125;
+
+---
+
+### 25. **How to change styles based on condition in react ?**
+
+✅ 1. Using Inline Styles with Ternary Operator
+You can directly apply conditional styles using a ternary operator:
+function StatusBox(&#123; isActive &#125;) &#123;
+return (
+&lt;divstyle=&#123;&#123;
+backgroundColor: isActive ? 'green' : 'gray',
+color: 'white',
+padding: '10px',
+&#125;&#125;
+&gt;
+&#123;isActive ? 'Active' : 'Inactive'&#125;
+&lt;/div&gt;
+);
+&#125;
+✅ 2. Conditional Class Names
+You can apply different CSS classes conditionally:
+function Button(&#123; isPrimary &#125;) &#123;
+return (
+&lt;button className=&#123;isPrimary ? 'btn-primary' : 'btn-secondary'&#125;&gt;
+Click Me
+&lt;/button&gt;
+);
+&#125;
+CSS:
+.btn-primary &#123;
+background-color: blue;
+color: white;
+&#125;
+.btn-secondary &#123;
+background-color: gray;
+color: black;
+&#125;
+
+---
+
+### 26. **How do you access the dom element ?**
+
+In React, you can access DOM elements using Refs.
+✅ Method: Using useRef (Functional Components)
+useRef allows you to directly access a DOM node created by JSX.
+Example:
+&#105;mport React, &#123; useRef, useEffect &#125; from "react";
+function InputFocus() &#123;
+const inputRef = useRef(null);
+useEffect(() =&gt; &#123;
+// Access the DOM element and focus it
+inputRef.current.focus();
+&#125;, []);
+return &lt;input ref=&#123;inputRef&#125; placeholder="Focus on mount" /&gt;;
+&#125;
+✅ Method: createRef (Class Components)
+class MyComponent extends React.Component &#123;
+constructor(props) &#123;
+super(props);
+this.myDivRef = React.createRef();
+&#125;
+componentDidMount() &#123;
+// Access DOM element
+this.myDivRef.current.style.backgroundColor = 'yellow';
+&#125;
+render() &#123;
+return &lt;div ref=&#123;this.myDivRef&#125;&gt;Hello&lt;/div&gt;;
+&#125;
+&#125;
+🔎 When to use it?
+To focus an input field
+To measure DOM dimensions
+To scroll an element into view
+To interact with third-party libraries (charts, modals, etc.)
+⚠️ Best Practice
+Avoid excessive use of DOM access in React. Prefer React state and props for
+controlling behavior and appearance.
+35. Perform type checking using prop-types in reactjs
+?
+In ReactJS, you can use the prop-types package to perform type checking on
+component props. It helps ensure that components are used with the correct data
+types and provides warnings in the console during development if types don't
+match.
+✅ Steps to Use prop-types :
+1. Install prop-types :
+npm install prop-types
+1. Import and use it in your component:
+🔹 Example: Functional Component
+&#105;mport React from 'react';
+&#105;mport PropTypes from 'prop-types';
+const UserProfile = (&#123; name, age, isAdmin &#125;) =&gt; &#123;
+return (
+&lt;div&gt;
+&lt;h2&gt;&#123;name&#125;&lt;/h2&gt;
+&lt;p&gt;Age: &#123;age&#125;&lt;/p&gt;
+&#123;isAdmin && &lt;p&gt;Admin Access&lt;/p&gt;&#125;
+&lt;/div&gt;
+);
+&#125;;
+// Type checking with PropTypes
+UserProfile.propTypes = &#123;
+name: PropTypes.string.isRequired,
+age: PropTypes.number,
+isAdmin: PropTypes.bool
+&#125;;
+&#101;xport default UserProfile;
+🔹 Example: Class Component
+&#105;mport React from 'react';
+&#105;mport PropTypes from 'prop-types';
+class Product extends React.Component &#123;
+render() &#123;
+return (
+&lt;div&gt;
+&lt;h3&gt;&#123;this.props.title&#125;&lt;/h3&gt;
+&lt;p&gt;Price: $&#123;this.props.price&#125;&lt;/p&gt;
+&lt;/div&gt;
+);
+&#125;
+&#125;
+Product.propTypes = &#123;
+title: PropTypes.string.isRequired,
+price: PropTypes.number.isRequired
+&#125;;
+&#101;xport default Product;
+🔸 Common Prop Types
+Type
+Usage
+PropTypes.string
+String
+PropTypes.number
+Number
+PropTypes.bool
+Boolean
+PropTypes.array
+Array
+PropTypes.object
+Object
+PropTypes.func
+Function
+PropTypes.node
+Anything that can be rendered
+PropTypes.element
+React element
+PropTypes.symbol
+ES6 Symbol
+🔸 Advanced Usage
+PropTypes.arrayOf(PropTypes.string)
+PropTypes.objectOf(PropTypes.number)
+PropTypes.oneOf(['small', 'medium', 'large'])
+PropTypes.oneOfType([PropTypes.string, PropTypes.number])
+PropTypes.shape(&#123;
+id: PropTypes.number.isRequired,
+name: PropTypes.string
+&#125;)
+
+---
+
+### 27. **How to Implement a Theme Switcher Using**
+
+Context API
+Step 1: Create Theme Context
+We'll create a context that holds the current theme and a function to toggle it.
+// ThemeContext.js
+&#105;mport React, &#123; createContext, useState, useContext &#125; from 'react';
+const ThemeContext = createContext();
+&#101;xport const ThemeProvider = (&#123; children &#125;) =&gt; &#123;
+// Theme state: 'light' or 'dark'
+const [theme, setTheme] = useState('light');
+// Toggle between light and dark
+const toggleTheme = () =&gt; &#123;
+setTheme(prev =&gt; (prev === 'light' ? 'dark' : 'light'));
+&#125;;
+return (
+&lt;ThemeContext.Provider value=&#123;&#123; theme, toggleTheme &#125;&#125;&gt;
+&#123;children&#125;
+&lt;/ThemeContext.Provider&gt;
+);
+&#125;;
+// Custom hook for easier usage
+&#101;xport const useTheme = () =&gt; useContext(ThemeContext);
+Step 2: Wrap Your App with ThemeProvider
+Wrap your main app component with the ThemeProvider so the theme context is
+available throughout the app.
+// index.js or App.js
+&#105;mport React from 'react';
+&#105;mport ReactDOM from 'react-dom/client';
+&#105;mport App from './App';
+&#105;mport &#123; ThemeProvider &#125; from './ThemeContext';
+ReactDOM.createRoot(document.getElementById('root')).render(
+&lt;ThemeProvider&gt;
+&lt;App /&gt;
+&lt;/ThemeProvider&gt;
+);
+Step 3: Create ThemeSwitcher Component
+This component will read the current theme and toggle it on button click.
+// ThemeSwitcher.js
+&#105;mport React from 'react';
+&#105;mport &#123; useTheme &#125; from './ThemeContext';
+const ThemeSwitcher = () =&gt; &#123;
+const &#123; theme, toggleTheme &#125; = useTheme();
+return (
+&lt;button onClick=&#123;toggleTheme&#125;&gt;
+Switch to &#123;theme === 'light' ? 'Dark' : 'Light'&#125; Mode
+&lt;/button&gt;
+);
+&#125;;
+&#101;xport default ThemeSwitcher;
+Step 4: Use Theme in Your App
+You can now consume the theme value anywhere to apply styles conditionally.
+// App.js
+&#105;mport React from 'react';
+&#105;mport &#123; useTheme &#125; from './ThemeContext';
+&#105;mport ThemeSwitcher from './ThemeSwitcher';
+const App = () =&gt; &#123;
+const &#123; theme &#125; = useTheme();
+const appStyle = &#123;
+height: '100vh',
+display: 'flex',
+justifyContent: 'center',
+alignItems: 'center',
+backgroundColor: theme === 'light' ? '#fff' : '#222',
+color: theme === 'light' ? '#222' : '#fff',
+flexDirection: 'column',
+gap: '20px',
+&#125;;
+return (
+&lt;div style=&#123;appStyle&#125;&gt;
+&lt;h1&gt;&#123;theme.charAt(0).toUpperCase() + theme.slice(1)&#125; Mode&lt;/h1&gt;
+&lt;ThemeSwitcher /&gt;
+&lt;/div&gt;
+);
+&#125;;
+&#101;xport default App;
+Explanation
+Context API creates a global state ( ThemeContext ) that holds the current theme
+and the toggle function.
+ThemeProvider wraps the app and provides access to theme state
+everywhere.
+useTheme custom hook simplifies accessing context values.
+ThemeSwitcher component reads current theme and toggles it.
+App component uses the theme value to apply styles dynamically.
+This keeps theme state centralized and allows any component in the tree to read
+or update the theme easily.
+
+---
+
+### 28. **How to update Document Title on Mount in a React**
+
+Component
+To update the document title when a React component mounts, you typically use
+the useEffect hook in a functional component.
+Why use useEffect ?
+React components render many times during their lifecycle.
+We want to update the document title only once when the component
+mounts (or when specific values change).
+useEffect with an empty dependency array runs only once after the first render
+(mount).
+Example: Update document title on mount
+&#105;mport React, &#123; useEffect &#125; from 'react';
+function MyComponent() &#123;
+useEffect(() =&gt; &#123;
+document.title = "My New Page Title";
+&#125;, []);  // empty dependency array means run once on mount
+return &lt;div&gt;Hello, this is my component!&lt;/div&gt;;
+&#125;
+&#101;xport default MyComponent;
+Explanation:
+useEffect(() =&gt; &#123; ... &#125;, []) runs the callback function once after the component is
+mounted.
+Inside the callback, we set document.title to the desired string.
+The empty array [] ensures this effect does not run on subsequent re-
+renders.
+In class components
+If you use class components, you do this in componentDidMount :
+class MyComponent extends React.Component &#123;
+componentDidMount() &#123;
+document.title = "My New Page Title";
+&#125;
+render() &#123;
+return &lt;div&gt;Hello from class component&lt;/div&gt;;
+&#125;
+&#125;
+Summary:
+Use useEffect with empty dependencies in functional components.
+Use componentDidMount in class components.
+This updates the browser tab’s title when the component mounts.
+If you want to update the title dynamically based on props or state, add those
+dependencies in the array. But for just updating once on mount, keep it empty.
+
+---
+
+### 29. **How to create a Higher-Order Component (HOC) to**
+
+Log Props in reactjs ?
+✅ What is a Higher-Order Component (HOC) in React?
+A Higher-Order Component (HOC) is a function that takes a component as input
+and returns a new component with extended or enhanced functionality.
+Example use case: You want to log props every time a component renders –
+without modifying the component directly. A HOC is the perfect solution.
+✅ How to Create a HOC to Log Props in React
+Here's a step-by-step explanation with code:
+🔧 Step 1: Create the HOC
+// withPropsLogger.js
+&#105;mport React, &#123; useEffect &#125; from 'react';
+const withPropsLogger = (WrappedComponent) =&gt; &#123;
+return function PropsLoggerWrapper(props) &#123;
+useEffect(() =&gt; &#123;
+console.log(`[Props Logger] $&#123;WrappedComponent.name&#125; props:`, props);
+&#125;, [props]); // log every time props change
+return &lt;WrappedComponent &#123;...props&#125; /&gt;;
+&#125;;
+&#125;;
+&#101;xport default withPropsLogger;
+✅ What this does:
+Takes a WrappedComponent as input.
+Logs the props to the console whenever they change.
+Renders the WrappedComponent with all received props.
+🔧 Step 2: Use the HOC
+// MyComponent.js
+&#105;mport React from 'react';
+const MyComponent = (&#123; name &#125;) =&gt; &#123;
+return &lt;div&gt;Hello, &#123;name&#125;&lt;/div&gt;;
+&#125;;
+&#101;xport default MyComponent;
+// App.js
+&#105;mport React from 'react';
+&#105;mport MyComponent from './MyComponent';
+&#105;mport withPropsLogger from './withPropsLogger';
+const MyComponentWithLogging = withPropsLogger(MyComponent);
+function App() &#123;
+return &lt;MyComponentWithLogging name="Saikrishna" /&gt;;
+&#125;
+&#101;xport default App;
+
+---
+
+### 30. **How will you Manage Environment-Specific**
+
+Configurations in Reactjs in your project ?
+1. Using .env Files with Create React App (CRA)
+CRA supports environment variables through .env files.
+.env (default, for all envs)
+.env.development
+.env.production
+.env.test
+Important: All variables must start with REACT_APP_ to be accessible in your React
+app.
+Example Setup
+Create these files in your project root:
+.env.development
+REACT_APP_API_URL=https://dev.api.example.com
+REACT_APP_FEATURE_FLAG=true
+.env.production
+REACT_APP_API_URL=https://api.example.com
+REACT_APP_FEATURE_FLAG=false
+2. Accessing Variables in React Code
+function App() &#123;
+const apiUrl = process.env.REACT_APP_API_URL;
+const featureFlag = process.env.REACT_APP_FEATURE_FLAG === 'true';
+return (
+&lt;div&gt;
+&lt;h1&gt;Environment: &#123;process.env.NODE_ENV&#125;&lt;/h1&gt;
+&lt;p&gt;API URL: &#123;apiUrl&#125;&lt;/p&gt;
+&lt;p&gt;Feature Enabled: &#123;featureFlag ? 'Yes' : 'No'&#125;&lt;/p&gt;
+&lt;/div&gt;
+);
+&#125;
+&#101;xport default App;
+process.env.NODE_ENV will be 'development' or 'production' depending on how you
+run/build your app.
+process.env.REACT_APP_API_URL will be replaced at build time with the matching .env
+file value.
+3. Running Your App
+npm start will use .env.development
+npm run build will use .env.production
+4. Custom Configuration Object (Optional)
+If you want more control, create a config file that switches based on NODE_ENV :
+// src/config.js
+const devConfig = &#123;
+apiUrl: "https://dev.api.example.com",
+featureFlag: true,
+&#125;;
+const prodConfig = &#123;
+apiUrl: "https://api.example.com",
+featureFlag: false,
+&#125;;
+const config = process.env.NODE_ENV === "production" ? prodConfig : devC
+onfig;
+&#101;xport default config;
+Use it in your app:
+&#105;mport config from './config';
+function App() &#123;
+return (
+&lt;div&gt;
+&lt;h1&gt;API URL: &#123;config.apiUrl&#125;&lt;/h1&gt;
+&lt;p&gt;Feature Enabled: &#123;config.featureFlag ? 'Yes' : 'No'&#125;&lt;/p&gt;
+&lt;/div&gt;
+);
+&#125;
+Summary
+Use .env files with variables prefixed by REACT_APP_ .
+Access them in your React code via process.env.REACT_APP_* .
+CRA automatically picks the right .env based on environment.
+For more flexibility, create your own config file and export based on NODE_ENV .
+
+---
+
+### 31. **How to create a Custom Hook for Data Fetching**
+
+with Loading and Error States
+Creating a custom React hook for data fetching with loading and error states is a
+great way to encapsulate and reuse fetch logic cleanly across your app.
+Why a Custom Hook for Data Fetching?
+Reuse the same fetch logic in multiple components
+Keep components cleaner and focused on UI
+Handle loading, error, and data states in one place
+How to Create It — Step by Step
+1. Define the Hook
+Create a function called useFetch which takes a URL (or any fetch parameter).
+It manages:
+data — the fetched result
+loading — boolean while fetching
+error — error message if fetch fails
+2. Use useState for state management and useEffect to trigger
+fetch
+Example Code
+&#105;mport &#123; useState, useEffect &#125; from "react";
+function useFetch(url) &#123;
+const [data, setData] = useState(null);
+const [loading, setLoading] = useState(true);
+const [error, setError] = useState(null);
+useEffect(() =&gt; &#123;
+if (!url) return;
+setLoading(true);
+setError(null);
+fetch(url)
+.then((response) =&gt; &#123;
+if (!response.ok) &#123;
+throw new Error("Network response was not ok");
+&#125;
+return response.json();
+&#125;)
+.then((json) =&gt; &#123;
+setData(json);
+setLoading(false);
+&#125;)
+.catch((err) =&gt; &#123;
+setError(err.message || "Something went wrong");
+setLoading(false);
+&#125;);
+&#125;, [url]);
+return &#123; data, loading, error &#125;;
+&#125;
+&#101;xport default useFetch;
+3. Using the Hook in a Component
+&#105;mport React from "react";
+&#105;mport useFetch from "./useFetch";
+function UserList() &#123;
+const &#123; data, loading, error &#125; = useFetch("https://jsonplaceholder.typicode.co
+m/users");
+if (loading) return &lt;p&gt;Loading users...&lt;/p&gt;;
+if (error) return &lt;p&gt;Error: &#123;error&#125;&lt;/p&gt;;
+return (
+&lt;ul&gt;
+&#123;data.map(user =&gt; (
+&lt;li key=&#123;user.id&#125;&gt;&#123;user.name&#125;&lt;/li&gt;
+))&#125;
+&lt;/ul&gt;
+);
+&#125;
+&#101;xport default UserList;
+How it Works
+When the component mounts or the URL changes, useEffect triggers the fetch.
+While fetching, loading is true .
+If the fetch succeeds, data is set and loading is false .
+If it fails, error is set and loading is false .
+The component using the hook can respond to these states accordingly.
+
+---
+
+### 32. **Create a component to upload the file in reactjs ?**
+
+&#105;mport React, &#123; useState &#125; from "react";
+function FileUpload() &#123;
+const [file, setFile] = useState(null);
+const [status, setStatus] = useState("");
+const onFileChange = (e) =&gt; &#123;
+setFile(e.target.files[0]);
+setStatus("");
+&#125;;
+const onUpload = async () =&gt; &#123;
+if (!file) &#123;
+setStatus("Please select a file first");
+return;
+&#125;
+const formData = new FormData();
+formData.append("file", file);
+setStatus("Uploading...");
+try &#123;
+const response = await fetch("https://your-api-endpoint.com/upload", &#123;
+method: "POST",
+body: formData,
+&#125;);
+if (!response.ok) &#123;
+throw new Error(`Upload failed with status $&#123;response.status&#125;`);
+&#125;
+const result = await response.json();
+setStatus(`Upload successful: $&#123;result.message || file.name&#125;`);
+&#125; catch (error) &#123;
+setStatus(`Upload error: $&#123;error.message&#125;`);
+&#125;
+&#125;;
+return (
+&lt;div&gt;
+&lt;input type="file" onChange=&#123;onFileChange&#125; /&gt;
+&lt;button onClick=&#123;onUpload&#125;&gt;Upload&lt;/button&gt;
+&#123;status && &lt;p&gt;&#123;status&#125;&lt;/p&gt;&#125;
+&lt;/div&gt;
+);
+&#125;
+&#101;xport default FileUpload;
+Replace "https://your-api-endpoint.com/upload" with your actual upload URL.
+This sends the selected file as multipart/form-data via POST to your API.
+
+---
+
+### 33. **How to cancel the api call when the timeout occurs**
+
+using abort controller ?
+What is AbortController?
+AbortController is a browser API that lets you abort (cancel) a fetch request.
+You create an instance of AbortController .
+Pass its signal property to the fetch request.
+Call abort() on the controller to cancel the fetch.
+How to use AbortController with timeout in React?
+You combine AbortController with setTimeout to cancel the fetch if it takes too long.
+Example code and explanation
+&#105;mport React, &#123; useEffect, useState &#125; from 'react';
+function FetchWithTimeout() &#123;
+const [data, setData] = useState(null);
+const [error, setError] = useState(null);
+const [loading, setLoading] = useState(false);
+useEffect(() =&gt; &#123;
+const controller = new AbortController();  // Create AbortController
+const signal = controller.signal;
+const timeoutId = setTimeout(() =&gt; &#123;
+controller.abort(); // Cancel the fetch after timeout
+&#125;, 5000); // 5000ms = 5 seconds timeout
+setLoading(true);
+fetch('https://jsonplaceholder.typicode.com/posts/1', &#123; signal &#125;)
+.then((response) =&gt; &#123;
+if (!response.ok) &#123;
+throw new Error('Network response was not ok');
+&#125;
+return response.json();
+&#125;)
+.then((json) =&gt; &#123;
+setData(json);
+setError(null);
+&#125;)
+.catch((err) =&gt; &#123;
+if (err.name === 'AbortError') &#123;
+setError('Fetch request was aborted due to timeout');
+&#125; else &#123;
+setError(err.message);
+&#125;
+&#125;)
+.finally(() =&gt; &#123;
+setLoading(false);
+clearTimeout(timeoutId); // Clear the timeout if fetch finished before time
+out
+&#125;);
+// Cleanup if component unmounts before fetch completes
+return () =&gt; &#123;
+clearTimeout(timeoutId);
+controller.abort();
+&#125;;
+&#125;, []);
+return (
+&lt;div&gt;
+&#123;loading && &lt;p&gt;Loading...&lt;/p&gt;&#125;
+&#123;error && &lt;p style=&#123;&#123; color: 'red' &#125;&#125;&gt;Error: &#123;error&#125;&lt;/p&gt;&#125;
+&#123;data && (
+&lt;div&gt;
+&lt;h3&gt;&#123;data.title&#125;&lt;/h3&gt;
+&lt;p&gt;&#123;data.body&#125;&lt;/p&gt;
+&lt;/div&gt;
+)&#125;
+&lt;/div&gt;
+);
+&#125;
+&#101;xport default FetchWithTimeout;
+Explanation:
+We create an AbortController instance and get its signal .
+Pass the signal to fetch options.
+We set a setTimeout to call controller.abort() after 5 seconds.
+If the fetch completes before timeout, clearTimeout cancels the timeout.
+If timeout happens first, fetch is aborted, and .catch handles the AbortError .
+The cleanup function cancels the fetch and clears the timeout if the
+component unmounts early.
+Summary
+Use AbortController to cancel fetch requests.
+Combine with setTimeout to implement timeout logic.
+Handle AbortError to detect when fetch is canceled.
+Always clear your timeouts to avoid leaks.
+
+---
+

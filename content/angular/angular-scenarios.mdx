@@ -1,0 +1,1107 @@
+---
+title: "Angular Scenarios"
+category: "Angular"
+difficulty: "Advanced"
+interviewFrequency: "High"
+experienceLevel: "All Levels"
+estimatedReadTime: 21
+tags: ["interview", "questions", "angular-scenarios"]
+---
+
+# Angular Scenarios
+
+Here is the ultimate list of interview questions for Angular Scenarios.
+
+## ❓ Interview Questions
+
+### 1. **How do you send the data from parent component to**
+
+child component in angular ?
+Ans. In Angular, you pass data from a parent component to a child component
+using  @Input()  properties. Here's a clear, step-by-step explanation:
+a. Define an  @Input()  Property in the Child Component
+Use the  @Input()  decorator on a property in the child component to receive
+data from the parent.
+// child.component.ts
+&#105;mport &#123; Component, Input &#125; from '@angular/core';
+@Component(&#123;
+selector: 'app-child',
+template: `
+&lt;h2&gt;Child Component&lt;/h2&gt;
+&lt;p&gt;Message from parent: &#123;&#123; parentMessage &#125;&#125;&lt;/p&gt;
+&lt;p&gt;User: &#123;&#123; userData.name &#125;&#125; (&#123;&#123; userData.age &#125;&#125;)&lt;/p&gt;
+`&#125;)
+&#101;xport class ChildComponent &#123;
+@Input() parentMessage!: string;// Receives string
+@Input() userData!: &#123; name: string, age: number
+&#125;;// Receives object
+&#125;
+b. Pass Data from Parent Component's Template
+Bind the parent's data to the child's  @Input()  properties using property
+binding ( [propertyName] ).
+// parent.component.ts
+&#105;mport &#123; Component &#125; from '@angular/core';
+@Component(&#123;
+selector: 'app-parent',
+template: `
+&lt;h1&gt;Parent Component&lt;/h1&gt;
+&lt;app-child
+[parentMessage]="message"
+[userData]="user"
+&gt;&lt;/app-child&gt;
+`&#125;)
+&#101;xport class ParentComponent &#123;
+message = "Hello from Parent!";// Data to send
+user = &#123; name: 'Alice', age: 30 &#125;;// Object data&#125;
+
+---
+
+### 2. **How to call parent component method from child**
+
+component in angular ?
+In Angular's component-based architecture, parent-child communication is
+elegantly handled through  @Output()  decorators and  EventEmitter . This maintains
+Angular's unidirectional data flow while allowing children to "notify" parents about
+events. Here's the beautiful flow:
+1. Child Component: Declares an  @Output()  event emitter (like raising a flag).
+2. Parent Component: Listens for this event and triggers its own method.
+3. Data Flow: Child emits events with optional data payloads → Parent catches
+and responds.
+Step 1: Child Component
+&#105;mport &#123; Component, Output, EventEmitter &#125; from '@angular/core';
+@Component(&#123;
+selector: 'app-child',
+template: `
+&lt;div class="child"&gt;
+&lt;h2&gt;🌼 Child Component&lt;/h2&gt;
+&lt;button (click)="sendMessageToParent()"&gt;
+Send Message
+&lt;/button&gt;
+&lt;/div&gt;
+`&#125;)
+&#101;xport class ChildComponent &#123;
+// 1. Declare output event emitter
+@Output() messageSent = new EventEmitter&lt;string&gt;();
+sendMessageToParent() &#123;
+const message = "Hello from child!";
+// 2. Emit event with data payload
+this.messageSent.emit(message);
+&#125;
+&#125;
+Step 2: Parent Component
+&#105;mport &#123; Component &#125; from '@angular/core';
+@Component(&#123;
+selector: 'app-parent',
+template: `
+&lt;div class="parent"&gt;
+&lt;h1&gt;🌳 Parent Component&lt;/h1&gt;
+&lt;p&gt;Child's message: &#123;&#123; childMessage &#125;&#125;&lt;/p&gt;
+&lt;!-- 3. Bind to child's event --&gt;
+&lt;app-child (messageSent)="handleChildMessage($event)"&gt;
+&lt;/app-child&gt;
+&lt;/div&gt;
+`&#125;)
+&#101;xport class ParentComponent &#123;
+childMessage = '';
+// 4. Handle event from child
+handleChildMessage(message: string) &#123;
+this.childMessage = message;
+console.log('Parent received:', message);
+// Call any parent method here!
+&#125;
+&#125;
+
+---
+
+### 3. **How to bind array/array of objects to dropdown in**
+
+angular ?
+Binding an array or array of objects to a dropdown ( &lt;select&gt; ) in Angular is
+straightforward. Here’s how you can do it clearly:
+Step 1: Define Array or Array of Objects in Component
+// component.ts
+&#105;mport &#123; Component &#125; from '@angular/core';
+@Component(&#123;
+selector: 'app-dropdown',
+templateUrl: './dropdown.component.html',
+&#125;)
+&#101;xport class DropdownComponent &#123;
+// Simple array
+fruits = ['Apple', 'Banana', 'Orange'];
+// Array of objects
+countries = [
+&#123; id: 1, name: 'India' &#125;,
+&#123; id: 2, name: 'USA' &#125;,
+&#123; id: 3, name: 'Canada' &#125;,
+];
+selectedFruit: string = '';
+selectedCountryId: number | null = null;
+&#125;
+Step 2: Template Binding ( ngFor )
+In your HTML template, use the *ngFor directive to loop over the array:
+For a simple array
+&lt;select [(ngModel)]="selectedFruit"&gt;
+&lt;option *ngFor="let fruit of fruits" [value]="fruit"&gt;
+&#123;&#123; fruit &#125;&#125;
+&lt;/option&gt;
+&lt;/select&gt;
+Selected Fruit: &#123;&#123; selectedFruit &#125;&#125;
+For an array of objects
+&lt;select [(ngModel)]="selectedCountryId"&gt;
+&lt;option *ngFor="let country of countries" [value]="country.id"&gt;
+&#123;&#123; country.name &#125;&#125;
+&lt;/option&gt;
+&lt;/select&gt;
+Selected Country ID: &#123;&#123; selectedCountryId &#125;&#125;
+Step 3: Import FormsModule
+To enable two-way binding ( [(ngModel)] ), import the FormsModule in your module:
+// app.module.ts
+&#105;mport &#123; NgModule &#125; from '@angular/core';
+&#105;mport &#123; BrowserModule &#125; from '@angular/platform-browser';
+&#105;mport &#123; FormsModule &#125; from '@angular/forms';
+@NgModule(&#123;
+imports: [BrowserModule, FormsModule],
+declarations: [DropdownComponent],
+bootstrap: [DropdownComponent],
+&#125;)
+&#101;xport class AppModule &#123;&#125;
+Explanation
+ngFor loops through the array.
+[value] sets the value attribute for the option.
+[(ngModel)] enables two-way binding, allowing your selection to update the
+bound variable.
+Output Example:
+Selecting a fruit like "Banana" would set selectedFruit to "Banana" .
+Selecting a country like "India" would set selectedCountryId to 1 .
+
+---
+
+### 4. **Create a lazy loaded component in angular ?**
+
+✅ Step 1: Create a component
+ng generate component lazy-component
+✅ Step 2: Create a Module for Lazy Loading
+Create a new module to host the component:
+ng generate module lazy --routing
+This creates two files:
+lazy.module.ts
+lazy-routing.module.ts
+✅ Step 3: Add the Component to the Lazy Module
+lazy.module.ts:
+&#105;mport &#123; NgModule &#125; from '@angular/core';
+&#105;mport &#123; CommonModule &#125; from '@angular/common';
+&#105;mport &#123; LazyComponentComponent &#125; from '../lazy-component/lazy-compone
+nt.component';
+&#105;mport &#123; LazyRoutingModule &#125; from './lazy-routing.module';
+@NgModule(&#123;
+declarations: [LazyComponentComponent],
+imports: [
+CommonModule,
+LazyRoutingModule
+]
+&#125;)
+&#101;xport class LazyModule &#123; &#125;
+✅ Step 4: Define Route in Lazy Routing Module
+lazy-routing.module.ts:
+&#105;mport &#123; NgModule &#125; from '@angular/core';
+&#105;mport &#123; RouterModule, Routes &#125; from '@angular/router';
+&#105;mport &#123; LazyComponentComponent &#125; from '../lazy-component/lazy-compone
+nt.component';
+const routes: Routes = [
+&#123; path: '', component: LazyComponentComponent &#125;
+];
+@NgModule(&#123;
+imports: [RouterModule.forChild(routes)],
+exports: [RouterModule]
+&#125;)
+&#101;xport class LazyRoutingModule &#123; &#125;
+✅ Step 5: Configure Lazy Loading in the Main Routing Module
+Update your app's main routing ( app-routing.module.ts ):
+&#105;mport &#123; NgModule &#125; from '@angular/core';
+&#105;mport &#123; RouterModule, Routes &#125; from '@angular/router';
+const routes: Routes = [
+&#123;
+path: 'lazy',
+loadChildren: () =&gt; import('./lazy/lazy.module').then(m =&gt; m.LazyModule)
+&#125;
+];
+@NgModule(&#123;
+imports: [RouterModule.forRoot(routes)],
+exports: [RouterModule]
+&#125;)
+&#101;xport class AppRoutingModule &#123;
+✅ Step 6: Use the Lazy Loaded Route
+In your HTML, use a router link:
+&lt;a routerLink="/lazy"&gt;Go to Lazy Loaded Component&lt;/a&gt;
+&lt;router-outlet&gt;&lt;/router-outlet&gt;
+Explanation:
+Lazy loading means the LazyModule and its components won't load initially, only
+loading when the user navigates to the /lazy route.
+This approach optimizes performance by reducing the initial load time.
+
+---
+
+### 5. **How to display data entered by the user in another**
+
+textbox ?
+Step-by-step approach:
+1. Component HTML:
+&lt;input type="text" [(ngModel)]="userInput" placeholder="Enter something" /
+&gt;
+&lt;!-- Second textbox displays entered data --&gt;
+&lt;input type="text" [value]="userInput" readonly /
+2. Component TypeScript:
+&#105;mport &#123; Component &#125; from '@angular/core';
+@Component(&#123;
+selector: 'app-input-display',
+templateUrl: './input-display.component.html'
+&#125;)
+&#101;xport class InputDisplayComponent &#123;
+userInput: string = '';
+&#125;
+Explanation:
+[(ngModel)] provides two-way binding, automatically syncing input changes with
+the component’s userInput property.
+The second input uses property binding ( [value] ) to reflect the current value of
+userInput .
+Remember:
+Ensure you import FormsModule in your module:
+&#105;mport &#123; FormsModule &#125; from '@angular/forms';
+@NgModule(&#123;
+imports: [FormsModule]
+&#125;)
+&#101;xport class YourModule &#123; &#125;
+This approach automatically updates the second textbox as you type in the first
+one.
+
+---
+
+### 6. **How to conditionally render an element or text in**
+
+angular ?
+In Angular, you can conditionally render an element or text using built-in directives
+like *ngIf :
+Using ngIf :
+HTML:
+&lt;div *ngIf="showElement"&gt;
+This element is conditionally rendered.
+&lt;/div&gt;
+Component:
+&#101;xport class ExampleComponent &#123;
+showElement: boolean = true; // or false
+&#125;
+Conditional text or alternate rendering:
+&lt;div&gt;
+&#123;&#123; showElement ? 'Element is visible!' : 'Element is hidden!' &#125;&#125;
+&lt;/di
+Using else block with ngIf :
+HTML:
+&lt;div *ngIf="isLoggedIn; else loggedOut"&gt;
+Welcome back, user!
+&lt;/div&gt;
+&lt;ng-template #loggedOut&gt;
+Please log in.
+&lt;/ng-template
+Component:
+&#101;xport class ExampleComponent &#123;
+isLoggedIn: boolean = false; // toggle based on logic
+&#125;
+These simple patterns cover most conditional rendering scenarios in Angular.
+
+---
+
+### 7. **How to perform debouncing in angular ?**
+
+Method 1: Using RxJS (Recommended)
+Import necessary modules:
+typescript
+CopyEdit
+&#105;mport &#123; Component, OnInit &#125; from '@angular/core';
+&#105;mport &#123; FormControl &#125; from '@angular/forms';
+&#105;mport &#123; debounceTime, distinctUntilChanged &#125; from 'rxjs/operators';
+Component Implementation:
+//component.ts
+@Component(&#123;
+selector: 'app-debounce',
+templateUrl: './debounce.component.html',
+&#125;)
+&#101;xport class DebounceComponent implements OnInit &#123;
+searchControl = new FormControl('');
+ngOnInit(): void &#123;
+this.searchControl.valueChanges.pipe(
+debounceTime(500),             // waits for 500ms pause
+distinctUntilChanged()         // triggers only if value changes
+)
+.subscribe(value =&gt; &#123;
+this.onSearch(value);
+&#125;);
+&#125;
+onSearch(value: string): void &#123;
+console.log('Debounced Search:', value);
+// Perform search or API call here
+&#125;
+&#125;
+HTML:
+&lt;input type="text" [formControl]="searchControl" placeholder="Search..." /&gt;
+Explanation:
+debounceTime(500) : waits 500 milliseconds after typing stops before emitting the
+event.
+distinctUntilChanged() : ensures the subscribed event triggers only if the value has
+changed.
+Method 2: Manual Debounce with JavaScript (less common):
+If RxJS isn't desired, you could create a custom debounce function manually.
+component.ts
+debounceTimer: any;
+onKeyup(value: string): void &#123;
+clearTimeout(this.debounceTimer);
+this.debounceTimer = setTimeout(() =&gt; &#123;
+this.onSearch(value);
+&#125;, 500); // waits 500ms
+&#125;
+onSearch(value: string): void &#123;
+console.log('Search:', value);
+&#125;
+HTML
+&lt;input type="text" (keyup)="onKeyup($event.target.value)" placeholder="Sea
+rch..." /&gt;
+8. Create a component to fetch data from api in
+angular ?
+Step-by-step Implementation
+a. Import HttpClientModule in your App Module ( app.module.ts ):
+&#105;mport &#123; HttpClientModule &#125; from '@angular/common/http';
+@NgModule(&#123;
+imports: [
+HttpClientModule
+]
+&#125;)
+&#101;xport class AppModule &#123; &#125;
+b. Create the Service ( data.service.ts ):
+&#105;mport &#123; Injectable &#125; from '@angular/core';
+&#105;mport &#123; HttpClient &#125; from '@angular/common/http';
+&#105;mport &#123; Observable &#125; from 'rxjs';
+@Injectable(&#123; providedIn: 'root' &#125;)
+&#101;xport class DataService &#123;
+private apiUrl = 'https://jsonplaceholder.typicode.com/posts';
+constructor(private http: HttpClient) &#123;&#125;
+fetchData(): Observable&lt;any[]&gt; &#123;
+return this.http.get&lt;any[]&gt;(this.apiUrl);
+&#125;
+&#125;
+c. Create the Component ( fetch-data.component.ts ):
+&#105;mport &#123; Component, OnInit &#125; from '@angular/core';
+&#105;mport &#123; DataService &#125; from './data.service';
+@Component(&#123;
+selector: 'app-fetch-data',
+templateUrl: './fetch-data.component.html'
+&#125;)
+&#101;xport class FetchDataComponent implements OnInit &#123;
+data: any[] = [];
+loading: boolean = true;
+error: string = '';
+constructor(private dataService: DataService) &#123;&#125;
+ngOnInit() &#123;
+this.dataService.fetchData().subscribe(&#123;
+next: (response) =&gt; &#123;
+this.data = response;
+this.loading = false;
+&#125;,
+error: (err) =&gt; &#123;
+this.error = err.message || 'Error fetching data';
+this.loading = false;
+&#125;
+&#125;);
+&#125;
+&#125;
+d. Create the HTML Template ( fetch-data.component.html ):
+&lt;div *ngIf="loading"&gt;Loading data...&lt;/div&gt;
+&lt;div *ngIf="error" class="error"&gt;&#123;&#123; error &#125;&#125;&lt;/div&gt;
+&lt;ul *ngIf="!loading && !error"&gt;
+&lt;li *ngFor="let item of data"&gt;
+&lt;strong&gt;&#123;&#123; item.title &#125;&#125;&lt;/strong&gt;
+&lt;p&gt;&#123;&#123; item.body &#125;&#125;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+Explanation:
+Service ( HttpClient ) is the recommended way to fetch API data.
+Loading and error handling are managed clearly.
+Component fetches data on initialization using Angular’s lifecycle hook ngOnInit .
+Now your Angular component cleanly fetches and displays data from an API.
+9. Given two dropdowns, select 2nd dropdown options
+based on value selected in one dropdown in angular ?
+(Load states based on country selected)
+a. Sample Data Setup
+// country-state.data.ts
+&#101;xport const countries = [
+&#123; id: 1, name: 'India' &#125;,
+&#123; id: 2, name: 'USA' &#125;
+];
+&#101;xport const states = [
+&#123; id: 1, name: 'Telangana', countryId: 1 &#125;,
+&#123; id: 2, name: 'Karnataka', countryId: 1 &#125;,
+&#123; id: 3, name: 'California', countryId: 2 &#125;,
+&#123; id: 4, name: 'Texas', countryId: 2 &#125;
+];
+b. Component TypeScript
+&#105;mport &#123; Component &#125; from '@angular/core';
+&#105;mport &#123; countries, states &#125; from './country-state.data';
+@Component(&#123;
+selector: 'app-country-state-dropdown',
+templateUrl: './country-state-dropdown.component.html'
+&#125;)
+&#101;xport class CountryStateDropdownComponent &#123;
+countries = countries;
+allStates = states;
+selectedCountryId: number = 0;
+filteredStates: any[] = [];
+onCountryChange(countryId: string) &#123;
+const id = +countryId;
+this.filteredStates = this.allStates.filter(s =&gt; s.countryId === id);
+this.selectedCountryId = id;
+&#125;
+&#125;
+c. Component HTML
+&lt;!-- Country Dropdown --&gt;
+&lt;select (change)="onCountryChange($event.target.value)"&gt;
+&lt;option value=""&gt;Select Country&lt;/option&gt;
+&lt;option *ngFor="let country of countries" [value]="country.id"&gt;&#123;&#123; country.n
+ame &#125;&#125;&lt;/option&gt;
+&lt;/select&gt;
+&lt;!-- State Dropdown --&gt;
+&lt;select [disabled]="filteredStates.length === 0"&gt;
+&lt;option value=""&gt;Select State&lt;/option&gt;
+&lt;option *ngFor="let state of filteredStates" [value]="state.id"&gt;&#123;&#123; state.name
+&#125;&#125;&lt;/option&gt;
+&lt;/select&gt;
+Optional: Use ngModel for two-way binding (if needed)
+Add FormsModule to AppModule imports if using [(ngModel)] :
+&#105;mport &#123; FormsModule &#125; from '@angular/forms';
+@NgModule(&#123;
+imports: [FormsModule]
+&#125;)
+
+---
+
+### 8. **How to display dynamic html data in angular ?**
+
+To display dynamic HTML data in Angular safely (i.e., HTML content coming from
+a variable), you should use Angular's [innerHTML] binding along with DomSanitizer
+to avoid security issues like XSS.
+Suppose you have some HTML content as a string in your component:
+// component.ts
+&#101;xport class MyComponent &#123;
+htmlContent: string = "&lt;p style='color:red;'&gt;This is dynamic HTML content&lt;/
+p&gt;";
+&#125;
+In the template:
+&lt;!-- component.html --&gt;
+&lt;div [innerHTML]="htmlContent"&gt;&lt;/div&gt;
+If the HTML comes from external source (safe approach):
+Angular sanitizes HTML automatically when using [innerHTML] , but sometimes you
+may want to trust some HTML explicitly (e.g., you know it's safe). Use DomSanitizer
+like this:
+&#105;mport &#123; Component &#125; from '@angular/core';
+&#105;mport &#123; DomSanitizer, SafeHtml &#125; from '@angular/platform-browser';
+@Component(&#123;
+selector: 'app-my-component',
+templateUrl: './my.component.html'
+&#125;)
+&#101;xport class MyComponent &#123;
+htmlContent: SafeHtml;
+constructor(private sanitizer: DomSanitizer) &#123;
+const dirtyHtml = "&lt;p style='color:red;'&gt;Dynamic HTML content with &lt;b&gt;b
+old&lt;/b&gt; text&lt;/p&gt;";
+this.htmlContent = this.sanitizer.bypassSecurityTrustHtml(dirtyHtml);
+&#125;
+&#125;
+Template:
+&lt;div [innerHTML]="htmlContent"&gt;&lt;/div&gt;
+Summary:
+Use [innerHTML] binding to render HTML from string.
+If the content is dynamic and from an external source, sanitize or trust it via
+DomSanitizer .
+Avoid direct string interpolation with &#123;&#123; &#125;&#125; because Angular will escape HTML
+as plain text.
+
+---
+
+### 9. **How to update an array property in an Angular**
+
+component and reflect the changes in the template?
+To update an array property in an Angular component and have those changes
+reflected in the template, follow these key points:
+Basic steps:
+1. Update the array property in the component (e.g., add, remove, modify
+items).
+2. Angular’s change detection will automatically update the view if you mutate
+the array properly or replace it.
+3. Use Angular template syntax like ngFor to display the array.
+Example
+Component ( example.component.ts ):
+&#105;mport &#123; Component &#125; from '@angular/core';
+@Component(&#123;
+selector: 'app-example',
+templateUrl: './example.component.html',
+&#125;)
+&#101;xport class ExampleComponent &#123;
+items: string[] = ['Apple', 'Banana', 'Cherry'];
+addItem() &#123;
+this.items.push('Date');
+// Alternatively, to trigger change detection safely:
+// this.items = [...this.items, 'Date'];
+&#125;
+removeItem(index: number) &#123;
+this.items.splice(index, 1);
+&#125;
+updateItem(index: number, newValue: string) &#123;
+this.items[index] = newValue;
+// If needed, reassign to new array reference for change detection:
+// this.items = [...this.items];
+&#125;
+&#125;
+Template ( example.component.html ):
+&lt;ul&gt;
+&lt;li *ngFor="let item of items; let i = index"&gt;
+&#123;&#123; item &#125;&#125;
+&lt;button (click)="removeItem(i)"&gt;Remove&lt;/button&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;button (click)="addItem()"&gt;Add Item&lt;/button&gt;
+Mutating the array (e.g., .push() , .splice() ) usually works fine because Angular's
+default change detection detects these changes in most cases.
+However, in some cases (especially with OnPush change detection strategy or
+immutability preferences), replace the array reference like this:
+this.items = [...this.items, 'NewItem'];
+This triggers Angular to detect a new array and update the template
+accordingly.
+Always bind your template with ngFor or other directives that react to data
+changes.
+12. Change focus/enable/disable textbox in child
+component based on parent component button click ?
+To control focus, enable, or disable a textbox inside a child component from a
+parent component button click in Angular, follow these steps:
+1. Pass a property from parent to child via @Input() to control enable/disable or
+focus state.
+2. Use @ViewChild in child to get the textbox reference for focusing.
+3. On input change, update textbox state or focus inside the child component.
+a. Child Component (child.component.ts & html)
+// child.component.ts
+&#105;mport &#123; Component, Input, OnChanges, SimpleChanges, ViewChild, ElementR
+ef &#125; from '@angular/core';
+@Component(&#123;
+selector: 'app-child',
+template: `
+&lt;input #inputBox type="text" [disabled]="isDisabled" /&gt;
+`
+&#125;)
+&#101;xport class ChildComponent implements OnChanges &#123;
+@Input() isDisabled: boolean = false;
+@Input() shouldFocus: boolean = false;
+@ViewChild('inputBox') inputBox!: ElementRef&lt;HTMLInputElement&gt;;
+ngOnChanges(changes: SimpleChanges) &#123;
+if (changes['shouldFocus'] && this.shouldFocus) &#123;
+// Focus input when shouldFocus becomes true
+setTimeout(() =&gt; this.inputBox.nativeElement.focus(), 0);
+&#125;
+&#125;
+&#125;
+b. Parent Component (parent.component.ts & html)
+// parent.component.ts
+&#105;mport &#123; Component &#125; from '@angular/core';
+@Component(&#123;
+selector: 'app-parent',
+template: `
+&lt;button (click)="toggleTextbox()"&gt;Toggle Enable/Disable&lt;/button&gt;
+&lt;button (click)="focusTextbox()"&gt;Focus Textbox&lt;/button&gt;
+&lt;app-child
+[isDisabled]="isTextboxDisabled"
+[shouldFocus]="shouldFocusTextbox"&gt;
+&lt;/app-child&gt;
+`
+&#125;)
+&#101;xport class ParentComponent &#123;
+isTextboxDisabled = false;
+shouldFocusTextbox = false;
+toggleTextbox() &#123;
+this.isTextboxDisabled = !this.isTextboxDisabled;
+&#125;
+focusTextbox() &#123;
+this.shouldFocusTextbox = true;
+// Reset after focus to allow future focus toggles
+setTimeout(() =&gt; this.shouldFocusTextbox = false, 100);
+&#125;
+&#125;
+Explanation:
+The parent toggles isTextboxDisabled to enable/disable the textbox in the child.
+The parent sets shouldFocusTextbox to true to trigger focus in the child input.
+The child detects changes in inputs using ngOnChanges and focuses the input
+programmatically.
+Resetting shouldFocusTextbox to false lets you focus again on subsequent clicks.
+
+---
+
+### 10. **How to display dropdown value selected by user in**
+
+another textbox ?
+To display the dropdown value selected by the user in another textbox in Angular,
+you can:
+1. Bind the dropdown selection to a component property using [(ngModel)] or
+reactive forms.
+2. Bind the textbox’s value to the same property (or a derived one).
+3. When user selects an option, the textbox updates automatically.
+Simple Example Using ngModel
+app.component.ts
+&#105;mport &#123; Component &#125; from '@angular/core';
+@Component(&#123;
+selector: 'app-root',
+templateUrl: './app.component.html',
+&#125;)
+&#101;xport class AppComponent &#123;
+selectedValue: string = '';
+options = ['Apple', 'Banana', 'Cherry'];
+&#125;
+app.component.html
+&lt;select [(ngModel)]="selectedValue"&gt;
+&lt;option *ngFor="let option of options" [value]="option"&gt;&#123;&#123; option &#125;&#125;&lt;/option
+&gt;
+&lt;/select&gt;
+&lt;br /&gt;
+&lt;input type="text" [value]="selectedValue" readonly /&gt;
+Explanation:
+[(ngModel)]="selectedValue" binds the dropdown selected value two-way.
+The textbox has [value]="selectedValue" which updates automatically when
+selection changes.
+Setting readonly prevents user editing the textbox directly.
+
+---
+
+### 11. **How do you implement a character countdown**
+
+functionality for a &lt;textarea&gt; in Angular? Explain how
+you can use a template reference variable or
+@ViewChild to track the number of characters entered
+and display the remaining characters dynamically.
+Here’s how to implement a character countdown for a &lt;textarea&gt; in Angular, using
+both template reference variables and @ViewChild approaches to track
+characters entered and display remaining characters dynamically.
+a. Using Template Reference Variable
+Concept:
+Use a template reference variable (e.g., #myTextarea ) on &lt;textarea&gt; .
+Bind to (input) event to track the current length.
+Display remaining characters based on max limit.
+Example
+component.ts
+&#105;mport &#123; Component &#125; from '@angular/core';
+@Component(&#123;
+selector: 'app-char-count',
+templateUrl: './char-count.component.html',
+&#125;)
+&#101;xport class CharCountComponent &#123;
+maxChars = 100;
+currentLength = 0;
+onInput(event: Event) &#123;
+const input = event.target as HTMLTextAreaElement;
+this.currentLength = input.value.length;
+&#125;
+&#125;
+component.html
+&lt;textarea
+#myTextarea
+(input)="onInput($event)"
+[attr.maxLength]="maxChars"
+&gt;&lt;/textarea&gt;
+&lt;p&gt;&#123;&#123; maxChars - currentLength &#125;&#125; characters remaining&lt;/p&gt;
+b. Using @ViewChild to access the textarea DOM
+element
+Concept:
+Use @ViewChild to get the textarea element reference in the component.
+Listen to input events or trigger updates manually.
+Update remaining characters in the component and bind to the template.
+Example
+component.ts
+&#105;mport &#123; Component, ViewChild, ElementRef, AfterViewInit &#125; from '@angular/c
+ore';
+@Component(&#123;
+selector: 'app-char-count',
+templateUrl: './char-count.component.html',
+&#125;)
+&#101;xport class CharCountComponent implements AfterViewInit &#123;
+@ViewChild('myTextarea') myTextarea!: ElementRef&lt;HTMLTextAreaElement
+&gt;;
+maxChars = 100;
+currentLength = 0;
+ngAfterViewInit() &#123;
+this.myTextarea.nativeElement.addEventListener('input', () =&gt; &#123;
+this.currentLength = this.myTextarea.nativeElement.value.length;
+&#125;);
+&#125;
+&#125;
+component.html
+&lt;textarea #myTextarea [attr.maxLength]="maxChars"&gt;&lt;/textarea&gt;
+&lt;p&gt;&#123;&#123; maxChars - currentLength &#125;&#125; characters remaining&lt;/p&gt;
+Summary:
+Approach
+How it works
+Use when
+Template Reference
+Variable
+Bind (input) event and update
+length directly
+Simple and declarative,
+preferred way
+@ViewChild
+Access DOM element, listen
+manually in TS
+When direct DOM
+manipulation needed
+15. Create a search textbox filter in angular
+Here’s a simple example to create a search textbox filter in Angular:
+a. Setup Angular Component
+app.component.ts
+&#105;mport &#123; Component &#125; from '@angular/core';
+@Component(&#123;
+selector: 'app-root',
+templateUrl: './app.component.html',
+styleUrls: ['./app.component.css'],
+&#125;)
+&#101;xport class AppComponent &#123;
+searchText: string = '';
+items: string[] = [
+'Apple',
+'Banana',
+'Orange',
+'Grapes',
+'Mango',
+'Pineapple',
+'Strawberry',
+];
+get filteredItems(): string[] &#123;
+if (!this.searchText) &#123;
+return this.items;
+&#125;
+const lowerSearch = this.searchText.toLowerCase();
+return this.items.filter((item) =&gt;
+item.toLowerCase().includes(lowerSearch)
+);
+&#125;
+&#125;
+b. Template with Search Input and Filtered List
+app.component.html
+&lt;inputtype="text"
+placeholder="Search items"
+[(ngModel)]="searchText"
+/&gt;
+&lt;ul&gt;
+&lt;li *ngFor="let item of filteredItems"&gt;&#123;&#123; item &#125;&#125;&lt;/li&gt;
+&lt;/ul&gt;
+c. Add FormsModule to your App Module
+Make sure FormsModule is imported in your app module to use [(ngModel)] :
+app.module.ts
+typescript
+Copy
+&#105;mport &#123; NgModule &#125; from '@angular/core';
+&#105;mport &#123; BrowserModule &#125; from '@angular/platform-browser';
+&#105;mport &#123; FormsModule &#125; from '@angular/forms';  // import FormsModule here
+&#105;mport &#123; AppComponent &#125; from './app.component';
+@NgModule(&#123;
+declarations: [AppComponent],
+imports: [BrowserModule, FormsModule],
+bootstrap: [AppComponent],
+&#125;)
+&#101;xport class AppModule &#123;&#125;
+How it works:
+The user types in the textbox ( searchText bound via ngModel).
+The getter filteredItems filters the original list based on the search string.
+The filtered list is displayed dynamically.
+16. Display radio button data selected by user in
+another textbox
+Here is a simple Angular example showing how to display the selected radio
+button value inside a textbox:
+// app.component.ts
+&#105;mport &#123; Component &#125; from '@angular/core';
+@Component(&#123;
+selector: 'app-root',
+templateUrl: './app.component.html',
+styleUrls: ['./app.component.css'],
+&#125;)
+&#101;xport class AppComponent &#123;
+selectedOption: string = '';
+onSelectionChange(value: string) &#123;
+this.selectedOption = value;
+&#125;
+&#125;
+&lt;!-- app.component.html --&gt;
+&lt;form&gt;
+&lt;label&gt;
+&lt;inputtype="radio"
+name="options"
+value="Option 1"
+(change)="onSelectionChange('Option 1')"
+[checked]="selectedOption === 'Option 1'"
+/&gt;
+Option 1
+&lt;/label&gt;
+&lt;label&gt;
+&lt;inputtype="radio"
+name="options"
+value="Option 2"
+(change)="onSelectionChange('Option 2')"
+[checked]="selectedOption === 'Option 2'"
+/&gt;
+Option 2
+&lt;/label&gt;
+&lt;label&gt;
+&lt;inputtype="radio"
+name="options"
+value="Option 3"
+(change)="onSelectionChange('Option 3')"
+[checked]="selectedOption === 'Option 3'"
+/&gt;
+Option 3
+&lt;/label&gt;
+&lt;br /&gt;&lt;br /&gt;
+&lt;input type="text" [value]="selectedOption" readonly /&gt;
+&lt;/form&gt;
+How it works:
+When a radio button is selected, the onSelectionChange method is called with the
+value of the selected option.
+The component property selectedOption stores the current selection.
+The textbox uses Angular's property binding [value]="selectedOption" to display the
+selected radio button value dynamically.
+
+---
+
+### 12. **Create an error boundary component in angular ?**
+
+Angular doesn’t have a built-in concept called “Error Boundary” like React, but you
+can achieve similar behavior using Angular’s ErrorHandler class combined with a
+component to show fallback UI on error.
+Minimal example to create an error boundary component in
+Angular:
+Step 1: Create a global error handler
+Create a custom error handler service by extending Angular’s ErrorHandler :
+// error-boundary-handler.service.ts
+&#105;mport &#123; ErrorHandler, Injectable, Injector &#125; from '@angular/core';
+&#105;mport &#123; ErrorBoundaryService &#125; from './error-boundary.service';
+@Injectable()
+&#101;xport class ErrorBoundaryHandler implements ErrorHandler &#123;
+constructor(private injector: Injector) &#123;&#125;
+handleError(error: any) &#123;
+const errorBoundaryService = this.injector.get(ErrorBoundaryService);
+errorBoundaryService.setError(error);
+// Log the error or send to server
+console.error('Caught by ErrorBoundaryHandler:', error);
+&#125;
+&#125;
+Step 2: Create an ErrorBoundaryService to share error state
+// error-boundary.service.ts
+&#105;mport &#123; Injectable &#125; from '@angular/core';
+&#105;mport &#123; BehaviorSubject &#125; from 'rxjs';
+@Injectable(&#123; providedIn: 'root' &#125;)
+&#101;xport class ErrorBoundaryService &#123;
+private errorSubject = new BehaviorSubject&lt;any&gt;(null);
+error$ = this.errorSubject.asObservable();
+setError(error: any) &#123;
+this.errorSubject.next(error);
+&#125;
+clearError() &#123;
+this.errorSubject.next(null);
+&#125;
+&#125;
+Step 3: Create an ErrorBoundaryComponent to show fallback UI
+// error-boundary.component.ts
+&#105;mport &#123; Component &#125; from '@angular/core';
+&#105;mport &#123; ErrorBoundaryService &#125; from './error-boundary.service';
+@Component(&#123;
+selector: 'app-error-boundary',
+template: `
+&lt;ng-container *ngIf="error$ | async as error; else content"&gt;
+&lt;div class="error-fallback"&gt;
+&lt;h2&gt;Something went wrong!&lt;/h2&gt;
+&lt;pre&gt;&#123;&#123; error?.message || error &#125;&#125;&lt;/pre&gt;
+&lt;button (click)="clearError()"&gt;Try Again&lt;/button&gt;
+&lt;/div&gt;
+&lt;/ng-container&gt;
+&lt;ng-template #content&gt;
+&lt;ng-content&gt;&lt;/ng-content&gt;
+&lt;/ng-template&gt;
+`,
+styles: [`
+.error-fallback &#123;
+border: 1px solid red;
+padding: 20px;
+background: #ffe6e6;
+color: #900;
+&#125;
+`]
+&#125;)
+&#101;xport class ErrorBoundaryComponent &#123;
+error$ = this.errorBoundaryService.error$;
+constructor(private errorBoundaryService: ErrorBoundaryService) &#123;&#125;
+clearError() &#123;
+this.errorBoundaryService.clearError();
+&#125;
+&#125;
+Step 4: Register the custom error handler globally
+Add the provider in your app.module.ts :
+&#105;mport &#123; NgModule, ErrorHandler &#125; from '@angular/core';
+&#105;mport &#123; BrowserModule &#125; from '@angular/platform-browser';
+&#105;mport &#123; AppComponent &#125; from './app.component';
+&#105;mport &#123; ErrorBoundaryComponent &#125; from './error-boundary.component';
+&#105;mport &#123; ErrorBoundaryHandler &#125; from './error-boundary-handler.service';
+@NgModule(&#123;
+declarations: [AppComponent, ErrorBoundaryComponent],
+imports: [BrowserModule],
+providers: [
+&#123; provide: ErrorHandler, useClass: ErrorBoundaryHandler &#125;
+],
+bootstrap: [AppComponent]
+&#125;)
+&#101;xport class AppModule &#123;&#125;
+Step 5: Wrap components inside &lt;app-error-boundary&gt;
+Use the ErrorBoundaryComponent as a wrapper wherever you want to catch and display
+errors:
+&lt;!-- app.component.html --&gt;
+&lt;app-error-boundary&gt;
+&lt;app-child-component&gt;&lt;/app-child-component&gt;
+&lt;/app-error-boundary&gt;
+If an error occurs anywhere in the child components, the error boundary will show
+fallback UI.
+Summary:
+ErrorBoundaryHandler catches uncaught errors globally.
+ErrorBoundaryService shares error state reactively.
+ErrorBoundaryComponent listens for errors and shows fallback UI.
+Wrap components in &lt;app-error-boundary&gt; to isolate error display
+
+---
+
+### 13. **Create a counter component in angular ?**
+
+✅ Step 1: Generate Component
+First, create a new Angular component via CLI:
+ng generate component counter
+This will create:
+src/app/counter/
+├── counter.component.ts
+├── counter.component.html
+├── counter.component.css
+└── counter.component.spec.ts
+✅ Step 2: Add Logic
+🔹 counter.component.ts
+&#105;mport &#123; Component &#125; from '@angular/core';
+@Component(&#123;
+selector: 'app-counter',
+templateUrl: './counter.component.html',
+styleUrls: ['./counter.component.css']
+&#125;)
+&#101;xport class CounterComponent &#123;
+count = 0;
+increment(): void &#123;
+this.count++;
+&#125;
+decrement(): void &#123;
+this.count--;
+&#125;
+reset(): void &#123;
+this.count = 0;
+&#125;
+&#125;
+✅ Explanation:
+count is a class property that stores the current counter value.
+increment() , decrement() , and reset() are methods to change the value.
+These methods are triggered when buttons are clicked.
+✅ Step 3: Create Template
+🔹 counter.component.html
+&lt;div class="counter"&gt;
+&lt;h2&gt;Counter Value: &#123;&#123; count &#125;&#125;&lt;/h2&gt;
+&lt;div class="buttons"&gt;
+&lt;button (click)="decrement()"&gt;–&lt;/button&gt;
+&lt;button (click)="reset()"&gt;Reset&lt;/button&gt;
+&lt;button (click)="increment()"&gt;+&lt;/button&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+✅ Explanation:
+&#123;&#123; count &#125;&#125; : Angular interpolation to display the counter value.
+(click)="method()" : Event binding to trigger corresponding methods on button
+click.
+✅
+✅ Step 4: Add Styles (Optional)
+🔹 counter.component.css
+.counter &#123;
+text-align: center;
+margin-top: 2rem;
+font-family: Arial, sans-serif;
+&#125;
+.buttons &#123;
+display: flex;
+justify-content: center;
+gap: 1rem;
+margin-top: 1rem;
+&#125;
+button &#123;
+font-size: 1.5rem;
+padding: 0.5rem 1rem;
+cursor: pointer;
+&#125;
+✅ Step 5: Use Component in App
+In app.component.html or any other parent component:
+&lt;app-counter&gt;&lt;/app-counter&gt;
+Make sure it's declared in app.module.ts (done automatically when generated with
+CLI).
+✅ Output
+A fully working Angular counter that looks like this:
+less
+CopyEdit
+Counter Value: 0
+[ - ]  [ Reset ]  [ + ]
+
+---
+
+### 14. **How to call a method on every rerender of a**
+
+component ?
+In Angular, if you want to call a method on every re-render (change detection
+cycle) of a component — the best place to do this is in the ngDoCheck() lifecycle
+hook.
+✅ What is ngDoCheck() ?
+ngDoCheck() is a lifecycle hook that Angular calls during every change detection
+run, i.e., whenever the component is checked for changes, which happens:
+when input properties change,
+on events,
+or when you explicitly trigger change detection.
+So it's the Angular equivalent of "every re-render" in React.
+✅ Example: Call a Method on Every Rerender
+🔹 Step 1: Component File
+&#105;mport &#123; Component, DoCheck &#125; from '@angular/core';
+@Component(&#123;
+selector: 'app-my-component',
+templateUrl: './my-component.component.html'
+&#125;)
+&#101;xport class MyComponent implements DoCheck &#123;
+counter = 0;
+constructor() &#123;&#125;
+ngDoCheck(): void &#123;
+this.onEveryRerender(); // Called during every change detection run
+&#125;
+onEveryRerender(): void &#123;
+console.log('Component re-rendered!');
+&#125;
+triggerChange(): void &#123;
+// This method is to trigger a change
+this.counter++;
+&#125;
+&#125;
+🔹 HTML Template
+&lt;h2&gt;Counter: &#123;&#123; counter &#125;&#125;&lt;/h2&gt;
+&lt;button (click)="triggerChange()"&gt;Increase Counter&lt;/button&gt;
+✅ Explanation:
+ngDoCheck() is triggered on every Angular change detection.
+Inside it, we call onEveryRerender() which logs a message or performs any logic.
+Clicking the button updates the counter, which causes a change detection →
+which calls ngDoCheck() .
+⚠️
+⚠️ Note:
+Use ngDoCheck() carefully because it's called very frequently.
+Don’t perform heavy logic here unless it’s necessary.
+
+---
+

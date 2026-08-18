@@ -1,0 +1,66 @@
+---
+title: "Asynchronous JavaScript"
+category: "JavaScript"
+difficulty: "Advanced"
+interviewFrequency: "Very High"
+experienceLevel: "All Levels"
+estimatedReadTime: 20
+tags: ["javascript", "async", "promises", "event-loop"]
+---
+
+# Asynchronous JavaScript
+
+JavaScript is single-threaded. Understanding how it handles asynchronous operations (like network requests) without blocking the main thread is the most frequently tested concept in modern JS interviews.
+
+## ❓ Interview Questions
+
+### 57. **What is synchronous JavaScript?**
+- _Answer_: Synchronous code is executed line-by-line, sequentially. Each line of code waits for the previous line to finish executing before it starts. If a synchronous task takes a long time, it completely blocks the thread, freezing the UI.
+
+### 58. **What is asynchronous JavaScript?**
+- _Answer_: Asynchronous code allows JavaScript to initiate a long-running task (like a network request or a timer) and move on to execute other code while waiting for that task to finish in the background, preventing the UI from freezing.
+
+### 59. **What is the event loop?**
+- _Answer_: The Event Loop is the secret behind JavaScript's non-blocking architecture. It continuously checks the Call Stack and the Callback Queue (or Microtask Queue). If the Call Stack is empty, it takes the first function from the Queue and pushes it onto the Call Stack for execution.
+
+### 60. **What is the difference between synchronous and asynchronous code?**
+- _Answer_: Synchronous code is blocking and executes immediately in the order it appears. Asynchronous code is non-blocking; it is delegated to Web APIs and its callback is queued to execute only after the synchronous code has completely finished.
+
+### 61. **What is a callback?**
+- _Answer_: A callback is a function passed into another function as an argument, intended to be executed later (usually after an asynchronous operation has completed).
+
+### 62. **What is callback hell?**
+- _Answer_: Callback hell (also known as the Pyramid of Doom) occurs when multiple asynchronous operations are nested inside each other using callbacks. This results in deeply nested, unreadable, and difficult-to-maintain code.
+
+### 63. **What is a Promise?**
+- _Answer_: A Promise is an object representing the eventual completion (or failure) of an asynchronous operation and its resulting value. It is the modern solution to callback hell.
+
+### 64. **What are the states of a Promise?**
+- _Answer_: A Promise is always in one of three states:
+1. **Pending**: The initial state; the operation has not completed yet.
+2. **Fulfilled (Resolved)**: The operation completed successfully.
+3. **Rejected**: The operation failed (e.g., network error).
+
+### 65. **What is .then()?**
+- _Answer_: `.then()` is a method used to attach a callback that will be executed when the Promise is successfully resolved.
+
+### 66. **What is .catch()?**
+- _Answer_: `.catch()` is a method used to attach a callback that will be executed if the Promise is rejected, allowing you to handle errors gracefully.
+
+### 67. **What is .finally()?**
+- _Answer_: `.finally()` is a method that executes its callback regardless of whether the Promise was resolved or rejected. It is typically used for cleanup tasks, like hiding a loading spinner.
+
+### 68. **What is async/await?**
+- _Answer_: Introduced in ES8, `async/await` is syntactic sugar over Promises. It allows you to write asynchronous, Promise-based code that looks and reads like standard synchronous code. 
+
+### 69. **What is the difference between Promises and async/await?**
+- _Answer_: While they both handle asynchronous code under the hood, Promises rely on `.then()` chains, which can become verbose. `async/await` allows you to pause execution using `await` until a Promise resolves, eliminating chaining and making error handling cleaner with standard `try/catch` blocks.
+
+### 70. **What is Promise.all()?**
+- _Answer_: `Promise.all()` takes an array of Promises and executes them concurrently. It resolves only when **all** the Promises resolve, returning an array of their results. If even **one** Promise rejects, the entire `Promise.all` immediately rejects.
+
+### 71. **What is Promise.allSettled()?**
+- _Answer_: Unlike `Promise.all()`, `Promise.allSettled()` waits for all Promises to finish, regardless of whether they resolved or rejected. It returns an array of objects describing the outcome (status and value/reason) of each Promise.
+
+### 72. **What is Promise.race()?**
+- _Answer_: `Promise.race()` takes an array of Promises and resolves or rejects as soon as the **first** Promise in the array resolves or rejects. It literally "races" them and returns the result of the winner.

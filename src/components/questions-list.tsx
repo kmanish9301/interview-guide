@@ -28,13 +28,19 @@ interface QuestionsListProps {
 
 export function QuestionsList({ initialQuestions }: QuestionsListProps) {
   const [search, setSearch] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
-  const filtered = initialQuestions.filter(
-    (item) =>
-      item.q.toLowerCase().includes(search.toLowerCase()) ||
+  const categories = Array.from(new Set(initialQuestions.map(q => q.category)));
+
+  const filtered = initialQuestions.filter((item) => {
+    const matchesSearch = item.q.toLowerCase().includes(search.toLowerCase()) ||
       item.topicTitle.toLowerCase().includes(search.toLowerCase()) ||
-      item.category.toLowerCase().includes(search.toLowerCase())
-  );
+      item.category.toLowerCase().includes(search.toLowerCase());
+      
+    const matchesCategory = selectedCategory ? item.category === selectedCategory : true;
+    
+    return matchesSearch && matchesCategory;
+  });
 
   return (
     <>
@@ -47,7 +53,7 @@ export function QuestionsList({ initialQuestions }: QuestionsListProps) {
           questions extracted directly from our topics.
         </p>
 
-        <div className="relative w-full">
+        <div className="relative w-full mb-6">
           <SearchIcon className="absolute left-3 top-3 h-5 w-5 text-muted-foreground" />
           <Input
             placeholder="Search questions by keyword or topic..."
@@ -56,6 +62,29 @@ export function QuestionsList({ initialQuestions }: QuestionsListProps) {
             onChange={(e) => setSearch(e.target.value)}
           />
         </div>
+
+        {categories.length > 0 && (
+          <div className="flex flex-wrap gap-2 items-center">
+            <span className="text-sm text-muted-foreground mr-2">Filter by Category:</span>
+            <Badge
+              variant={selectedCategory === null ? "default" : "outline"}
+              className="cursor-pointer transition-colors"
+              onClick={() => setSelectedCategory(null)}
+            >
+              All
+            </Badge>
+            {categories.map(cat => (
+              <Badge
+                key={cat}
+                variant={selectedCategory === cat ? "default" : "outline"}
+                className="cursor-pointer transition-colors"
+                onClick={() => setSelectedCategory(cat)}
+              >
+                {cat}
+              </Badge>
+            ))}
+          </div>
+        )}
       </div>
 
       <div className="space-y-6">

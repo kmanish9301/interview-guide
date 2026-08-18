@@ -1,0 +1,45 @@
+---
+title: "Hoisting & Execution Context"
+category: "JavaScript"
+difficulty: "Advanced"
+interviewFrequency: "High"
+experienceLevel: "Mid-Senior"
+estimatedReadTime: 12
+tags: ["javascript", "hoisting", "execution", "call-stack"]
+---
+
+# Hoisting & Execution
+
+Understanding how the JavaScript engine actually parses, hoists, and executes your code is a hallmark of a senior developer. 
+
+## ❓ Interview Questions
+
+### 42. **What is hoisting?**
+- _Answer_: Hoisting is JavaScript's default behavior of moving variable and function declarations to the top of their respective scopes during the compilation phase, before the code is executed.
+
+**Concept:**
+Because of hoisting, you can call a function before it appears in your code. However, only the *declarations* are hoisted, not the *initializations*.
+
+### 43. **How does hoisting work with var, let, and const?**
+- _Answer_: Variables declared with `var` are hoisted and initialized with `undefined`. Variables declared with `let` and `const` are also hoisted, but they are *not* initialized. Accessing them before their declaration results in a `ReferenceError`.
+
+**Concept:**
+```javascript
+console.log(a); // undefined (var is hoisted and initialized)
+var a = 5;
+
+console.log(b); // ReferenceError: Cannot access 'b' before initialization
+let b = 10;
+```
+
+### 44. **What is the Temporal Dead Zone (TDZ)?**
+- _Answer_: The TDZ is the specific time window where variables declared with `let` and `const` exist in memory (because they were hoisted), but cannot be accessed because they haven't been initialized yet. The TDZ ends when the execution reaches the line where the variable is declared.
+
+### 45. **What is the execution context?**
+- _Answer_: The execution context is an abstract concept describing the environment in which JavaScript code is evaluated and executed. Every time a function runs, a new Execution Context is created. It contains the variable environment, the scope chain, and the value of `this`.
+
+### 46. **What is the call stack?**
+- _Answer_: The call stack is a LIFO (Last In, First Out) data structure used by the JavaScript engine to keep track of its place in a script that calls multiple functions. When a function is invoked, it is pushed onto the stack. When the function finishes, it is popped off the stack.
+
+### 47. **What is the scope chain?**
+- _Answer_: When a variable is used in JavaScript, the engine will try to find the variable's value in the current scope. If it cannot find it, it will look into the outer (parent) scope, and will continue to do so up the chain until it reaches the Global Scope. This chain of scopes is called the Scope Chain.

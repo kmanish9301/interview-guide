@@ -1,0 +1,68 @@
+---
+title: "this, Prototype & OOP"
+category: "JavaScript"
+difficulty: "Advanced"
+interviewFrequency: "Very High"
+experienceLevel: "Mid-Senior"
+estimatedReadTime: 15
+tags: ["javascript", "this", "prototype", "oop", "classes"]
+---
+
+# this, Prototype & OOP
+
+JavaScript's object-oriented nature relies heavily on prototypes rather than traditional classes. Understanding `this` and prototypal inheritance is crucial for senior roles.
+
+## ❓ Interview Questions
+
+### 48. **What is the this keyword?**
+- _Answer_: The `this` keyword refers to the object that is currently executing the code. Its value is not determined by where the function was declared, but rather by **how** the function is called (the execution context).
+
+### 49. **How does this behave in regular functions?**
+- _Answer_: In a regular function, `this` refers to the global object (`window` in browsers) if called in the global scope. If the function is called as a method of an object (e.g., `obj.method()`), `this` refers to the object itself. In strict mode, `this` is `undefined` instead of the global object.
+
+### 50. **How does this behave in arrow functions?**
+- _Answer_: Arrow functions do NOT have their own `this` binding. Instead, they inherit `this` lexically from the outer enclosing scope at the time they are defined. 
+
+**Concept:**
+Because they lack their own `this`, arrow functions cannot be used as object methods if you need to access the object's properties via `this`.
+
+### 51. **What are call(), apply(), and bind()?**
+- _Answer_: These are built-in methods used to explicitly set the value of `this` for a function.
+- `call(thisArg, arg1, arg2)`: Invokes the function immediately with arguments passed individually.
+- `apply(thisArg, [argsArray])`: Invokes the function immediately with arguments passed as an array.
+- `bind(thisArg, arg1, arg2)`: Returns a **new function** with `this` permanently bound, which can be invoked later.
+
+### 52. **What is prototypal inheritance?**
+- _Answer_: Prototypal inheritance is a feature in JavaScript where objects can inherit properties and methods directly from other objects via an internal link called the prototype (`[[Prototype]]` or `__proto__`). 
+
+### 53. **What is the prototype chain?**
+- _Answer_: When you try to access a property on an object, the JS engine first looks on the object itself. If it doesn't find it, it looks at the object's prototype, then the prototype's prototype, and so on until it reaches `null`. This sequence of links is the Prototype Chain.
+
+**Concept:**
+This is how an Array has access to `.map()` or `.filter()`—those methods live on `Array.prototype`, which is in the prototype chain of every array.
+
+### 54. **What are JavaScript classes?**
+- _Answer_: Introduced in ES6, JavaScript classes are primarily syntactic sugar over the existing prototypal inheritance system. They provide a cleaner, more traditional OOP syntax to create objects and deal with inheritance.
+
+### 55. **What is inheritance in JavaScript?**
+- _Answer_: Inheritance allows a new class (or object) to take on the properties and methods of an existing class (or object). In ES6 classes, this is achieved using the `extends` keyword, and you must call `super()` in the constructor to access the parent class's context.
+
+### 56. **What are getters and setters?**
+- _Answer_: Getters and setters are special methods that allow you to define custom logic for reading (`get`) or writing (`set`) a property on an object, making them act like regular properties rather than functions.
+
+**Concept:**
+```javascript
+const user = {
+  firstName: "John",
+  lastName: "Doe",
+  get fullName() {
+    return `${this.firstName} ${this.lastName}`;
+  },
+  set fullName(name) {
+    [this.firstName, this.lastName] = name.split(" ");
+  }
+};
+
+console.log(user.fullName); // "John Doe" (Invokes getter)
+user.fullName = "Jane Smith"; // Invokes setter
+```

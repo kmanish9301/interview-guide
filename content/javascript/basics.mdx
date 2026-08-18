@@ -1,0 +1,108 @@
+---
+title: "JavaScript Basics"
+category: "JavaScript"
+difficulty: "Beginner"
+interviewFrequency: "High"
+experienceLevel: "All Levels"
+estimatedReadTime: 15
+tags: ["javascript", "basics", "types", "variables"]
+---
+
+# JavaScript Basics
+
+Mastering the absolute fundamentals of JavaScript is critical for any MERN stack developer. These basics form the foundation of every technical interview.
+
+## ❓ Interview Questions
+
+### 1. **What is JavaScript?**
+- _Answer_: JavaScript is a high-level, interpreted, dynamically-typed programming language primarily used to add interactivity to web pages. It is a multi-paradigm language, supporting object-oriented, imperative, and declarative (functional) styles.
+
+**Concept:**
+It runs in the browser via engines like V8 (Chrome) or SpiderMonkey (Firefox), but thanks to Node.js, it can also run on the server, making it a full-stack language.
+
+### 2. **What are the features of JavaScript?**
+- _Answer_: JavaScript is lightweight, interpreted, dynamically typed, and has first-class functions. It is single-threaded and non-blocking (asynchronous) due to its event loop architecture.
+
+**Concept:**
+- **Dynamic Typing**: You don't have to declare variable types (e.g., `let x = 5` can become `x = "hello"`).
+- **First-Class Functions**: Functions are treated like variables. They can be passed as arguments or returned from other functions.
+
+### 3. **What are the different data types in JavaScript?**
+- _Answer_: JavaScript has two main categories of data types: Primitive and Non-Primitive (Reference). There are 7 primitive types: `String`, `Number`, `BigInt`, `Boolean`, `Undefined`, `Null`, and `Symbol`. The only non-primitive type is `Object` (which includes Arrays and Functions).
+
+### 4. **What is the difference between primitive and reference data types?**
+- _Answer_: Primitives are immutable values stored directly in memory (the stack). Reference types are mutable objects stored in the heap, and variables only hold a reference (pointer) to that memory location.
+
+**Concept:**
+```javascript
+// Primitive (Copied by value)
+let a = 10;
+let b = a;
+b = 20; 
+console.log(a); // 10
+
+// Reference (Copied by reference)
+let obj1 = { name: "John" };
+let obj2 = obj1;
+obj2.name = "Doe";
+console.log(obj1.name); // "Doe"
+```
+
+### 5. **What is the difference between var, let, and const?**
+- _Answer_: `var` is function-scoped and can be re-declared and updated. `let` is block-scoped and can be updated but not re-declared. `const` is block-scoped, cannot be updated, and must be initialized during declaration.
+
+**Concept:**
+Because `var` is hoisted and initialized with `undefined`, it can lead to unpredictable bugs. You should almost always use `const` by default, and `let` only when the variable will change.
+
+### 6. **What is the difference between == and ===?**
+- _Answer_: `==` (loose equality) compares values after performing type coercion. `===` (strict equality) compares both value and type without converting them.
+
+**Concept:**
+```javascript
+console.log(5 == "5");  // true (type coerced)
+console.log(5 === "5"); // false (different types)
+```
+
+### 7. **What are truthy and falsy values?**
+- _Answer_: A falsy value is a value that translates to `false` when evaluated in a Boolean context. There are exactly 6 falsy values in JS: `false`, `0`, `""` (empty string), `null`, `undefined`, and `NaN`. Everything else is truthy.
+
+### 8. **What is type coercion?**
+- _Answer_: Type coercion is the automatic or implicit conversion of values from one data type to another by the JavaScript engine.
+
+**Concept:**
+```javascript
+const result = "5" + 2; // "52" (Number coerced to String)
+const result2 = "5" - 2; // 3 (String coerced to Number)
+```
+
+### 9. **What is the difference between null and undefined?**
+- _Answer_: `undefined` means a variable has been declared but has not yet been assigned a value. `null` is an assignment value that represents the intentional absence of any object value.
+
+### 10. **What is NaN?**
+- _Answer_: `NaN` stands for "Not-a-Number". It is a special numeric value indicating that a mathematical operation yielded an invalid result (e.g., dividing zero by zero, or parsing a non-numeric string).
+
+**Concept:**
+Interestingly, `typeof NaN` returns `"number"`. To check if a value is NaN, always use `Number.isNaN(value)`.
+
+### 11. **What is the difference between NaN, null, and undefined?**
+- _Answer_: `undefined` is the default value of uninitialized variables. `null` is an empty object pointer set intentionally. `NaN` is a computational error when a math operation fails. 
+
+### 12. **What is the typeof operator?**
+- _Answer_: The `typeof` operator returns a string indicating the type of the unevaluated operand.
+
+**Concept:**
+```javascript
+typeof "hello"; // "string"
+typeof true;    // "boolean"
+typeof null;    // "object" (This is a famous historical JS bug!)
+typeof undefined; // "undefined"
+```
+
+### 13. **What is strict mode ("use strict")?**
+- _Answer_: Strict mode is a feature in ES5 that allows you to place a program or a function in a "strict" operating context. It catches common coding bloopers (like using undeclared variables) and throws errors instead of failing silently.
+
+**Concept:**
+```javascript
+"use strict";
+x = 10; // Throws a ReferenceError because x is not declared
+```

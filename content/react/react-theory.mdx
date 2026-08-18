@@ -1,0 +1,1341 @@
+---
+title: "React Theory"
+category: "React"
+difficulty: "Advanced"
+interviewFrequency: "High"
+experienceLevel: "All Levels"
+estimatedReadTime: 69
+tags: ["interview", "questions", "react-theory"]
+---
+
+# React Theory
+
+Here is the ultimate list of interview questions for React Theory.
+
+## ❓ Interview Questions
+
+### 1. **What is React?**
+
+React is an opensource component based JavaScript library which is used
+to develop interactive user interfaces.
+
+---
+
+### 2. **What are the features of React ?**
+
+Jsx
+Virtual dom
+one way data binding
+Uses reusable components to develop the views
+Supports server side rendering
+
+---
+
+### 3. **What is JSX ?**
+
+JSX means javascript xml. It allows the user to write the code similar to
+html in their javascript files.
+This jsx will be transpiled into javascript that interacts with the browser
+when the application is built.
+
+---
+
+### 4. **What is DOM ?**
+
+DOM means document object model. It is like a tree like structure that
+represents the elements of a webpage.
+
+---
+
+### 5. **What is Virtual Dom ?**
+
+When ever any underlying data changes or whenever user enters
+something in textbox then entire UI is rerendered in a virtual dom
+representation.
+Now this virtual dom is compared with the original dom and creates a
+changeset which will be applied on the real dom.
+So instead of updating the entire realdom, it will be updated with only the
+things that have actually been changed.
+Rendering Efficiency:
+Virtual DOM: Updates to the Virtual DOM are typically faster because
+they occur in memory and are not directly reflected in the browser.
+Actual DOM: Manipulating the actual DOM is slower due to its
+complexity and the potential for reflows and repaints.
+
+---
+
+### 6. **What is state in Reactjs?**
+
+State is an object which holds the data related to a component that may
+change over the lifetime of a component.
+When the state changes, the component re-renders.
+Eg: for functional component and class component
+&#105;mport React, &#123; useState &#125; from "react";
+function User() &#123;
+const [message, setMessage] = useState("Welcome React");
+return (
+&lt;div&gt;
+&lt;h1&gt;&#123;message&#125;&lt;/h1&gt;
+&lt;/div&gt;
+);
+&#125;
+&#105;mport React from 'react';
+class User extends React.Component &#123;
+constructor(props) &#123;
+super(props);
+this.state = &#123;
+message: "Welcome to React world",
+&#125;;
+&#125;
+render() &#123;
+return (
+&lt;div&gt;
+&lt;h1&gt;&#123;this.state.message&#125;&lt;/h1&gt;
+&lt;/div&gt;
+);
+&#125;
+&#125;
+
+---
+
+### 7. **What is the purpose of callback function as an argument**
+
+of  setState() ?
+If we want to execute some logic once state is updated and component is
+rerendered then we can add it in callback function.
+
+---
+
+### 8. **What are props ?**
+
+Props are inputs to the component.
+They are used to send data from parent component to child component.
+Props are immutable, so they cannot be modified directly within the child
+component.
+Example:
+// ParentComponent.js
+&#105;mport React from 'react';
+&#105;mport ChildComponent from './ChildComponent';
+function ParentComponent() &#123;
+const name = "John";
+return (
+&lt;div&gt;
+&lt;h1&gt;Parent Component&lt;/h1&gt;
+&lt;ChildComponent name=&#123;name&#125; /&gt;
+&lt;/div&gt;
+);
+&#125;
+&#101;xport default ParentComponent;
+// ChildComponent.js
+&#105;mport React from 'react';
+function ChildComponent(props) &#123;
+return (
+&lt;div&gt;
+&lt;h2&gt;Child Component&lt;/h2&gt;
+&lt;p&gt;Hello, &#123;props.name&#125;!&lt;/p&gt;
+&lt;/div&gt;
+);
+&#125;
+&#101;xport default ChildComponent;
+
+---
+
+### 9. **What are the differences between State and Props in react ?**
+
+Both props and state are used to manage the data of a component.
+State is used to hold the data of a component whereas props are used to
+send data from one component to another component.
+State is mutable but props are immutable.
+Any change in state causes rerender of component and its children.
+
+---
+
+### 10. **What is props drilling ?**
+
+Props drilling is the process of sending the data from one component to
+the component thats needs the data from several interconnected
+components
+
+---
+
+### 11. **What are the disadvantages of props drilling and How we**
+
+can avoid props drilling ?
+Code complexity:
+Prop drilling can make code difficult to read and maintain, especially in
+large applications with many components. This is because props need to
+be passed down through multiple levels of components, and it can be
+difficult to keep track of which components are using which props.
+Reduced maintainability:
+Prop drilling can also make code less maintainable. This is because if a
+prop needs to be changed, the change needs to be propagated through all
+of the components that use it. This can be a time-consuming and error-
+prone process.
+Increased risk of errors:
+Prop drilling can also increase the risk of errors. This is because it can be
+difficult to keep track of which components are using which props, and it
+can be easy to forget to pass a prop down to a component that needs
+it. This can lead to errors in the application.
+Performance overhead:
+Prop drilling can also have a performance overhead. This is because every
+time a prop is passed down to a component, the component needs to re-
+render. This can be a significant performance overhead in large
+applications with many components.
+Makes application slower.
+We can avoid props drilling using context api or Redux or by using any state
+management libraries.
+
+---
+
+### 12. **What is useReducer hook ?**
+
+It is an alternative to useState hook which is used when state of the
+component is complex and requires more than one state variable.
+
+---
+
+### 13. **What is useMemo ?**
+
+useMemo is useful for performance optimization in react.
+It is used to cache the result of a function between re-renders.
+Example :
+In our application we have a data vizualization component where we
+need to display charts based on performing complex calculations on
+some large data sets. By using useMemo we can cache the computed
+result, which ensures that the component does not recalculate on
+every re-renders.
+This saves computational resources and provides smoother user
+experience.
+&#105;mport React, &#123; useMemo &#125; from 'react';
+const DataVisualization = (&#123; data &#125;) =&gt; &#123;
+const processedData = useMemo(() =&gt; &#123;
+// Perform expensive computations on data
+// ...
+return processedData;
+&#125;, [data]);
+// Render the visualization using the processed data
+// ...
+return &lt;div&gt;&#123;/* Visualization component */&#125;&lt;/div&gt;;
+&#125;;
+In this example, the  processedData  is memoized using  useMemo  to avoid
+recomputing it on every render. The expensive computations are performed
+only when the  data  prop changes.
+
+---
+
+### 14. **What is useCallback ?**
+
+useCallback caches the function defination between the re-renders
+It takes two arguments: the callback function and an array of
+dependencies. The callback function is only recreated if one of the
+dependencies has changed.
+Good Ref: https://deadsimplechat.com/blog/usecallback-guide-use-cases-
+and-examples/#the-difference-between-usecallback-and-declaring-a-
+function-directly
+
+---
+
+### 15. **What are the differences between useMemo and**
+
+useCallback ?
+Both useMemo and useCallback are useful for performance optimization.
+useMemo will cache the result of the function between re-renders
+whereas useCallback will cache the function itself between re-renders.
+16. Which lifecycle hooks in class component are replaced
+with useEffect in functional components ?
+1. componentDidMount():  equivalent to useEffect with empty array.
+useEffect(()=&gt;&#123;
+console.log("Called on initial mount only once")
+&#125;,[])
+2. componentDidUpdate(): equivalent to useEffect with array of
+dependencies
+useEffect(()=&gt;&#123;
+console.log("Called on every dependency update")
+&#125;,[props.isFeature,props.content])
+This will be called whenever dependency value changes (here Eg: isFeature or
+content).
+3. componentDidUnmount(): equivalent to useEffect with return statement.
+useEffect(()=&gt;&#123;
+return ()=&gt;&#123;
+console.log(`Any cleanup activities
+or unsubscribing etc here`)
+&#125;
+&#125;)
+
+---
+
+### 16. **What is component life cycle of React class component ?**
+
+React life cycle consists of 3 phases.
+mounting
+updating
+unmounting
+Mounting:
+In this phase the component is generally mounted into the dom.
+It is an initialization phase where we can do some operations like
+getting data from api, subscribing to events etc.
+1. Constructor:
+It is a place to set the initial state and other initial values.
+2. getDerivedStateFromProps:
+This is called right before rendering the elements into the dom.
+Its a natural place to set the state object based on the initial props.
+It takes state as an argument and returns an object with changes to
+the state.
+getDerivedStateFromProps(props,state)&#123;
+return &#123; favColor: props.favColor &#125;
+&#125;
+3. render():
+It contains all the html elements and is method that actually outputs
+the html to the dom.
+4. ComponentDidMount():
+This is called once component is mounted into the dom.
+Eg: fetch api calls, subscribing to events etc.
+Updating phase:
+This is when the component is updated. The component will be
+updated when ever there is change in state or props.
+1. getDerivedStateFromProps: same as above
+2. ShouldComponentUpdate:
+This will return  boolean value that specifies whether react should
+continue with the rendering or not. default is true.
+shouldComponentUpdate()&#123;
+return true/false
+&#125;
+3. Render: same as above
+4. getSnapshotBeforeUpdate:
+It will have access to the props and state before update. means
+that even after the update you can check what are the values were
+before update.
+getSnapshotBeforeUpdate(prevProps,prevState)&#123;
+console.log(prevProps,prevState)
+&#125;
+5. ComponentDidUpdate:
+Called after the component is updated in the dom.
+Unmounting phase:
+In this phase the component will be removed from the dom. here we
+can do unsubscribe to some events or destroying the existing dialogs
+etc.
+1. ComponentWillUnmount:
+This is called when component is about to be removed from the
+dom.
+
+---
+
+### 17. **What are keys in React ?**
+
+Keys are used to uniquely identify the elements in the list.
+react will use this to indentify, which elements in the list have been added,
+removed or updated.
+function MyComponent() &#123;
+const items = [
+&#123; id: 1, name: "apple" &#125;,
+&#123; id: 2, name: "banana" &#125;,
+&#123; id: 3, name: "orange" &#125;
+];
+return (
+&lt;ul&gt;
+&#123;items.map((item) =&gt; (
+&lt;li key=&#123;item.id&#125;&gt;&#123;item.name&#125;&lt;/li&gt;
+))&#125;
+&lt;/ul&gt;
+);
+&#125;
+
+---
+
+### 18. **What are fragments in react ?**
+
+React fragments allows us to wrap or group multiple elements without
+adding extra nodes to the dom.
+
+---
+
+### 19. **What are Pure components in React ?**
+
+A component which renders the same output for the same props and state
+is called as pure component.
+It internally implements shouldComponentUpdate lifecycle method and
+performs a shallow comparision on the props and state of the component.
+If there is no difference, the component is not re-rendered.
+Advantage:
+It optimizes the performance by reducing unnecessary re-renders.
+Example for class component:
+&#105;mport React, &#123; PureComponent &#125; from 'react';
+class MyPureComponent extends PureComponent &#123;
+render() &#123;
+return (
+&lt;div&gt;
+&lt;h1&gt;Pure Component Example&lt;/h1&gt;
+&lt;p&gt;Props: &#123;this.props.text&#125;&lt;/p&gt;
+&lt;/div&gt;
+);
+&#125;
+&#125;
+&#101;xport default MyPureComponent;
+Reference: https://react.dev/reference/react/PureComponent
+&#105;mport &#123; PureComponent, useState &#125; from 'react';
+class Greeting extends PureComponent &#123;
+render() &#123;
+console.log("Greeting was rendered at",
+new Date().toLocaleTimeString());
+return &lt;h3&gt;Hello&#123;this.props.name && ', '&#125;
+&#123;this.props.name&#125;!&lt;/h3&gt;;
+&#125;
+&#125;
+&#101;xport default function MyApp() &#123;
+const [name, setName] = useState('');
+const [address, setAddress] = useState('');
+return (
+&lt;&gt;
+&lt;label&gt;
+Name&#123;': '&#125;
+&lt;input value=&#123;name&#125; onChange=&#123;e =&gt; &#123;
+setName(e.target.value)&#125;
+&#125; /&gt;
+&lt;/label&gt;
+&lt;label&gt;
+Address&#123;': '&#125;
+&lt;input value=&#123;address&#125; onChange=&#123;e =&gt; &#123;
+setAddress(e.target.value)&#125;
+&#125; /&gt;
+&lt;/label&gt;
+&lt;Greeting name=&#123;name&#125; /&gt;
+&lt;/&gt;
+);
+&#125;
+
+---
+
+### 20. **What are the differences between controlled and**
+
+uncontrolled components ?
+Controlled components:
+In controlled components, the form data is handled by the react
+component
+We use event handlers to update the state.
+React state is the source of truth.
+Uncontrolled components:
+In uncontrolled components, the form data is handled by the dom.
+We use Ref’s to update the state.
+Dom is the source of truth.
+Ref: https://goshacmd.com/controlled-vs-uncontrolled-inputs-react/
+
+---
+
+### 21. **Whatare Ref’s in React?**
+
+ref’s are the way to access the dom elements created in the render
+method.
+they are helpful when we want to update the component whith out using
+state and props and prevents triggering rerender.
+Common useCases:
+Managing input focus and text selection
+Media control/Playback
+Communicating between react components that are not directly related
+through the component tree.
+Examples:
+1. Managing input focus
+function App() &#123;
+const inputRef = useRef();
+const focusOnInput = () =&gt; &#123;
+inputRef.current.focus();
+&#125;;
+return (
+&lt;div&gt;
+&lt;input type='text' ref=&#123;inputRef&#125; /&gt;
+&lt;button onClick=&#123;focusOnInput&#125;&gt;Click Me&lt;/button&gt;
+&lt;/div&gt;
+);
+&#125;
+2.Managing Audio playback:
+function App() &#123;
+const audioRef = useRef();
+const playAudio = () =&gt; &#123;
+audioRef.current.play();
+&#125;;
+const pauseAudio = () =&gt; &#123;
+audioRef.current.pause();
+&#125;;
+return (
+&lt;div&gt;
+&lt;audio
+ref=&#123;audioRef&#125;
+type='audio/mp3'
+src='https://s3-us-west-2.amazonaws.com/keyboard-32-12.mp3'
+&gt;&lt;/audio&gt;
+&lt;button onClick=&#123;playAudio&#125;&gt;Play Audio&lt;/button&gt;
+&lt;button onClick=&#123;pauseAudio&#125;&gt;Pause Audio&lt;/button&gt;
+&lt;/div&gt;
+);
+&#125;
+Reference: https://www.memberstack.com/blog/react-refs
+
+---
+
+### 22. **What is meant by forward ref ?**
+
+In React, forwardref is a technique which is used to send the ref from
+parent component to one of its children. This is helpful when we want to
+access the child component dom node from the parent component.
+Example:
+1. Creating the Forward Ref Component: Define a component that forwards
+the ref to a child component.
+&#105;mport React, &#123; forwardRef &#125; from 'react';
+const ChildComponent = forwardRef((props, ref) =&gt; &#123;
+return &lt;input ref=&#123;ref&#125; /&gt;;
+&#125;);
+&#101;xport default ChildComponent;
+2. Using the Forward Ref Component: Use this component and pass a ref to
+it.
+&#105;mport React, &#123; useRef &#125; from 'react';
+&#105;mport ChildComponent from './ChildComponent';
+function ParentComponent() &#123;
+const inputRef = useRef(null);
+return (
+&lt;div&gt;
+&lt;ChildComponent ref=&#123;inputRef&#125; /&gt;
+&lt;button onClick=&#123;() =&gt; inputRef.current.focus()&#125;&gt;
+Focus Input
+&lt;/button&gt;
+&lt;/div&gt;
+);
+&#125;
+&#101;xport default ParentComponent;
+In this example, ChildComponent is a functional component that forwards the ref
+it receives to the input element it renders. Then, in the ParentComponent , a ref is
+created using useRef , passed to ChildComponent , and used to focus the input
+when a button is clicked.
+Reference: https://codedamn.com/news/reactjs/what-are-forward-refs-in-
+react-js
+
+---
+
+### 23. **What are Error boundaries ?**
+
+Error boundaries are one of the feature in react which allows the
+developers to catch the errors during the rendering of component tree, log
+those erros and handle those errors without crashing the entire application
+by displaying a fallback ui.
+class ErrorBoundary extends React.Component &#123;
+constructor(props) &#123;
+super(props);
+this.state = &#123; hasError: false &#125;;
+&#125;
+static getDerivedStateFromError(error) &#123;
+/* Update state so the next render will
+show the fallback UI. */
+return &#123; hasError: true &#125;;
+&#125;
+componentDidCatch(error, info) &#123;
+// Example "componentStack":
+//   in ComponentThatThrows (created by App)
+//   in ErrorBoundary (created by App)
+//   in div (created by App)
+//   in App
+logErrorToMyService(error, info.componentStack);
+&#125;
+render() &#123;
+if (this.state.hasError) &#123;
+// You can render any custom fallback UI
+return this.props.fallback;
+&#125;
+return this.props.children;
+&#125;
+&#125;
+Then you can wrap a part of your component tree with it:
+&lt;ErrorBoundary fallback=&#123;&lt;p&gt;Something went wrong&lt;/p&gt;&#125;&gt;
+&lt;Profile /&gt;
+&lt;/ErrorBoundary&gt;
+
+---
+
+### 24. **What are Higher order components in react ?**
+
+Higher order component is a function which takes the component as an
+argument and returns a new component that wraps the original
+component.
+For example if we wanted to add a some style to multiple components in our
+application, Instead of creating a  style  object locally each time, we can create
+a HOC that adds the  style  objects to the component that we pass to it.
+function withStyles(Component) &#123;
+return props =&gt; &#123;
+const style = &#123; padding: '0.2rem', margin: '1rem' &#125;
+return &lt;Component style=&#123;style&#125; &#123;...props&#125; /&gt;
+&#125;
+&#125;
+const Button = () = &lt;button&gt;Click me!&lt;/button&gt;
+const Text = () =&gt; &lt;p&gt;Hello World!&lt;/p&gt;
+const StyledButton = withStyles(Button)
+const StyledText = withStyles(Text)
+
+---
+
+### 25. **What is Lazy loading in React ?**
+
+It is a technique used to improve the performance of a webapplication by
+splitting the code into smaller chunks and loading them only when its
+required intead of loading on initial load.
+&#105;mport React, &#123; lazy, Suspense &#125; from 'react';
+const LazyComponent = lazy(() =&gt; import('./LazyComponent'));
+function App() &#123;
+return (
+&lt;div&gt;
+&lt;Suspense fallback=&#123;&lt;div&gt;Loading...&lt;/div&gt;&#125;&gt;
+&lt;LazyComponent /&gt;
+&lt;/Suspense&gt;
+&lt;/div&gt;
+);
+&#125;
+&#101;xport default App;
+
+---
+
+### 26. **What is suspense in React ?**
+
+The lazy loaded components are wrapped by Suspense.The Suspense
+component receives a fallback prop which is displayed until the lazy loaded
+component in rendered.
+&#105;mport React, &#123; lazy, Suspense &#125; from 'react';
+const LazyComponent = lazy(() =&gt; import('./LazyComponent'));
+function App() &#123;
+return (
+&lt;div&gt;
+&lt;Suspense fallback=&#123;&lt;div&gt;Loading...&lt;/div&gt;&#125;&gt;
+&lt;LazyComponent /&gt;
+&lt;/Suspense&gt;
+&lt;/div&gt;
+);
+&#125;
+&#101;xport default App;
+
+---
+
+### 27. **What are custom hooks ?**
+
+Custom hooks helps us to extract and reuse the stateful logic between
+components.
+Eg:
+Fetch data
+To find user is in online or offline.
+https://react.dev/learn/reusing-logic-with-custom-hooks
+&#105;mport &#123; useState, useEffect &#125; from 'react';
+// Custom hook to fetch data from an API
+function useFetch(url) &#123;
+const [data, setData] = useState(null);
+const [loading, setLoading] = useState(true);
+const [error, setError] = useState(null);
+useEffect(() =&gt; &#123;
+const fetchData = async () =&gt; &#123;
+try &#123;
+const response = await fetch(url);
+if (!response.ok) &#123;
+throw new Error('Network response was not ok');
+&#125;
+const result = await response.json();
+setData(result);
+&#125; catch (error) &#123;
+setError(error);
+&#125; finally &#123;
+setLoading(false);
+&#125;
+&#125;;
+fetchData();
+// Cleanup function
+return () =&gt; &#123;
+// Cleanup logic if needed
+&#125;;
+&#125;, [url]); // Dependency array to watch for changes
+return &#123; data, loading, error &#125;;
+&#125;
+// Example usage of the custom hook
+function MyComponent() &#123;
+const &#123; data, loading, error &#125; = useFetch('https://api.com/data');
+if (loading) &#123;
+return &lt;div&gt;Loading...&lt;/div&gt;;
+&#125;
+if (error) &#123;
+return &lt;div&gt;Error: &#123;error.message&#125;&lt;/div&gt;;
+&#125;
+return (
+&lt;div&gt;
+&#123;data && (
+&lt;ul&gt;
+&#123;data.map(item =&gt; (
+&lt;li key=&#123;item.id&#125;&gt;&#123;item.name&#125;&lt;/li&gt;
+))&#125;
+&lt;/ul&gt;
+)&#125;
+&lt;/div&gt;
+);
+&#125;
+&#101;xport default MyComponent;
+
+---
+
+### 28. **What is context api in react ?**
+
+Context api is a feature in react by using which we can share the data
+across the application with out having to pass the data manually through
+every level of component tree.
+It solves the problem of props drilling in react.
+We need to follow 3 main steps to implement context api in our application.
+Create context
+Create Provider and wrap this provider around root level component and
+pass the data.
+Create consumer and utilize data using useContext.
+Examples Where we can use context api:
+Shopping cart: Managing cart data in ecommerce application and share
+between product listings and checkout pages.
+Authentication: sharing user information across the application.
+Data fetching : Sharing fetched data across multiple components that need
+to display this data. (for displaying search results when user makes a
+search request).
+
+---
+
+### 29. **Give an example of context api usage ?**
+
+Example: Once user loggedin, I wanted to share the user information between
+the components.
+Step - 1: We need to create a context using createContext method in
+userContext.js file.
+UserContext.js
+&#105;mport React,&#123;createContext&#125; from "react";
+const UserContext = createContext();
+const UserProvider = UserContext.Provider;
+const UserConsumer = UserContext.Consumer;
+&#101;xport &#123;UserProvider, UserConsumer&#125;;
+Step - 2: We need to wrap the root level component with provider and
+pass the user Information.
+App component:
+&#105;mport React from "react";
+&#105;mport &#123;ComponentA&#125; from "./ComponentA.js";
+&#105;mport &#123;UserProvider&#125; from "./UserContext.js";
+const App = () =&gt; &#123;
+const userinfo = &#123;
+id:"1",
+name:"saikrishna"
+&#125;
+return (
+&lt;div&gt;
+&lt;UserProvider value=&#123;userinfo&#125;&gt;
+&lt;ComponentA/&gt;
+&lt;/UserProvider&gt;
+&lt;/div&gt;
+);
+&#125;;
+Step - 3: In componentA, We can get the data using useContext and utilize
+the user Information.
+ComponentA:
+&#105;mport React,&#123;useContext&#125; from "react";
+&#105;mport &#123;UserConsumer&#125; from "./UserContext.js";
+&#101;xport const ComponentA = () =&gt; &#123;
+const &#123;id,name&#125; = useContext(UserConsumer);
+return &lt;div&gt;Hello &#123;id&#125;&#123;name&#125;&lt;/div&gt;
+&#125;
+
+---
+
+### 30. **What is Strict mode in react ?**
+
+It identifies the commonly occured bugs in the development time itself.
+Checks if there are any depricated apis usage.
+Checks for deprecated lifecycle methods.
+Checks if Duplicate keys in list.
+Warns about Possible memory leaks. etc.
+=======================================================
+// Enabling strict mode for entire App.
+=======================================================
+&#105;mport &#123; StrictMode &#125; from 'react';
+&#105;mport &#123; createRoot &#125; from 'react-dom/client';
+const root = createRoot(document.getElementById('root'));
+root.render(
+&lt;StrictMode&gt;
+&lt;App /&gt;
+&lt;/StrictMode&gt;
+);
+=======================================================
+// Any part of your app
+=======================================================
+&#105;mport &#123; StrictMode &#125; from 'react';
+function App() &#123;
+return (
+&lt;&gt;
+&lt;Header /&gt;
+&lt;StrictMode&gt;
+&lt;main&gt;
+&lt;Sidebar /&gt;
+&lt;Content /&gt;
+&lt;/main&gt;
+&lt;/StrictMode&gt;
+&lt;Footer /&gt;
+&lt;/&gt;
+);
+&#125;
+Good Ref: https://dev.to/codeofrelevancy/what-is-strict-mode-in-react-3p5b
+
+---
+
+### 31. **What are the different ways to pass data from child**
+
+component to parent component in react ?
+There are 4 common ways to send data from child component to parent
+component. They are.,
+1. Callback Functions
+2. Context API
+3. React Hooks (useRef)
+4. Redux
+
+---
+
+### 32. **How do you optimize your react application ?**
+
+Code Splitting: Break down large bundles into smaller chunks to reduce
+initial load times
+Lazy Loading: Load non-essential components\asynchronously to
+prioritize critical content.
+Caching and Memoization: Cache data locally or use memoization
+libraries to avoid redundant API calls and computations.
+Memoization: Memoize expensive computations and avoid unnecessary
+re-renders using tools like React.memo and useMemo.
+Optimized Rendering: Use shouldComponentUpdate, PureComponent, or
+React.memo to prevent unnecessary re-renders of components.
+Virtualization: Implement virtual lists and grids to render only the visible
+elements, improving rendering performance for large datasets.
+Server-Side Rendering (SSR): Pre-render content on the server to
+improve initial page load times and enhance SEO.
+Bundle Analysis: Identify and remove unused dependencies, optimize
+images, and minify code to reduce bundle size.
+Performance Monitoring: Continuously monitor app performance using
+tools like Lighthouse, Web Vitals, and browser DevTools.
+Optimize rendering with keys: Ensure each list item in a mapped array
+has a unique and stable key prop to optimize rendering performance. Keys
+help React identify which items have changed, been added, or removed,
+minimizing unnecessary DOM updates.
+CDN Integration: Serve static assets and resources from Content Delivery
+Networks (CDNs) to reduce latency and improve reliability.
+
+---
+
+### 33. **What are Portals in react ?**
+
+Portals are the way to render the child components outside of the parent’s
+dom hierarchy.
+We mainly need portals when a React parent component has a hidden
+value of overflow property(overflow: hidden) or z-index style, and we
+need a child component to openly come out of the current tree hierarchy.
+It is commonly used in Modals, tooltips, loaders, notifications toasters.
+This helps in improving the performance of application.
+&#105;mport React from 'react';
+&#105;mport ReactDOM from 'react-dom';
+class MyPortal extends React.Component &#123;
+render() &#123;
+return ReactDOM.createPortal(
+this.props.children,
+document.getElementById('portal-root')
+);
+&#125;
+&#125;
+class App extends React.Component &#123;
+render() &#123;
+return (
+&lt;div&gt;
+&lt;h1&gt;My App&lt;/h1&gt;
+&lt;MyPortal&gt;
+&lt;p&gt;
+This is rendered in a different part of the DOM!
+&lt;/p&gt;
+&lt;/MyPortal&gt;
+&lt;/div&gt;
+);
+&#125;
+&#125;
+ReactDOM.render(&lt;App /&gt;, document.getElementById('root'));
+
+---
+
+### 34. **What are synthetic events in react ?**
+
+Synthetic events are the wrapper around native browser events.
+By using this react will remove browser inconsistencies and provides a
+unified api interface for event handling
+They optimise the performance by event pooling and reusing event
+objects.
+
+---
+
+### 35. **What are the difference between Package.json and**
+
+Package.lock.json
+𝐏𝐚𝐜𝐤𝐚𝐠𝐞.𝐣𝐬𝐨𝐧:  is a metadata file that contains information about your
+project, such as the name, version, description, author, and most
+importantly, the list of dependencies required for your project to run. This
+file is used by npm (Node Package Manager) to install, manage, and
+update dependencies for your project.
+𝐏𝐚𝐜𝐤𝐚𝐠𝐞.𝐥𝐨𝐜𝐤.𝐣𝐬𝐨𝐧: is a file that npm generates after installing packages for
+your project. This file contains a detailed description of the dependencies
+installed in your project, including their versions and the dependencies of
+their dependencies. This file is used by npm to ensure that the same
+version of each package is installed every time, regardless of the platform,
+environment, or the order of installation.
+Package.json is used to define the list of required dependencies for your
+project, while package-lock.json is used to ensure that the exact same
+versions of those dependencies are installed every time, preventing
+version conflicts and guaranteeing a consistent environment for your
+project.
+
+---
+
+### 36. **What are the differences between client side and server**
+
+side rendering
+Rendering location: In csr, rendering occurs on the client side after
+receiving raw data from the server where as in ssr, rendering occurs on
+server side side and server returns the fully rendered html page to the
+browser.
+Initial Load time: csr has slow initial load time as browser needs to
+interpret the data and render the page. where as ssr has faster initial load
+times as server send pre-rendered html page to the browser.
+Subsequent interactions: subsequent interactions in csr involves dynamic
+updates with out requiring full page reload whereas, ssr requires full page
+reload as server generates new html for every interactions.
+Seo: Ssr is seo friendly when compared to csr as fully rendered html
+content is provided to the search engine crawlers whereas csr needs to
+parse javascript heavy content.
+
+---
+
+### 37. **What is react-router ?**
+
+React-router is a javascript library which is used to implement routing in react
+applications.
+It allows us to navigate between views or pages with out refreshing the page.
+Router: It wraps the entire application and provides the routing context for
+the application. It contains 2 types of routers,
+Browser router and Hash router.
+Route: It contains mapping between urlpath and the component. When the
+url matches, respective component will be rendered.
+Link: is used to create the navigation links which user can click to navigate
+to different routes.
+switch: is used to render the first matching route among its children. It
+ensures only one route is rendered.
+&#105;mport React from 'react';
+&#105;mport &#123; BrowserRouter as Router, Route, Switch, Link &#125; from 'react-router-do
+function Home() &#123;
+return &lt;h2&gt;Home&lt;/h2&gt;;
+&#125;
+function About() &#123;
+return &lt;h2&gt;About&lt;/h2&gt;;
+&#125;
+function Contact() &#123;
+return &lt;h2&gt;Contact&lt;/h2&gt;;
+&#125;
+function App() &#123;
+return (
+&lt;Router&gt;
+&lt;div&gt;
+&lt;nav&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;Link to="/"&gt;
+Home
+&lt;/Link&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;Link to="/about"&gt;
+About
+&lt;/Link&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;Link to="/contact"&gt;
+Contact
+&lt;/Link&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/nav&gt;
+&lt;Switch&gt;
+&lt;Route exact path="/"
+component=&#123;Home&#125;
+/&gt;
+&lt;Route path="/about"
+component=&#123;About&#125;
+/&gt;
+&lt;Route path="/contact"
+component=&#123;Contact&#125;
+/&gt;
+&lt;/Switch&gt;
+&lt;/div&gt;
+&lt;/Router&gt;
+);
+&#125;
+&#101;xport default App;
+
+---
+
+### 38. **What are protected routes in react ?**
+
+By using the protected routes, we can define which users/user roles have
+access to specific routes or components.
+
+---
+
+### 39. **What is the difference between useEffect and**
+
+useLayoutEffect ?
+useeffect is asynchronous where as uselayouteffect is synchronous
+uselayouteffect runs after browser calculation of dom measurements and
+before browser repaints the screen whereas useffect runs parallely.
+uselayouteffect really needed when we need to do something based on
+layout of the dom, if we want to measure dom elements and do something
+etc.
+Ref : https://www.youtube.com/watch?v=wU57kvYOxT4
+https://mtg-dev.tech/blog/real-world-example-to-use-uselayouteffect
+
+---
+
+### 40. **Practical question: How to send data from child to parent**
+
+using callback functions ?
+Define a function in the parent component that takes data as an argument.
+Pass this function as a prop to the child component.
+When an event occurs in the child component (like a button click), call this
+function with the data to be passed to the parent.
+Parent Component:
+&#105;mport React, &#123; useState &#125; from 'react';
+&#105;mport ChildComponent from './ChildComponent';
+function ParentComponent() &#123;
+const [dataFromChild, setDataFromChild] = useState('');
+const handleDataFromChild = (data) =&gt; &#123;
+setDataFromChild(data);
+&#125;;
+return (
+&lt;div&gt;
+&lt;ChildComponent onData=&#123;handleDataFromChild&#125; /&gt;
+&lt;p&gt;Data from child: &#123;dataFromChild&#125;&lt;/p&gt;
+&lt;/div&gt;
+);
+&#125;
+&#101;xport default ParentComponent;
+Child Component:
+&#105;mport React from 'react';
+function ChildComponent(&#123; onData &#125;) &#123;
+const sendDataToParent = () =&gt; &#123;
+const data = 'Hello from child';
+onData(data);
+&#125;;
+return (
+&lt;button onClick=&#123;sendDataToParent&#125;&gt;
+Send Data to Parent
+&lt;/button&gt;
+);
+&#125;
+&#101;xport default ChildComponent;
+
+---
+
+### 41. **Practical question: How to send the data from child**
+
+component to parent using useRef ?
+It is used to store the data without re-rendering the components.
+It will not trigger any event by itself whenever the data is updated.
+Parent component:
+&#105;mport React from "react";
+&#105;mport TextEditor from "./TextEditor";
+&#101;xport default function Parent() &#123;
+const valueRef = React.useRef("");
+return (
+&lt;&gt;
+&lt;TextEditor valueRef=&#123;valueRef&#125; /&gt;
+&lt;button onClick=&#123;() =&gt; &#123;
+console.log(valueRef.current)&#125;
+&#125;
+&gt;Get&lt;/button&gt;
+&lt;/&gt;
+);
+&#125;
+Child component:
+&#101;xport default function TextEditor(&#123; valueRef &#125;) &#123;
+return &lt;textarea
+onChange=&#123;(e) =&gt; (valueRef.current = e.target.value)&#125;&gt;
+&lt;/textarea&gt;;
+&#125;
+43. Practical question: Create a increment decrement counter
+using useReducer hook in react ?
+&#105;mport React, &#123; useReducer &#125; from 'react';
+// Initial state
+const initialState = &#123;
+count: 0
+&#125;;
+// Reducer function
+const reducer = (state, action) =&gt; &#123;
+switch (action.type) &#123;
+case 'increment':
+return &#123; count: state.count + 1 &#125;;
+case 'decrement':
+return &#123; count: state.count - 1 &#125;;
+default:
+return state;
+&#125;
+&#125;;
+// Component
+const Counter = () =&gt; &#123;
+const [state, dispatch] = useReducer(reducer, initialState);
+return (
+&lt;div&gt;
+&lt;p&gt;Count: &#123;state.count&#125;&lt;/p&gt;
+&lt;button onClick=&#123;() =&gt; dispatch(
+&#123; type: 'increment' &#125;
+)&#125;&gt;Increment&lt;/button&gt;
+&lt;button onClick=&#123;() =&gt; dispatch(
+&#123; type: 'decrement' &#125;
+)&#125;&gt;Decrement&lt;/button&gt;
+&lt;/div&gt;
+);
+&#125;;
+&#101;xport default Counter;
+44. Practical question: create a custom hook for
+increment/decrement counter ?
+Create a custom hook for counter:
+useCounter.js:
+&#101;xport const useCounter = () =&gt; &#123;
+const [counter, setCounter] = useState(0);
+const increment = () =&gt; &#123;
+setCounter(counter + 1);
+&#125;;
+const decrement = () =&gt; &#123;
+setCounter(counter - 1);
+&#125;;
+return &#123;
+counter,
+increment,
+decrement,
+&#125;;
+&#125;;
+Utilize useCounter in our component:
+component.js:
+&#105;mport &#123; useCounter &#125; from './useCounter.js';
+const App = () =&gt; &#123;
+const &#123; counter, increment, decrement &#125; = useCounter();
+return (
+&lt;div&gt;
+&lt;button onClick=&#123;decrement&#125;&gt;Decrease&lt;/button&gt;
+&lt;div&gt;Count: &#123;counter&#125;&lt;/div&gt;
+&lt;button onClick=&#123;increment&#125;&gt;Increase&lt;/button&gt;
+&lt;/div&gt;
+);
+&#125;;
+45. Machine coding question:  Dynamic checkbox counter
+Display 4 checkboxes with different names and a button named selectall
+User can select each checkbox
+Select all button click will check all checkboxes
+Button should be disabled once all checkboxes are selected.
+Display selected checkboxes count and names in ui.
+&#105;mport React, &#123; useState &#125; from 'react';
+&#105;mport &#123; render &#125; from 'react-dom';
+const Checkbox = (&#123; label, checked, onChange &#125;) =&gt; &#123;
+return (
+&lt;div&gt;
+&lt;label&gt;
+&lt;input type="checkbox"
+checked=&#123;checked&#125;
+onChange=&#123;onChange&#125; /&gt;
+&#123;label&#125;
+&lt;/label&gt;
+&lt;/div&gt;
+);
+&#125;;
+const App = () =&gt; &#123;
+const [checkboxes, setCheckboxes] = useState([
+&#123; id: 1, label: 'Checkbox 1', checked: false &#125;,
+&#123; id: 2, label: 'Checkbox 2', checked: false &#125;,
+&#123; id: 3, label: 'Checkbox 3', checked: false &#125;,
+&#123; id: 4, label: 'Checkbox 4', checked: false &#125;,
+]);
+const [selectAllDisabled,setSelectAllDisabled]= useState(
+false
+);
+const handleCheckboxChange = (id) =&gt; &#123;
+const updatedCheckboxes = checkboxes.map((checkbox) =&gt;
+checkbox.id === id
+? &#123; ...checkbox, checked: !checkbox.checked &#125;
+: checkbox
+);
+setCheckboxes(updatedCheckboxes);
+const allChecked = updatedCheckboxes.every(
+(checkbox) =&gt; checkbox.checked
+);
+setSelectAllDisabled(allChecked);
+&#125;;
+const handleSelectAll = () =&gt; &#123;
+const updatedCheckboxes = checkboxes.map(
+(checkbox) =&gt; (&#123;
+...checkbox,
+checked: !selectAllDisabled,
+&#125;));
+setCheckboxes(updatedCheckboxes);
+setSelectAllDisabled(!selectAllDisabled);
+&#125;;
+const selectedCheckboxes = checkboxes.filter(
+(checkbox) =&gt; checkbox.checked
+);
+const selectedCount = selectedCheckboxes.length;
+return (
+&lt;div&gt;
+&#123;checkboxes.map((checkbox) =&gt; (
+&lt;Checkbox
+key=&#123;checkbox.id&#125;
+label=&#123;checkbox.label&#125;
+checked=&#123;checkbox.checked&#125;
+onChange=&#123;
+() =&gt; handleCheckboxChange(checkbox.id)
+&#125;
+/&gt;
+))&#125;
+&lt;button
+onClick=&#123;handleSelectAll&#125;
+disabled=&#123;selectAllDisabled&#125;&gt;
+&#123;selectAllDisabled ? 'Deselect All' : 'Select All'&#125;
+&lt;/button&gt;
+&lt;p&gt;Selected: &#123;selectedCount&#125;&lt;/p&gt;
+&lt;ul&gt;
+&#123;selectedCheckboxes.map((checkbox) =&gt; (
+&lt;li key=&#123;checkbox.id&#125;&gt;&#123;checkbox.label&#125;&lt;/li&gt;
+))&#125;
+&lt;/ul&gt;
+&lt;/div&gt;
+);
+&#125;;
+render(&lt;App /&gt;, document.getElementById('root'));
+46. Create a nested circles based on user input like below
+image.
+Solution:
+Create App component and circle component. We will use recursion concept
+to achieve this.
+App.js:
+&#105;mport React, &#123; useState &#125; from "react";
+&#105;mport &#123; Circle &#125; from "./Circle.js";
+&#105;mport "./styles.css";
+&#101;xport default function App() &#123;
+const [num, setNum] = useState(0);
+const handleInput = (e) =&gt; &#123;
+setNum(e.target.value);
+&#125;;
+return (
+&lt;div className="nested-circles-container"&gt;
+&lt;input
+onChange=&#123;(e) =&gt; handleInput(e)&#125;
+placeholder="Enter number of circles"
+type="number"
+/&gt;
+&lt;Circle numbCircles=&#123;num&#125;&gt;&lt;/Circle&gt;
+&lt;/div&gt;
+);
+&#125;
+App.css/Style.css:
+.nested-circles-container &#123;
+display: flex;
+justify-content: center;
+align-items: center;
+flex-direction: column;
+&#125;
+Circle.js:
+&#105;mport React from "react";
+&#105;mport "./Circle.css";
+&#101;xport const Circle = (&#123; numbCircles &#125;) =&gt; &#123;
+let size = numbCircles * 100;
+return (
+&lt;div
+className="circle-new"
+style=&#123;&#123;
+width: `$&#123;size&#125;px`,
+height: `$&#123;size&#125;px`,
+&#125;&#125;
+&gt;
+&#123;numbCircles &gt; 1 &&
+&lt;Circle numbCircles=&#123;numbCircles - 1&#125;&gt;
+&lt;/Circle&gt;
+&#125;
+&lt;/div&gt;
+);
+&#125;;
+Circle.css:
+.circle-new &#123;
+border-radius: 100%;
+border: 1px solid black;
+display: flex;
+justify-content: center;
+align-items: center;
+&#125;
+
+---
+
+### 42. **What are the various design patterns in react ?**
+
+Compound pattern
+HOC Pattern
+Render props pattern
+Container/Presentational pattern
+
+---
+
+### 43. **What is compound pattern ?**
+
+By using this compound pattern we will create multiple components that
+work together to perform a single task.
+We can achieve this using context api.
+This promotes separation of concerns between parent and child
+components, promotes reusability of logic and maintainability.
+
+---
+
+### 44. **What is render props pettern ?**
+
+With the Render Props pattern, we pass components as props to other
+components. The components that are passed as props can in turn
+receive props from that component.
+Render props make it easy to reuse logic across multiple components.
+https://javascriptpatterns.vercel.app/patterns/react-patterns/render-props
+
+---
+
+### 45. **What is Container/Presentational pattern ?**
+
+It enforces separation of concerns by separating the view from the application
+logic.
+We can use the Container/Presentational pattern to separate the logic of a
+component from the view. To achieve this, we need to have a:
+Presentational Component, that cares about how data is shown to the
+user.
+Container Component, that cares about what data is shown to the
+user.
+For example, if we wanted to show listings on the landing page, we could use
+a container component to fetch the data for the recent listings, and use a
+presentational component to actually render this data.
+https://javascriptpatterns.vercel.app/patterns/react-patterns/conpres
+
+---
+
+### 46. **What is React.memo ?**
+
+React.memo is a Higher order component provided by react that
+memoizes the functional components.
+It caches the result of component’s rendering and rerenders the
+component only when the props have changed.
+const MyComponent = React.memo((props) =&gt; &#123;
+console.log('Rendering MyComponent');
+return (
+&lt;div&gt;
+&lt;h1&gt;Hello, &#123;props.name&#125;!&lt;/h1&gt;
+&lt;p&gt;&#123;props.message&#125;&lt;/p&gt;
+&lt;/div&gt;
+);
+&#125;);
+52. Differences between dependencies and devdependencies
+?
+dependencies: These are the packages that your project needs to run in
+production. These are essential for the application to function correctly.
+devDependencies: These packages are only needed during the
+development phase.
+Eg: Jest, react-developer-tools etc.
+
+---
+

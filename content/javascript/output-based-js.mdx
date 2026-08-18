@@ -1,0 +1,1427 @@
+---
+title: "Output Based JS"
+category: "JavaScript"
+difficulty: "Advanced"
+interviewFrequency: "High"
+experienceLevel: "All Levels"
+estimatedReadTime: 78
+tags: ["interview", "questions", "output-based-js"]
+---
+
+# Output Based JS
+
+Here is the ultimate list of interview questions for Output Based JS.
+
+## ❓ Interview Questions
+
+### 1. **What is the output of  3+2+”7” ?**
+
+“57”
+Explaination:
+In javascript, the addition associativity is from left to right. Due to this
+initially 3+2 will be evaluated and it will become 5. Now expression
+becomes 5+”7”.
+In javascript when ever we try to perform addition between a numeric
+value and a string, javascript will perform type coercion and convert
+numeric value in to a string.
+Now expression becomes “5”+ “7” this performs string concatenation and
+results in “57”.
+
+---
+
+### 2. **What is the output of below logic ?**
+
+const a = 1&lt;2&lt;3;
+const b = 1&gt;2&gt;3;
+console.log(a,b) //true,false
+Output:
+true, false
+In JavaScript, the comparison operators &lt; and &gt; have left-to-right
+associativity. So, 1 &lt; 2 &lt; 3 is evaluated as (1 &lt; 2) &lt; 3 , which becomes true &lt;
+3 . When comparing a boolean value ( true ) with a number ( 3 ),
+JavaScript coerces the boolean to a number, which is 1 . So, true &lt; 3
+evaluates to 1 &lt; 3 , which is true .
+Similarly, 1 &gt; 2 &gt; 3 is evaluated as (1 &gt; 2) &gt; 3 , which becomes false &gt; 3 .
+When comparing a boolean value ( false ) with a number ( 3 ),
+JavaScript coerces the boolean to a number, which is 0 . So, false &gt; 3
+evaluates to 0 &gt; 3 , which is false .
+That's why console.log(a, b) prints true false .
+
+---
+
+### 3. **Guess the ouput ?**
+
+const p = &#123; k: 1, l: 2 &#125;;
+const q = &#123; k: 1, l: 2 &#125;;
+let isEqual = p==q;
+let isStartEqual = p=== q;
+console.log(isEqual, isStartEqual)
+OutPut:
+False,False
+In JavaScript, when you compare objects using == or === , you're
+comparing their references in memory, not their actual contents. Even if
+two objects have the same properties and values, they are considered
+unequal unless they reference the exact same object in memory.
+In your code:
+isEqual will be false because p and q are two different objects in
+memory, even though they have the same properties and values.
+isStartEqual will also be false for the same reason. The === operator
+checks for strict equality, meaning it not only compares values but also
+ensures that the objects being compared reference the exact same
+memory location.
+So, console.log(isEqual, isStartEqual) will output false false .
+
+---
+
+### 4. **Guess the output ?**
+
+a) 2+2 = ?
+b) "2"+"2" = ?
+c) 2+2-2 = ?
+d) "2"+"2"-"2" = ? (tricky remember this)
+e) 4+"2"+2+4+"25"+2+2 ?
+Output:
+a) 2+2 = ?
+console.log(2 + 2); // Output: 4
+b) "2"+"2" = ?
+console.log("2" + "2");
+// Output: "22" (string concatenation)
+c) 2+2-2 = ?
+console.log(2 + 2 - 2); // Output: 2
+d) "2"+"2"-"2" = ?
+console.log("2" + "2" - "2");
+// Output: 20 (string "22" is converted
+to a number, then subtracted by the number 2)
+e) 4+"2"+2+4+"25"+2+2
+console.log(4+"2"+2+4+"25"+2+2);
+// "42242522"
+
+---
+
+### 5. **What is the output of below logic ?**
+
+let a = 'jscafe'
+a[0] = 'c'
+console.log(a)
+Output:
+“jscafe”
+Strings are immutable in javascript so we cannot change individual
+characters by index where as we can create a new string with desired
+modification as below.
+a = “cscafe” // outputs “cscafe”
+
+---
+
+### 6. **Output of below logic ?**
+
+var x=10;
+function foo()&#123;
+var x = 5;
+console.log(x)
+&#125;
+foo();
+console.log(x)
+Output: 5 and 10
+In JavaScript, this code demonstrates variable scoping. When you declare a
+variable inside a function using the var keyword, it creates a new variable
+scoped to that function, which may shadow a variable with the same name in
+an outer scope. Here's what happens step by step:
+1. var x = 10; : Declares a global variable x and initializes it with the value 10 .
+2. function foo() &#123; ... &#125; : Defines a function named foo .
+3. var x = 5; : Inside the function foo , declares a local variable x and initializes
+it with the value 5 . This x is scoped to the function foo and is different
+from the global x .
+4. console.log(x); : Logs the value of the local variable x (which is 5 ) to the
+console from within the foo function.
+5. foo(); : Calls the foo function.
+6. console.log(x); : Logs the value of the global variable x (which is still 10 ) to
+the console outside the foo function.
+
+---
+
+### 7. **Guess the output ?**
+
+console.log("Start");
+setTimeout(() =&gt; &#123;
+console.log("Timeout");
+&#125;);
+Promise.resolve().then(() =&gt; console.log("Promise"));
+console.log("End");
+Output:
+Start, End,Promise,Timeout.
+"Start" is logged first because it's a synchronous operation.
+Then, "End" is logged because it's another synchronous operation.
+"Promise" is logged because Promise.resolve().then() is a microtask and
+will be executed before the next tick of the event loop.
+Finally, "Timeout" is logged. Even though it's a setTimeout with a
+delay of 0 milliseconds, it's still a macrotask and will be executed in
+the next tick of the event loop after all microtasks have been
+executed.
+
+---
+
+### 8. **This code prints 6 everytime. How to print 1,2,3,4,5,6 ?**
+
+(Most asked)
+function x()&#123;
+for(var i=1;i&lt;=5;i++)&#123;
+setTimeout(()=&gt;&#123;
+console.log(i)
+&#125;,i*1000)
+&#125;
+&#125;
+x();
+Solution: Either use let or closure
+function x() &#123;
+function closur(x) &#123;
+// Set a timeout to log value of x after x seconds
+setTimeout(() =&gt; &#123;
+console.log(x);
+&#125;, x * 1000);
+&#125;;
+// Loop from 1 to 5
+for (var i = 1; i &lt;= 5; i++) &#123;
+// Call the closure function with current value of i
+closur(i);
+&#125;
+&#125;
+// Call the outer function x
+x();
+The function we have written defines an inner function closur which is
+supposed to log the value of x after x seconds. The outer function x calls
+this inner function for values from 1 to 5.
+The code will log the values 1 to 5 after 1 to 5 seconds respectively. Here's an
+explanation of how it works:
+1. The outer function x is called.
+2. Inside x , a loop runs from i=1 to i=5 .
+3. For each iteration of the loop, the inner function closur is called with the
+current value of i .
+4. Inside closur , a setTimeout is set to log the value of x after x seconds.
+Each call to closur(i) creates a new closure that captures the current value of i
+and sets a timeout to log that value after i seconds.
+When you run this code, the output will be:
+1 (after 1 second)
+2 (after 2 seconds)
+3 (after 3 seconds)
+4 (after 4 seconds)
+5 (after 5 seconds)
+This happens because each iteration of the loop calls closur with a different
+value of i , and each setTimeout inside closur is set to log that value after i
+seconds.
+
+---
+
+### 9. **What will be the output or below code ?**
+
+function x()&#123;
+let a = 10;
+function d()&#123;
+console.log(a);
+&#125;
+a = 500;
+return d;
+&#125;
+var z = x();
+z();
+Solution: 500 - Closures concept
+In JavaScript, this code demonstrates lexical scoping and closure. Let's break
+it down:
+1. function x() &#123; ... &#125; : Defines a function named x .
+2. let a = 10; : Declares a variable a inside the function x and initializes it with
+the value 10 .
+3. function d() &#123; ... &#125; : Defines a nested function named d inside the function x .
+4. console.log(a); : Logs the value of the variable a to the console. Since d is
+defined within the scope of x , it has access to the variable a defined in
+x .
+5. a = 500; : Changes the value of the variable a to 500 .
+6. return d; : Returns the function d from the function x .
+7. var z = x(); : Calls the function x and assigns the returned function d to the
+variable z .
+8. z(); : Calls the function d through the variable z .
+When you run this code, it will log the value of a at the time of executing d ,
+which is 500 , because d retains access to the variable a even after x has
+finished executing. This behavior is possible due to closure, which allows
+inner functions to access variables from their outer scope even after the outer
+function has completed execution.
+
+---
+
+### 10. **What’s the output of below logic ?**
+
+getData1()
+getData();
+function getData1()&#123;
+console.log("getData11")
+&#125;
+var getData = () =&gt; &#123;
+console.log("Hello")
+&#125;
+/* Here declaring getData with let causes
+reference error.ie.,"ReferenceError: Cannot
+access 'getData' before initialization As we
+are declaring with var it throws type error
+as show below */
+Output:
+Explanation:
+In JavaScript, function declarations are hoisted to the top of their scope, while
+variable declarations using var are also hoisted but initialized with undefined .
+Here's what happens in your code:
+1. getData1() is a function declaration and getData() is a variable declaration
+with an arrow function expression assigned to it.
+2. When the code runs:
+getData1() is a function declaration, so it's hoisted to the top and can be
+called anywhere in the code. However, it's not called immediately.
+getData is declared using var , so it's also hoisted to the top but
+initialized with undefined .
+The arrow function assigned to getData is not hoisted because it's
+assigned to a variable.
+3. When getData() is invoked:
+It will throw an error because getData is undefined , and you cannot call
+undefined as a function.
+Therefore, if you try to run the code as is, you'll encounter an error when
+attempting to call getData() .
+If you want to avoid this error, you should either define getData before calling it
+or use a function declaration instead of a variable declaration for getData .
+Here's how you can do it:
+Modification needed for code:
+var getData = () =&gt; &#123;
+console.log("Hello")
+&#125;
+getData1(); // This will log "getData11"
+getData();  // This will log "Hello"
+
+---
+
+### 11. **Whats the output of below code ?**
+
+function func() &#123;
+try &#123;
+console.log(1)
+return
+&#125; catch (e) &#123;
+console.log(2)
+&#125; finally &#123;
+console.log(3)
+&#125;
+console.log(4)
+&#125;
+func()
+Output: 1 & 3
+1. The function func() is defined.
+2. Inside the try block:
+console.log(1) is executed, printing 1 to the console.
+return is encountered, which immediately exits the function.
+3. The finally block is executed:
+console.log(3) is executed, printing 3 to the console.
+Since return is encountered within the try block, the control exits the function
+immediately after console.log(1) . The catch block is skipped because there are no
+errors, and the code in the finally block is executed regardless of whether an
+error occurred or not.
+So, when you run this code, it will only print 1 and 3 to the console.
+
+---
+
+### 12. **What’s the output of below code ?**
+
+const nums = [1,2,3,4,5,6,7];
+nums.forEach((n) =&gt; &#123;
+if(n%2 === 0) &#123;
+break;
+&#125;
+console.log(n);
+&#125;);
+Explanation:
+Many of you might have thought the output to be 1,2,3,4,5,6,7.  But “break”
+statement works only loops like for, while, do…while and not for map(),
+forEach(). They are essentially functions by nature which takes a callback and
+not loops.
+
+---
+
+### 13. **Whats the output of below code ?**
+
+let a = true;
+setTimeout(() =&gt; &#123;
+a = false;
+&#125;, 2000)
+while(a) &#123;
+console.log(' -- inside whilee -- ');
+&#125;
+Solution: https://medium.com/@iamyashkhandelwal/5-output-based-
+interview-questions-in-javascript-b64a707f34d2
+This code snippet creates an infinite loop. Let's break it down:
+1. let a = true; : This declares a variable a and initializes it to true .
+2. setTimeout(() =&gt; &#123; a = false; &#125;, 2000) : This sets up a timer to execute a function after
+2000 milliseconds (2 seconds). The function assigned to setTimeout will set
+the value of a to false after the timeout.
+3. while(a) &#123; console.log(' -- inside whilee -- '); &#125; : This is a while loop that continues to
+execute as long as the condition a is true . Inside the loop, it prints ' -- inside
+whilee -- ' .
+The issue here is that the while loop runs indefinitely because there's no
+opportunity for the JavaScript event loop to process the setTimeout callback
+and update the value of a . So, even though a will eventually become false
+after 2 seconds, the while loop will not terminate because it doesn't yield
+control to allow other tasks, like the callback, to execute.
+To fix this, you might consider using asynchronous programming techniques
+like Promises, async/await, or handling the setTimeout callback differently.
+
+---
+
+### 14. **Whats the output of below code ?**
+
+setTimeout(() =&gt; console.log(1), 0);
+console.log(2);
+new Promise(res =&gt; &#123;
+console.log(3)
+res();
+&#125;).then(() =&gt; console.log(4));
+console.log(5);
+This code demonstrates the event loop in JavaScript. Here's the breakdown of
+what happens:
+1. setTimeout(() =&gt; console.log(1), 0); : This schedules a callback function to be
+executed after 0 milliseconds. However, due to JavaScript's asynchronous
+nature, it doesn't guarantee that it will execute immediately after the
+current synchronous code block.
+2. console.log(2); : This immediately logs 2 to the console.
+3. new Promise(res =&gt; &#123; console.log(3); res(); &#125;).then(() =&gt; console.log(4)); : This creates a new
+Promise. The executor function inside the Promise logs 3 to the console
+and then resolves the Promise immediately with res() . The then() method is
+chained to the Promise, so once it's resolved, it logs 4 to the console.
+4. console.log(5); : This logs 5 to the console.
+When you run this code, the order of the output might seem a bit
+counterintuitive:
+2
+3
+5
+4
+1
+Here's why:
+console.log(2); is executed first because it's synchronous code.
+Then, the Promise executor is executed synchronously, so console.log(3); is
+logged.
+After that, console.log(5); is executed.
+Once the current synchronous execution is done, the event loop picks up
+the resolved Promise and executes its then() callback, logging 4 .
+Finally, the callback passed to setTimeout is executed, logging 1 . Although
+it was scheduled to run immediately with a delay of 0 milliseconds, it's still
+processed asynchronously and placed in the event queue, after the
+synchronous code has finished executing.
+https://medium.com/@iamyashkhandelwal/5-output-based-interview-
+questions-in-javascript-b64a707f34d2
+
+---
+
+### 15. **Output of below logic ?**
+
+async function foo() &#123;
+console.log("A");
+await Promise.resolve();
+console.log("B");
+await new Promise(resolve =&gt; setTimeout(resolve, 0));
+console.log("C");
+&#125;
+console.log("D");
+foo();
+console.log("E")
+Output:
+D, A, E, B, C
+Explanation:
+The main context logs “D” because it is synchronous and executed
+immediately.
+The foo() function logs "A" to the console since it's synchronous and executed
+immediately. await Promise.resolve() : This line awaits the resolution of a
+Promise. The Promise.resolve() function returns a resolved Promise
+immediately. The control is temporarily returned to the caller function ( foo() ),
+allowing other synchronous operations to execute.
+Back to the main context: console.log("E") : This line logs "E" to the console
+since it's a synchronous operation. The foo()
+function is still not fully executed, and it's waiting for the resolution of the
+Promise inside it. Inside foo()
+(resumed execution): console.log("B") : This line logs "B" to the console since
+it's a synchronous operation.
+await new Promise(resolve =&gt; setTimeout(resolve, 0));
+This line awaits the resolution of a Promise returned by the setTimeout
+function. Although the delay is set to 0 milliseconds, the setTimeout callback
+is pushed into the callback queue, allowing the synchronous code to continue.
+Back to the main context: The control is still waiting for the foo() function to
+complete.
+Inside foo() (resumed execution): The callback from the setTimeout is picked
+up from the callback queue, and the promise is resolved. This allows the
+execution of the next await .
+console.log("C") : This line logs "C" to the console since it's a synchronous
+operation. foo() function completes.
+
+---
+
+### 16. **Guess the output ?**
+
+let output = (function(x)&#123;
+delete x;
+return x;
+&#125;)(3);
+console.log(output);
+Output: 3
+Let me break it down for you:
+1. The code defines an immediately invoked function expression (IIFE) that
+takes a parameter x .
+
+---
+
+### 17. **Inside the function, delete x; is called. However, delete operator is used to**
+
+delete properties from objects, not variables. When you try to delete a
+variable, it doesn't actually delete the variable itself, but it's syntactically
+incorrect and may not have any effect depending on the context (in strict
+mode, it throws an error). So, delete x; doesn't do anything in this case.
+3. Finally, the function returns x . Since x was passed as 3 when calling the
+function (function(x)&#123; ... &#125;)(3) , it returns 3 .
+4. The returned value is assigned to the variable output .
+5. console.log(output); then logs the value of output , which is 3 .
+
+---
+
+### 18. **Guess the output of below code ?**
+
+for (var i = 0; i &lt; 3; i++) &#123;
+setTimeout(function () &#123;
+console.log(i);
+&#125;, 1000 + i);
+&#125;
+Output: 3 3 3
+This might seem counterintuitive at first glance, but it's due to how JavaScript
+handles closures and asynchronous execution.
+Here's why:
+1. The for loop initializes a variable i to 0 .
+2. It sets up a timeout for i milliseconds plus the current value of i , which
+means the timeouts will be 1000 , 1001 , and 1002 milliseconds.
+3. After setting up the timeouts, the loop increments i .
+4. The loop checks if i is still less than 3 . Since it's now 3 , the loop exits.
+When the timeouts execute after their respective intervals, they access the
+variable i from the outer scope. At the time of execution, i is 3 because the
+loop has already finished and incremented i to 3 . So, all three timeouts log
+3 .
+
+---
+
+### 19. **Guess the output ?**
+
+let output = (function(x)&#123;
+delete x;
+return x;
+&#125;)(3);
+console.log(output);
+Output: 3
+Let me break it down for you:
+1. The code defines an immediately invoked function expression (IIFE) that
+takes a parameter x .
+
+---
+
+### 20. **Inside the function, delete x; is called. However, delete operator is used to**
+
+delete properties from objects, not variables. When you try to delete a
+variable, it doesn't actually delete the variable itself, but it's syntactically
+incorrect and may not have any effect depending on the context (in strict
+mode, it throws an error). So, delete x; doesn't do anything in this case.
+3. Finally, the function returns x . Since x was passed as 3 when calling the
+function (function(x)&#123; ... &#125;)(3) , it returns 3 .
+4. The returned value is assigned to the variable output .
+5. console.log(output); then logs the value of output , which is 3 .
+
+---
+
+### 21. **Guess the output ?**
+
+let c=0;
+let id = setInterval(() =&gt; &#123;
+console.log(c++)
+&#125;,10)
+setTimeout(() =&gt; &#123;
+clearInterval(id)
+&#125;,2000)
+This JavaScript code sets up an interval that increments the value of c every
+200 milliseconds and logs its value to the console. After 2 seconds (2000
+milliseconds), it clears the interval.
+Here's what each part does:
+let c = 0; : Initializes a variable c and sets its initial value to 0.
+let id = setInterval(() =&gt; &#123; console.log(c++) &#125;, 200) : Sets up an interval that executes a
+function every 200 milliseconds. The function logs the current value of c
+to the console and then increments c .
+setTimeout(() =&gt; &#123; clearInterval(id) &#125;, 2000) : Sets a timeout function that executes
+after 2000 milliseconds (2 seconds). This function clears the interval
+identified by id , effectively stopping the logging of c .
+This code essentially logs the values of c at 200 milliseconds intervals until 2
+seconds have passed, at which point it stops logging.
+
+---
+
+### 22. **What would be the output of following code ?**
+
+function getName1()&#123;
+console.log(this.name);
+&#125;
+Object.prototype.getName2 = () =&gt;&#123;
+console.log(this.name)
+&#125;
+let personObj = &#123;
+name:"Tony",
+print:getName1
+&#125;
+personObj.print();
+personObj.getName2();
+Output: Tony undefined
+Explaination: getName1() function works fine because it's being called
+from personObj, so it has access to this.name property. But when while
+calling getnName2 which is defined under Object.prototype doesn't have any
+proprty named this.name. There should be name property under prototype.
+Following is the code:
+function getName1()&#123;
+console.log(this.name);
+&#125;
+Object.prototype.getName2 = () =&gt;&#123;
+console.log(Object.getPrototypeOf(this).name);
+&#125;
+let personObj = &#123;
+name:"Tony",
+print:getName1
+&#125;
+personObj.print();
+Object.prototype.name="Steve";
+personObj.getName2();
+
+---
+
+### 23. **What would be the output of following code ?**
+
+function test() &#123;
+console.log(a);
+console.log(foo());
+var a = 1;
+function foo() &#123;
+return 2;
+&#125;
+&#125;
+test();
+Output: undefined and  2
+In JavaScript, this code will result in undefined being logged for console.log(a) and
+2 being logged for console.log(foo()) . This is due to variable hoisting and function
+declaration hoisting.
+Here's what's happening step by step:
+1. The test function is called.
+2. Inside test :
+console.log(a) is executed. Since a is declared later in the function, it's
+hoisted to the top of the function scope, but not initialized yet. So, a is
+undefined at this point.
+console.log(foo()) is executed. The foo function is declared and assigned
+before it's called, so it returns 2 .
+var a = 1; declares and initializes a with the value 1 .
+Therefore, when console.log(a) is executed, a is undefined due to hoisting, and
+when console.log(foo()) is executed, it logs 2 , the return value of the foo
+function.
+
+---
+
+### 24. **What is the output of below logic ?**
+
+function job()&#123;
+return new Promise((resolve,reject)=&gt;&#123;
+reject()
+&#125;)
+&#125;
+let promise = job();
+promise.then(()=&gt;&#123;
+console.log("1111111111")
+&#125;).then(()=&gt;&#123;
+console.log("22222222222")
+&#125;).catch(()=&gt;&#123;
+console.log("3333333333")
+&#125;).then(()=&gt;&#123;
+console.log("4444444444")
+&#125;)
+In this code, a Promise is created with the job function. Inside the job
+function, a Promise is constructed with the executor function that immediately
+rejects the Promise.
+Then, the job function is called and assigned to the variable promise .
+After that, a series of then and catch methods are chained to the promise :
+1. The first then method is chained to the promise , but it is not executed
+because the Promise is rejected, so the execution jumps to the catch
+method.
+2. The catch method catches the rejection of the Promise and executes its
+callback, logging "3333333333".
+3. Another then method is chained after the catch method. Despite the
+previous rejection, this then method will still be executed because it's part
+of the Promise chain, regardless of previous rejections or resolutions. It
+logs "4444444444".
+So, when you run this code, you'll see the following output:
+3333333333
+4444444444
+
+---
+
+### 25. **Guess the output ?**
+
+var a = 1;
+function data() &#123;
+if(!a) &#123;
+var a = 10;
+&#125;
+console.log(a);
+&#125;
+data();
+console.log(a);
+Explanation:
+var a = 1;
+function toTheMoon() &#123;
+var a;
+/* var has function scope,Hence
+it's declaration will be hoisted */
+if(!a) &#123;
+a = 10;
+&#125;
+console.log(a);
+// 10 precendence will be given to local scoped variable.
+&#125;
+toTheMoon();
+console.log(a); // 1 refers to the `a` defined at the top.
+24. Tests your array basics
+function guessArray() &#123;
+let a = [1, 2];
+let b = [1, 2];
+console.log(a == b);
+console.log(a === b);
+&#125;
+guessArray();
+In JavaScript, when you compare two arrays using the == or === operators,
+you're comparing their references, not their contents. So, even if two arrays
+have the same elements, they will not be considered equal unless they refer to
+the exact same object in memory.
+In your guessArray function, a and b are two separate arrays with the same
+elements, but they are distinct objects in memory. Therefore, a == b and a === b
+will both return false , indicating that a and b are not the same object.
+If you want to compare the contents of the arrays, you'll need to compare
+each element individually.
+
+---
+
+### 26. **Test your basics on comparision ?**
+
+let a = 3;
+let b = new Number(3);
+let c = 3;
+console.log(a == b);
+console.log(a === b);
+console.log(b === c);
+new Number()  is a built-in function constructor. Although it looks like a number,
+it's not really a number: it has a bunch of extra features and is an object.
+When we use the  ==  operator (Equality operator), it only checks whether it
+has the same value. They both have the value of  3 , so it returns  true .
+However, when we use the  ===  operator (Strict equality operator), both
+value and type should be the same. It's not:  new Number()  is not a number, it's
+an object. Both return  false.
+
+---
+
+### 27. **Guess the output ?**
+
+var x = 23;
+(function()&#123;
+var x = 43;
+(function random()&#123;
+x++;
+console.log(x);
+var x = 21;
+&#125;)();
+&#125;)();
+Solution:
+The provided code snippet demonstrates the behavior of variable hoisting and
+function scope in JavaScript. Let's analyze the code step-by-step to
+understand the output:
+var x = 23;
+(function()&#123;
+var x = 43;
+(function random()&#123;
+x++;
+console.log(x);
+var x = 21;
+&#125;)();
+&#125;)();
+Breakdown
+1. Global Scope:
+var x = 23;
+A global variable x is declared and initialized with the value 23 .
+2. First IIFE (Immediately Invoked Function Expression):
+(function()&#123;
+var x = 43;
+// ...
+&#125;)();
+A new function scope is created. Inside this function, a local variable
+x is declared and initialized with the value 43 . This x shadows the
+global x .
+3. Second IIFE (Nested function, named random ):
+(function random()&#123;
+x++;
+console.log(x);
+var x = 21;
+&#125;)();
+Another function scope is created inside the first IIFE. The function
+random is invoked immediately.
+4. Inside the random function:
+x++;
+console.log(x);
+var x = 21;
+Here, variable hoisting comes into play. The declaration var x = 21; is
+hoisted to the top of the function random , but not its initialization. Thus,
+the code is interpreted as:
+var x;    // x is hoisted, but not initialized
+x++;
+console.log(x);
+x = 21;
+Initially, x is undefined because the hoisted declaration of x does not
+include its initialization.
+x++ attempts to increment x when it is still undefined . In JavaScript,
+undefined++ results in NaN (Not a Number).
+Therefore, console.log(x); outputs NaN .
+After the console.log statement, x is assigned the value 21 , but this
+assignment happens after the console.log and thus does not affect the
+output.
+Summary
+When random function is executed, the following sequence occurs:
+1. var x; (hoisting, x is undefined at this point)
+2. x++; ( undefined++ results in NaN )
+3. console.log(x); outputs NaN
+4. x = 21; (assigns 21 to x , but this is after the console.log )
+Output
+Thus, the output of the code is:
+NaN
+
+---
+
+### 28. **Answer below queries on typeOf operator in javascript ?**
+
+typeof [1,2,3,4]      // Returns object
+typeof null           // Returns object
+typeof NaN            // Returns number
+typeof 1234n          // Returns bigint
+typeof 3.14           // Returns number
+typeof Symbol()       // Returns symbol
+typeof "John"         // Returns string
+typeof 33             // Returns number
+typeof true           // Returns boolean
+typeof undefined      // Returns undefined
+28. Can you find is there any security issue in the javascript
+code?
+const data = await fetch("api");
+const div = document.getElementById("todo")
+div.innerHTML = data;
+The provided JavaScript code seems straightforward, but there's a potential
+security issue related to how it handles data from the API response.
+1. Cross-Site Scripting (XSS):
+The code directly assigns the fetched data (
+data ) to the innerHTML property of the div element. If the data fetched from
+the API contains untrusted or user-controlled content (such as user-
+generated content or content from a third-party API), it could potentially
+contain malicious scripts. Assigning such data directly to innerHTML can
+lead to XSS vulnerabilities, as it allows execution of arbitrary scripts in the
+context of the page.
+To mitigate this security risk, you should properly sanitize or escape the data
+before assigning it to innerHTML , or consider using safer alternatives like
+textContent or creating DOM elements programmatically.
+Here's an example of how you could sanitize the data using a library like
+DOMPurify:
+const data = await fetch("api");
+const div = document.getElementById("todo");
+data.text().then(text =&gt; &#123;
+div.innerHTML = DOMPurify.sanitize(text);
+&#125;);
+By using DOMPurify.sanitize() , you can ensure that any potentially harmful content
+is removed or escaped, reducing the risk of XSS attacks. Make sure to include
+the DOMPurify library in your project if you choose to use it.
+Always remember to validate and sanitize any data that originates from
+external sources before inserting it into your DOM.
+
+---
+
+### 29. **Can you guess the output for below code ?**
+
+console.log(typeof typeof 1)
+In the above code, we are using typeof operator. So what is this typeof ?
+typeof is an operator in javascript which will return the data type of the
+operand which is passed to it
+In the above example, Initially typeof 1 will be executed which will return
+“number”.
+Now the expression will become typeof “number” which will result in
+“string”.
+
+---
+
+### 30. **Guess the output of below code ?**
+
+x++;
+console.log(x);
+var x = 21;
+Explaination:
+In this example, First we need to understand how variables declared with
+var are hoisted ?
+In javascript variables declared with var are hoisted on to the top of
+their scope and initialized with the value of undefined. Due to this, in
+the first line, value of x is undefined.
+In the first line we are using postfix operator. so javascript will perform
+type cohercion and tries to convert this undefined into a number.
+As a result, value of x will become Nan and in the 2nd line x value ie., Nan
+is logged to the console.
+
+---
+
+### 31. **Guess the output ?**
+
+const x = [1];
+const y = [2];
+console.log(x+y);
+Explanation:
+1. Variable Declaration:
+const x = [1]; declares a constant variable x and assigns it an array
+containing a single element: the number 1.
+const y = [2]; declares another constant variable y and assigns it an
+array containing the number 2.
+2. Array Concatenation (Attempt):
+x+y attempts to concatenate the arrays x and y .
+However, the + operator performs string concatenation when used
+with arrays in JavaScript.
+3. Implicit Type Conversion:
+JavaScript implicitly converts the arrays x and y to strings.
+The array [1] is converted to the string "1" .
+The array [2] is converted to the string "2" .
+4. String Concatenation:
+The + operator then concatenates the strings "1" and "2" , resulting in
+the string "12" .
+5. Console Output:
+console.log(x+y); prints the resulting string "12" to the console.
+Key Points:
+The + operator does not perform array concatenation in JavaScript.
+When used with arrays, the + operator implicitly converts the arrays to
+strings and then concatenates them.
+
+---
+
+### 32. **Guess the output ?**
+
+const data = &#123;
+name: "sai",
+name: "krishna"
+&#125;
+console.log(data.name);
+Output: “krishna”.
+Explanation:
+In JavaScript, if an object has multiple properties with the same name, the last
+one defined in the object will overwrite the previous ones. This behavior
+occurs because object properties in JavaScript are treated as key-value pairs,
+where keys must be unique.
+
+---
+
+### 33. **What is the output of below code ?**
+
+let x = 10+2*3
+console.log(x);
+Output: 16
+Video Explaination: https://www.instagram.com/p/DHqg2pXCXmw/
+Explaination:
+The expression 10 + 2 * 3 is evaluated according to operator precedence
+rules in JavaScript. Multiplication ( * ) has a higher precedence than
+addition ( + ), so the multiplication is performed first:
+First, compute 2 * 3 which equals 6 .
+Then, add 10 to 6 , resulting in 16 .
+
+---
+
+### 34. **Guess the output ?**
+
+const x = [1,2,3];
+const y = [1,3,4];
+console.log(x+y);
+Output: “1,2,31,3,4”;
+Video Explaination: https://www.instagram.com/p/DHoMoC0ii_x/
+Explaination:
+Here we are defining two arrays:
+x is [1, 2, 3]
+y is [1, 3, 4]
+When you use the + operator with arrays, JavaScript converts each array to a
+string. Under the hood, this conversion happens by calling the toString() method
+on the arrays. For example:
+x.toString() becomes "1,2,3"
+y.toString() becomes "1,3,4"
+Then, the + operator concatenates these two strings together. So the result of
+x + y is the string:
+Finally, console.log prints "1,2,31,3,4" this string to the console.
+
+---
+
+### 35. **Guess the output ?**
+
+console.log(+true);
+console.log(!"sai");
+Output: 1,false
+Video Explaination:https://www.instagram.com/p/DHlWUMaChl9/
+Explaination:
+console.log(+true);
+The unary plus operator ( + ) converts its operand into a number.
+true is converted to 1 .
+Result: This prints 1 to the console.
+console.log(!"sai");
+The logical NOT operator ( ! ) converts its operand to a boolean and then
+negates it.
+The string "sai" is non-empty, which makes it a truthy value.
+Negating a truthy value results in false .
+Result: This prints false to the console.
+In summary:
++true becomes 1 .
+!"sai" becomes false .
+
+---
+
+### 36. **What is the output of below code ?**
+
+console.log([]+[]);
+console.log([1]+[]);
+console.log([1]+"abc");
+Output: “”,”1”,”1abc”
+Video Explaination: https://www.instagram.com/p/DHixQfaiwKE/
+Explaination:
+When you use the + operator with arrays, JavaScript first converts the arrays
+into strings using their toString() method:
+[] + []
+An empty array ( [] ) converts to an empty string ( "" ). So, "" + "" results in
+an empty string.
+[1] + []
+The array [1] converts to "1" , and [] converts to "" . So, "1" + "" results in
+"1" .
+[1] + "abc"
+Again, [1] converts to "1" . Then "1" + "abc" concatenates to give "1abc" .
+In summary, the arrays are turned into strings before they are concatenated.
+
+---
+
+### 37. **Guess the output ?**
+
+function getAge(...args)&#123;
+console.log(typeof args)
+&#125;
+getAge(21)
+Output: “object”
+Video Explaination: https://www.instagram.com/p/DHdo1CLi4ud/
+Explaination:
+The output of the code will be "object". This is because :
+1. Rest Parameters ( ...args ):
+The  ...args  in the function definition is JavaScript's rest parameter syntax.
+It collects all passed arguments into a single array. So even though you
+pass  21 ,  args  becomes  [21]  (an array).
+2. typeof  Behavior:
+In JavaScript, arrays are technically a type of object. When you
+use  typeof  on an array (like  args ), it returns  "object" , not  "array" .
+
+---
+
+### 38. **Guess the output ?**
+
+const obj = &#123;
+a: "one",
+b: "two",
+a: "three"
+&#125;
+console.log(obj);
+Output:
+&#123;
+a: "three",
+b: "two"
+&#125;
+Video Explaination: https://www.instagram.com/p/DHDwosvCVdx/
+Explaination:
+This is because.,
+1. Duplicate Keys in Objects:
+In JavaScript, if an object has duplicate keys, the last occurrence of the
+key will overwrite the previous value. This happens silently (no error is
+thrown).
+
+---
+
+### 39. **What Happens Here:**
+
+The key  a  is first assigned  "one" .
+Then,  a  is redefined with  "three"  (overwriting the first  a ).
+The key  b  stays  "two" .
+const obj = &#123;
+a: "one",    // overwritten by the next 'a'
+b: "two",
+a: "three"   // this is the final value of 'a'
+&#125;;
+
+---
+
+### 40. **Guess the output ?**
+
+var z = 1, y = z = typeof y;
+console.log(y);
+Output: "undefined"
+Video Explaination: https://www.instagram.com/p/DGlAOTsimyX/
+Explaination:
+The output of the code will be  "undefined" . Here's why:
+Step-by-Step Breakdown:
+1. Variable Hoisting:
+Variables  z  and  y  are declared (due to  var  hoisting) but not yet initialized.
+At this stage:
+z  is  undefined  (temporarily).
+y  is  undefined  (temporarily).
+2. Initial Assignments:
+va = 1; // z is now assigned `1`.
+3. The Tricky Line:
+y = z = typeof y; // Evaluated from right-to-left!
+Step 1:  typeof y  is evaluated.
+Since  y  is declared (due to hoisting) but not yet initialized,  typeof
+y  returns  "undefined" .
+Step 2: Assign  "undefined"  to  z .
+Now,  z = "undefined"  (overwriting its earlier value of  1 ).
+Step 3: Assign  z 's value ( "undefined" ) to  y .
+Now,  y = "undefined" .
+4. Final Result:
+console.log(y);  → Outputs  "undefined" .
+Key Takeaways:
+Hoisting: Variables declared with  var  are hoisted and initialized
+to  undefined  before assignment.
+Assignment Order:  a = b = c  is evaluated right-to-left ( b = c  first, then  a = b ).
+Overwriting: The initial value of  z  ( 1 ) is overwritten by  typeof y .
+
+---
+
+### 41. **Guess the output ?**
+
+console.log(false || null || "Hello");
+console.log(false && null && "Hello");
+Video Explaination: https://www.instagram.com/p/DGYC5Kqiwm1/
+Explaination:
+The outputs will be:
+"Hello"  and  false .
+Explanation:
+1. First Line:  false || null || "Hello"
+Logical OR ( || ) returns the first truthy value it finds.
+Check each value left-to-right:
+false  → falsy → move to next.
+null  → falsy → move to next.
+"Hello"  → truthy (non-empty string) → return "Hello".
+2. Second Line:  false && null && "Hello"
+Logical AND ( && ) returns the first falsy value it finds.
+Check each value left-to-right:
+false  → falsy → return  false  immediately.
+Key Rules:
+||  (OR): Stops at the first truthy value.
+&&  (AND): Stops at the first falsy value.
+If all values are checked (e.g., all truthy for  ||  or all falsy for  && ), the last
+value is returned.
+
+---
+
+### 42. **Guess the output ?**
+
+const numbers = [1,2,3,4,5];
+const [x,...y] = numbers;
+console.log(x,y);
+Video Explaination: https://www.instagram.com/p/DGQT6ioCreI/
+Explaination:
+The output will be:
+1 [2, 3, 4, 5]
+1. Array Destructuring:
+const [x, ...y] = [1, 2, 3, 4, 5];
+x  is assigned the first element of the array ( 1 ).
+...y  uses the rest operator ( ... ) to collect the remaining elements into
+a new array  y .
+2. Result:
+x  →  1
+y  →  [2, 3, 4, 5]
+Key Rules:
+The rest operator ( ... ) must always be the last element in destructuring.
+It captures all remaining elements into an array.
+
+---
+
+### 43. **Guess the output ?**
+
+const str = "abc"+ + "def";
+console.log(str);
+Video Explaination: https://www.instagram.com/p/DGNt9DOC5C3/
+Explaination:
+The output will be:
+"abcNaN"
+1. Code Breakdown:
+const str = "abc" + + "def";
+The  + + "def"  part is key. Let's break it down:
+The first  +  is a string concatenation operator.
+The second  +  is a unary plus operator (attempting to
+convert  "def"  to a number).
+2. Unary Plus Operation:
++ "def"  tries to convert the string  "def"  to a number.
+Since  "def"  is not a valid number, this results in  NaN  (Not-a-Number).
+3. Concatenation:
+Now the expression becomes:  "abc" + NaN .
+JavaScript converts  NaN  to the string  "NaN"  during concatenation.
+Final result:  "abc" + "NaN"  →  "abcNaN" .
+Key Takeaway:
+The unary  +  operator converts values to numbers.
+Invalid conversions (like  "def" ) produce  NaN .
+NaN  becomes  "NaN"  when concatenated with a string.
+
+---
+
+### 44. **Guess the output ?**
+
+let newlist = [1].push(2);
+console.log(newlist.push(3));
+Video Explaination: https://www.instagram.com/p/DGLKah0iB9G/
+Explaination:
+The code will throw an error:
+"TypeError: newlist.push is not a function"
+1. [1].push(2) :
+The  push()  method adds  2  to the array  [1] , making it  [1, 2] .
+But  push()  returns the new length of the array (not the array itself).
+So  newlist  is assigned the value  2  (the new length of the array).
+let newlist = [1].push(2); // newlist = 2 (a number)
+2. newlist.push(3) :
+newlist  is  2  (a number), not an array.
+Numbers do not have a  push()  method → this causes an error.
+Why This Happens:
+push()  modifies the original array but returns the length, not the array.
+We tried to use  push()  on a number ( 2 ), which is invalid.
+Key Takeaway:
+push()  returns the array’s length, not the array itself. Always work directly with
+the array variable.
+
+---
+
+### 45. **Guess the output ?**
+
+console.log(0 || 1);
+console.log(1 || 2);
+console.log(0 && 1);
+console.log(1 && 2);
+Video Explaination: https://www.instagram.com/p/DGGCcEUisBu/
+Explaination:
+The outputs will be:
+1 ,  1 ,  0 ,  2
+1.  console.log(0 || 1);
+Logical OR ( || ) returns the first truthy value.
+0  is falsy → check next value.
+1  is truthy → return  1 .
+Output:  1
+2.  console.log(1 || 2);
+Logical OR ( || ) stops at the first truthy value.
+1  is truthy → return  1  immediately.
+Output:  1
+3.  console.log(0 && 1);
+Logical AND ( && ) returns the first falsy value.
+0  is falsy → return  0  immediately.
+Output:  0
+4.  console.log(1 && 2);
+Logical AND ( && ) returns the last value if all are truthy.
+1  is truthy → check next value.
+2  is truthy → return  2 .
+Output:  2
+Key Rules:
+||  (OR):
+Returns the first truthy value.
+If all are falsy, returns the last value.
+&&  (AND):
+Returns the first falsy value.
+If all are truthy, returns the last value.
+
+---
+
+### 46. **Guess the output ?**
+
+console.log(data());
+var data = function()&#123;
+return "1";
+&#125;
+Video Explaination: https://www.instagram.com/p/DF7sDc8C7Zw/
+Explaination:
+The code will throw an error:
+TypeError: data is not a function
+Why This Happens:
+1. Variable Hoisting:
+JavaScript hoists the declaration of  data  (using  var ) to the top of the
+scope, but not its initialization.
+At the time of  console.log(data()) :
+data  exists (due to hoisting), but its value is  undefined .
+undefined  is not a function → error when trying to call  data() .
+2. Execution Order:
+console.log(data()); // ❌ Called BEFORE `data` is assigned a function
+var data = function() &#123; // Function expression (not hoisted)
+return "1";
+&#125;;
+Key Fix:
+Use a function declaration (which is fully hoisted):
+console.log(data()); // Works (output: "1")
+function data() &#123;    // Function declaration (hoisted)
+return "1";
+&#125;
+Comparison:
+Scenario
+Hoisting Behavior
+Result
+var data = function()
+Only  data  is hoisted (as  undefined )
+Error (not a function)
+function data()
+Entire function is hoisted
+Works
+Key Takeaway:
+Function expressions assigned to variables ( var x = function()&#123;&#125; ) are not hoisted as
+callable functions. Function declarations ( function x()&#123;&#125; ) are fully hoisted.
+
+---
+
+### 47. **Guess the output ?**
+
+const arr = [1,2,3];
+arr[5] = 6;
+console.log(arr.length);
+Video Explaination: https://www.instagram.com/p/DF5IdHRijnU/
+Explaination:
+The output will be  6 .
+1. Initial Array:
+const arr = [1, 2, 3]; // arr.length is 3
+The array starts with indexes 0, 1, and 2.
+2. Assigning to Index 5:
+arr[5] = 6;
+JavaScript automatically expands the array to accommodate index 5.
+Indexes 3 and 4 become "empty slots" (they are not initialized with any
+value).
+The array now looks like:
+[1, 2, 3, empty, empty, 6]
+3. Array Length:
+The  length  of an array is always 1 more than the highest
+index assigned.
+Here, the highest index is 5 →  length = 5 + 1 = 6 .
+Final Output:
+console.log(arr.length); // 6
+Key Takeaways:
+Arrays in JavaScript are dynamic and expand when you assign values to
+non-existing indexes.
+Empty slots are not the same as  undefined  – they are gaps in the array.
+The  length  property reflects the highest assigned index + 1, even if there
+are gaps.
+
+---
+
+### 48. **Guess the output ?**
+
+const obj = &#123;
+a:1
+&#125;
+obj.a = 2;
+console.log(obj);
+Video Explaination: https://www.instagram.com/p/DF2i864Ca1E/
+Explaination:
+The output will be:
+&#123; a: 2 &#125;
+1. Object Creation:
+const obj = &#123; a: 1 &#125;;
+Creates an object with a property  a  initialized to  1 .
+2. Modifying the Property:
+obj.a = 2;
+const  only prevents reassigning the variable  obj  to a new object.
+Properties of the object can still be modified.
+The value of  a  changes from  1  to  2 .
+3. Final Output:
+console.log(obj); // &#123; a: 2 &#125;
+Key Takeaways:
+const  protects the variable ( obj ) from being reassigned, not its contents.
+Objects declared with  const  can have their properties updated.
+
+---
+
+### 49. **Guess the output ?**
+
+let x = &#123;
+a: undefined,
+b: null
+&#125;
+console.log(JSON.stringify(x))
+Video Explaination: https://www.instagram.com/p/DF0BHY1iDV7/
+Explaination:
+The output will be:
+&#123;"b":null&#125;
+1. Object  x :
+let x = &#123;
+a: undefined,
+b: null
+&#125;;
+2. JSON.stringify()  Behavior:
+undefined  → Excluded from JSON output.
+null  → Included as  null  in JSON.
+3. Result:
+Property  a  (with value  undefined ) is removed.
+Property  b  (with value  null ) is kept.
+Final Output:
+console.log(JSON.stringify(x)); // &#123;"b":null&#125;
+Key Takeaways:
+JSON.stringify()  ignores properties with  undefined  values.
+null  is a valid JSON value and is preserved.
+
+---
+
+### 50. **Guess the output ?**
+
+console.log(true + 1);
+console.log(true+"1");
+Video Explaination: https://www.instagram.com/p/DFxaRLyCu6n/
+Explaination:
+The outputs will be:
+2  and  "true1"
+1.  console.log(true + 1);
+Boolean Conversion: JavaScript converts  true  to its numeric equivalent:
+true  →  1
+Addition:
+1 (true) + 1 = 2
+Output:  2
+2.  console.log(true + "1");
+String Concatenation: When  +  is used with a string ( "1" ), JavaScript
+converts both values to strings.
+true  →  "true"
+"1"  stays as  "1"
+Concatenation:
+"true" + "1" = "true1"
+Output:  "true1"
+Key Rules:
++  with numbers: Booleans convert to numbers ( true  →  1 ,  false  →  0 ).
++  with strings: Converts all values to strings and concatenates them.
+
+---
+
+### 51. **Guess the output ?**
+
+const str = "hello";
+str.data = "val";
+console.log(str.data);
+Video Explaination: https://www.instagram.com/p/DFu24SVCn3X/
+Explaination:
+The output will be  undefined .
+1. Primitive Strings vs. String Objects:
+"hello"  is a primitive string, not an object.
+Primitives cannot have properties added to them.
+
+---
+
+### 52. **What Happens When You Try:**
+
+When you write  str.data = "val" , JavaScript temporarily converts the
+primitive string to a String object to allow the assignment.
+However, this temporary object is discarded immediately. The
+property  data  is not saved.
+3. Accessing  str.data :
+When you read  str.data , JavaScript creates a new temporary String
+object (which doesn’t have the  data  property).
+Thus,  console.log(str.data)  returns  undefined .
+Key Takeaway:
+Primitive strings (like  "hello" ) cannot hold custom properties. Use an object
+(e.g.,  &#123;&#125; ) if you need to add properties.
+
+---
+
