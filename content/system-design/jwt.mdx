@@ -1,0 +1,134 @@
+---
+title: JWT Interview Guide
+category: System Design
+difficulty: Intermediate
+interviewFrequency: High
+experienceLevel: Mid-Level
+estimatedReadTime: 15
+tags: [jwt, authentication, authorization, security, web-security]
+companies:
+  - Google
+  - Amazon
+  - Meta
+  - Netflix
+---
+
+# JWT Interview Guide
+
+## 📖 What is JWT?
+
+**JWT (JSON Web Token)** is a compact, URL-safe token format commonly used to securely transfer claims between a client and server.
+
+It consists of three parts:
+```text
+Header.Payload.Signature
+```
+Each part is Base64URL-encoded and separated by a `.`.
+
+- **Header**: Contains metadata about the token (`alg` and `typ`).
+- **Payload**: Contains **claims** about the user (e.g., `userId`, `role`, `iat`, `exp`). **Important:** The payload is NOT encrypted by default. It is only Base64URL-encoded.
+- **Signature**: Protects the integrity of the JWT. It is created using the Header, Payload, and a `SECRET_KEY` (kept securely on the server). 
+
+The `SECRET_KEY` is NOT the signature itself. It is the key used to generate the signature. If an attacker modifies the payload (e.g., changes `role="USER"` to `role="ADMIN"`), the signature becomes invalid because the attacker doesn't have the secret key to generate the new, matching signature.
+
+## 🤔 Why do we need JWT?
+
+In traditional web applications, authentication relies on **Sessions**. The server stores a session ID in memory (or Redis) for every logged-in user. Every time the user makes a request, the server must look up this session ID.
+
+JWTs enable **stateless authentication**. Because the JWT contains a cryptographic signature, the server can simply use its `SECRET_KEY` to verify that the token is authentic, without ever needing to look up a session in a database. This makes JWTs extremely powerful for distributed systems, REST APIs, and microservices where multiple backend servers need to verify a user's identity instantly.
+
+---
+
+## ❓ Interview Questions
+
+1. **What is JWT?**
+   JWT stands for JSON Web Token and is commonly used for authentication. When a user logs in, the Node.js backend validates their credentials and creates a signed JWT containing trusted claims such as the user ID, role, issued time, and expiration. The client sends the token with subsequent requests, and authentication middleware verifies the signature.
+
+2. **What are the three parts of a JWT?**
+   - Header
+   - Payload
+   - Signature
+
+3. **Is the JWT payload encrypted?**
+   No. A normal signed JWT is encoded (using Base64URL) and signed, not encrypted. Its payload can be decoded by anyone who has the token. You should never put sensitive information like passwords in the payload.
+
+4. **Is the SECRET_KEY the signature?**
+   No. The SECRET_KEY is the secret value used by the signing algorithm to create and verify the signature. The signature is the cryptographic result generated from the encoded header and payload together with the secret key.
+
+5. **How does JWT verify a token?**
+   The server receives the token, takes the header and payload, uses the expected signing algorithm and secret key to calculate a new signature, and compares it with the signature inside the token. If they match and other validations such as expiration pass, the token is valid.
+
+6. **Can the client decide the JWT payload?**
+   The client can send information in the login request, but the backend should decide trusted JWT claims. The server must retrieve the user's actual role from trusted server-side data, not blindly trust a role sent by the client.
+
+7. **What happens if someone changes `role=user` to `role=admin` in the payload?**
+   The modified payload produces a different cryptographic signature. Since the attacker doesn't know the signing secret, they cannot create a valid signature. When the server calls `jwt.verify()`, signature validation fails and the request is rejected with a 401.
+
+8. **What happens when the JWT expires?**
+   The server's verification fails because the expiration claim (`exp`) is no longer valid, so the API returns 401. If using refresh tokens, the client can call the refresh endpoint to obtain a new access token.
+
+9. **Why use refresh tokens instead of just a long-lived access token?**
+   If an attacker steals a one-year token, the attack window is huge. Refresh tokens allow us to keep access tokens short-lived (e.g., 15 minutes) for security while maintaining a good user experience. When the short-lived access token expires, the longer-lived refresh token is used to seamlessly obtain a new one.
+
+10. **Where should you store a JWT in a browser application?**
+    For browser-based applications, I generally prefer secure HttpOnly cookies because JavaScript cannot directly access them, which reduces the risk of token theft through XSS. I would also configure Secure and an appropriate SameSite policy and handle CSRF protection.
+
+11. **What if the JWT is stolen?**
+    A valid stolen access token can potentially be used until it expires. Mitigations include short-lived access tokens, HTTPS, secure token storage, refresh-token protection and rotation, and revocation strategies.
+
+12. **What happens if the refresh token is stolen?**
+    A stolen refresh token is very serious because it can be used to obtain new access tokens. Mitigations include secure HttpOnly cookies, rotating refresh tokens on use, detecting reuse, and revoking the affected refresh-token family or session.
+
+13. **Can you revoke a JWT?**
+    JWT itself doesn't provide automatic revocation because it is stateless. To implement revocation, we use short-lived access tokens, refresh-token revocation (in the database), token versioning, or a server-side blacklist.
+
+14. **What happens when the user logs out?**
+    The JWT does not automatically become invalid just because the user clicks logout. For a browser application, you must clear the authentication cookie on the client AND revoke or invalidate the refresh token/session on the server.
+
+15. **What is the difference between authentication and authorization?**
+    Authentication determines who the user is (e.g., `userId=123`), while authorization determines what that authenticated user is allowed to do (e.g., `role=ADMIN`). 
+
+16. **What's the difference between 401 and 403?**
+    401 Unauthorized generally means authentication is missing or invalid (e.g., missing or expired JWT). 403 Forbidden means the user is authenticated but does not have permission to perform the requested operation.
+
+17. **Why use bcrypt if JWT is being used?**
+    bcrypt and JWT solve different problems. bcrypt is used to securely hash and verify passwords during login. JWT is used to authenticate subsequent requests after the user's credentials have been successfully validated.
+
+18. **Your admin API returns 403. What would you check?**
+    If the token is valid but the API returns 403, I would check the authorization logic. I would verify that the user's role comes from trusted server-side data and that the authorization middleware requires the correct permissions.
+
+19. **What if the user changes their password?**
+    Existing access tokens may remain valid until they expire unless the system explicitly invalidates them. I would use token versioning (increment a version counter in the database and include it in the JWT) to invalidate old tokens after sensitive account changes.
+
+20. **Why is JWT called stateless?**
+    JWT enables stateless access-token validation because the server can verify the token using its signature without maintaining a session database record for every request. However, the complete authentication system usually maintains state for refresh tokens and revocation.
+
+21. **HS256 vs RS256?**
+    HS256 uses the same shared secret for signing and verification. RS256 uses an asymmetric key pair: a private key signs the token and a public key verifies it. RS256 is useful when multiple independent services need to verify tokens without having access to the private signing key.
+
+22. **JWT vs OAuth?**
+    JWT is a token format, while OAuth 2.0 is an authorization framework. OAuth can use JWTs as access tokens, but OAuth does not require JWT as its token format.
+
+23. **What happens if a user sends `role=ADMIN` during login?**
+    I would completely ignore the client-provided role and retrieve the actual role from trusted server-side data (the database). Security-sensitive claims must be determined by the backend.
+
+24. **Explain the complete JWT login flow.**
+    The frontend sends credentials to the Node.js backend. The backend finds the user and validates the password using bcrypt. If valid, the backend creates a signed JWT containing trusted claims (user ID, role). The token is stored in a secure HttpOnly cookie. For subsequent requests, authentication middleware verifies the JWT signature and attaches the decoded user info to the request before the controller executes.
+
+25. **What are the advantages of JWT?**
+    - Stateless Access-Token Validation
+    - Excellent for REST APIs and distributed microservices
+    - Compact and easy to transmit
+    - Self-contained (contains necessary claims without DB lookups)
+
+26. **What are the disadvantages of JWT?**
+    - Revocation is much more complicated than sessions
+    - Token theft can be dangerous since it's valid until expiration
+    - Payload is readable by anyone (cannot store sensitive info)
+    - Tokens can get large if too many claims are included
+
+27. **Common Trap: "JWT is encrypted, right?"**
+    No. A normal signed JWT is encoded and signed, not encrypted. Its payload can be decoded easily.
+
+28. **Common Trap: "JWT automatically becomes invalid on logout."**
+    Not necessarily. A self-contained JWT remains cryptographically valid until its `exp` time is reached unless the application implements a revocation mechanism like a blacklist or token versioning.

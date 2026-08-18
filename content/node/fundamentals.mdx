@@ -1,0 +1,230 @@
+---
+title: Node.js Fundamentals
+category: Node.js
+difficulty: Beginner
+interviewFrequency: High
+experienceLevel: Junior to Mid-Level
+estimatedReadTime: 10
+tags: [nodejs, fundamentals, v8, npm, modules]
+---
+
+# Node.js Fundamentals
+
+## Q 1. What is Node.js?
+
+**Ans:** Node.js is a JavaScript runtime built on Chrome's V8 engine that allows running JavaScript outside the browser, mainly on servers.
+
+It is event-driven and non-blocking, which makes it good for scalable applications.
+
+Example:
+
+```javascript
+console.log("Hello from Node.js");
+```
+
+Run with: `$ node app.js`
+
+---
+
+## Q 2. Why is Node.js fast?
+
+**Ans:** Node.js uses:
+
+- V8 engine for fast execution
+- Non-blocking I/O
+- Event-driven architecture
+
+Instead of waiting for tasks like database queries, Node continues processing other requests.
+
+Example concept:
+
+- Request 1 → DB query → Request 2
+- Request 2 → handled → Handled immediately
+
+---
+
+## Q 3. What is V8 Engine?
+
+**Ans:** V8 is Google's JavaScript engine used in Chrome and Node.js. It converts JavaScript into machine code, making execution faster.
+
+Example:
+
+```javascript
+let sum = 10 + 20;
+console.log(sum);
+```
+
+---
+
+## Q 4. Is Node.js single-threaded?
+
+**Ans:** **Yes:** Node.js uses a single-threaded event loop.
+But heavy operations can be handled by worker threads internally.
+
+---
+
+## Q 5. Where is Node.js used?
+
+**Ans:**
+
+- REST APIs
+- Streaming services
+- Microservices
+- Real-time apps (chat)
+- Server-side rendering
+
+---
+
+## Q 6. What is npm?
+
+**Ans:** npm is Node Package Manager used to install libraries.
+
+Example install:
+
+```bash
+npm install express
+npm install -g nodemon
+```
+
+---
+
+## Q 7. What is package.json?
+
+**Ans:** It stores:
+
+- project information
+- dependencies
+- scripts
+- version info
+
+Example:
+
+```json
+{
+  "name": "node-app",
+  "version": "1.0.0",
+  "dependencies": {
+    "express": "^4.18.0"
+  }
+}
+```
+
+---
+
+## Q 8. What is npx?
+
+**Ans:** npx allows running packages without installing globally.
+
+Example:
+
+```bash
+npx create-react-app myapp
+```
+
+---
+
+## Q 9. What are Node.js modules?
+
+**Ans:** Modules are reusable pieces of code.
+
+Types:
+
+- Core modules
+- Local modules
+- Third-party modules
+
+---
+
+## Q 10. What are core modules?
+
+**Ans:** Built-in modules provided by Node.js.
+
+Common ones:
+
+- `http`
+- `fs`
+- `path`
+- `os`
+- `crypto`
+- `events`
+
+```javascript
+const os = require("os");
+console.log(os.platform());
+```
+
+---
+
+## Q 11. What is the fs module?
+
+**Ans:** `fs` stands for File System. Used for reading, writing, and deleting files.
+
+Example:
+
+```javascript
+const fs = require("fs");
+
+fs.readFile("data.txt", "utf8", (err, data) => {
+  console.log(data);
+});
+```
+
+---
+
+## Q 12. What is require()?
+
+**Ans:** `require()` is used to import modules.
+
+Example:
+
+```javascript
+const http = require("http");
+```
+
+---
+
+## Q 13. What is module.exports?
+
+**Ans:** Used to export functions or variables from a module.
+
+Example:
+
+**math.js**
+
+```javascript
+function add(a, b) {
+  return a + b;
+}
+module.exports = add;
+```
+
+**app.js**
+
+```javascript
+const add = require("./math");
+console.log(add(2, 3));
+```
+
+---
+
+## Q 14. What is ES Module import?
+
+**Ans:** Modern way of importing modules.
+
+Example:
+
+```javascript
+import fs from "fs";
+```
+
+Used when: `"type": "module"` is declared in `package.json`.
+
+---
+
+## Q 15. Difference between require and import?
+
+| Feature        | `require`              | `import`            |
+| -------------- | ---------------------- | ------------------- |
+| **System**     | CommonJS               | ES Modules          |
+| **Resolution** | Dynamic                | Static              |
+| **Usage**      | Older Node.js versions | Modern JS / Node.js |

@@ -1,6 +1,4 @@
 import { Suspense } from "react";
-import fs from "fs/promises";
-import path from "path";
 import { QuestionsList, Question } from "@/components/questions-list";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -22,10 +20,8 @@ function QuestionsSkeleton() {
 }
 
 export default async function QuestionsPage() {
-  // Read JSON directly from filesystem (runs only on server/build)
-  const filePath = path.join(process.cwd(), "public", "questions.json");
-  const fileContents = await fs.readFile(filePath, "utf8");
-  const questions: Question[] = JSON.parse(fileContents);
+  const { topics } = await import("#velite");
+  const questions: Question[] = topics.flatMap((topic: any) => topic.questions || []);
 
   return (
     <div className="container mx-auto py-12 px-4 md:px-8 max-w-4xl">

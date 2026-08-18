@@ -1,0 +1,243 @@
+---
+title: Express.js & Middleware
+category: Node.js
+difficulty: Intermediate
+interviewFrequency: Very High
+experienceLevel: Junior to Mid-Level
+estimatedReadTime: 12
+tags: [nodejs, express, middleware, rest, http, cors]
+---
+
+# Express.js & Middleware
+
+## Q 30. What is the HTTP module in Node.js?
+
+**Ans:** The `http` module is a built-in module used to create web servers and handle HTTP requests natively.
+
+Example:
+
+```javascript
+const http = require("http");
+
+const server = http.createServer((req, res) => {
+  res.write("Hello Server");
+  res.end();
+});
+
+server.listen(3000);
+```
+
+---
+
+## Q 31. What is Express.js?
+
+**Ans:** Express is a fast, unopinionated, minimal web framework for Node.js that heavily simplifies building APIs and web applications compared to the native `http` module.
+
+Example:
+
+```javascript
+const express = require("express");
+const app = express();
+
+app.get("/", (req, res) => {
+  res.send("Hello Express");
+});
+
+app.listen(3000);
+```
+
+---
+
+## Q 32. What is Routing in Express?
+
+**Ans:** Routing refers to defining how the server responds to specific endpoints (URIs) and specific HTTP request methods (GET, POST, etc.).
+
+Example:
+
+```javascript
+app.get("/users", (req, res) => {
+  res.send("Users list");
+});
+```
+
+---
+
+## Q 33. What are HTTP Methods?
+
+**Ans:** HTTP methods define the type of action to be performed on a resource.
+
+Common REST methods:
+
+- **GET**: Fetch data
+- **POST**: Create data
+- **PUT**: Update a full resource
+- **PATCH**: Update partial data of a resource
+- **DELETE**: Remove data
+
+Example:
+
+```javascript
+app.post("/user", (req, res) => {
+  res.send("User created");
+});
+```
+
+---
+
+## Q 34. What are HTTP Status Codes?
+
+**Ans:** They are standard response codes indicating the result of a request.
+
+Common ones:
+
+- **200**: Success
+- **201**: Created
+- **400**: Bad Request
+- **401**: Unauthorized
+- **403**: Forbidden
+- **404**: Not Found
+- **500**: Internal Server Error
+
+Example:
+
+```javascript
+res.status(200).json({ message: "success" });
+```
+
+---
+
+## Q 35. What is Middleware in Express?
+
+**Ans:** Middleware functions execute _before_ the final request handler. They have access to the request object (`req`), the response object (`res`), and the `next` function in the application's request-response cycle.
+
+Example:
+
+```javascript
+app.use((req, res, next) => {
+  console.log("Request received at:", Date.now());
+  next(); // Pass control to the next middleware
+});
+```
+
+---
+
+## Q 36. What are the Types of Middleware?
+
+**Ans:**
+
+- **Application-level middleware** (`app.use()`)
+- **Router-level middleware** (`router.use()`)
+- **Error-handling middleware** (takes 4 arguments `(err, req, res, next)`)
+- **Built-in middleware** (`express.json()`, `express.static()`)
+- **Third-party middleware** (`cors`, `helmet`, `morgan`)
+
+---
+
+## Q 37. What is body-parser?
+
+**Ans:** A middleware used to parse the incoming request body data into a readable format (like JSON). In modern Express, this is built-in as `express.json()`.
+
+Example:
+
+```javascript
+app.use(express.json());
+
+app.post("/data", (req, res) => {
+  // Now request body is accessible
+  console.log(req.body);
+  res.send("Parsed!");
+});
+```
+
+---
+
+## Q 38. What is CORS?
+
+**Ans:** CORS (Cross-Origin Resource Sharing) is a security feature that allows or restricts cross-origin HTTP requests between different domains.
+
+By default, browsers block frontend apps on `domain-a.com` from fetching data from `domain-b.com`. The `cors` middleware fixes this.
+
+Example:
+
+```javascript
+const cors = require("cors");
+app.use(cors()); // allows all origins
+```
+
+---
+
+## Q 39. What is Helmet?
+
+**Ans:** Helmet secures Node.js applications by setting various HTTP headers to protect against well-known web vulnerabilities like XSS, clickjacking, etc.
+
+Example:
+
+```javascript
+const helmet = require("helmet");
+app.use(helmet());
+```
+
+---
+
+## Q 40. What is Compression Middleware?
+
+**Ans:** It is a middleware used to compress the response body (usually using Gzip), drastically reducing the response payload size.
+
+Benefits:
+
+- Faster responses
+- Reduced bandwidth usage
+
+Example:
+
+```javascript
+const compression = require("compression");
+app.use(compression());
+```
+
+---
+
+## Q 41. What is Morgan?
+
+**Ans:** Morgan is a popular HTTP request logger middleware for Node.js. It logs every incoming HTTP request to the console or a file.
+
+Example:
+
+```javascript
+const morgan = require("morgan");
+app.use(morgan("dev"));
+// Logs e.g.: GET /api/users 200 15.201 ms - 45
+```
+
+---
+
+## Q 42. What is Logging in Node.js?
+
+**Ans:** Logging helps track system behavior, record errors, and monitor performance.
+
+Instead of just using `console.log()`, production apps use robust popular tools like:
+
+- **Winston**
+- **Pino**
+- **Morgan** (specifically for HTTP)
+
+---
+
+## Q 43. What is Error Handling Middleware?
+
+**Ans:** Express provides a special middleware to handle errors globally. It is always defined _last_, after all other app.use() and routes. It is distinct because it takes exactly 4 arguments.
+
+Example:
+
+```javascript
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).send("Server Error");
+});
+```
+
+---
+
+## Q 44. What is Graceful Shutdown?
+
+**Ans:** Graceful shutdown ensures the server finishes processing current active requests before completely stopping or exiting. It prevents dropping user connections forcefully during deployments or crashes.

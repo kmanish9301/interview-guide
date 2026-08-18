@@ -1,0 +1,204 @@
+---
+title: Event Loop & Async Programming
+category: Node.js
+difficulty: Intermediate
+interviewFrequency: Very High
+experienceLevel: Mid-Level
+estimatedReadTime: 15
+tags: [nodejs, event-loop, async, await, promises, libuv]
+---
+
+# Event Loop & Async Programming
+
+## Q 16. What is the Event Loop?
+
+**Ans:** The Event Loop is the core mechanism that allows Node.js to handle multiple requests using a single thread.
+
+Instead of creating a new thread for every request, Node.js places incoming operations in a queue and processes them asynchronously. The event loop continuously checks whether tasks are completed and then executes their callbacks.
+
+**Process flow:** Request → Event Loop → Callback Queue → Response
+
+This architecture makes Node.js highly scalable for handling many concurrent connections.
+
+---
+
+## Q 17. What is Non-blocking I/O?
+
+**Ans:** Non-blocking I/O means Node.js does not wait for a task to finish before moving to the next operation. When an operation such as reading a file or querying a database is started, Node.js continues executing other tasks while waiting for the result.
+
+Once the operation is completed, the result is returned through a callback or promise. This approach improves performance because the server can handle many requests simultaneously.
+
+---
+
+## Q 18. What is Blocking Code?
+
+**Ans:** Blocking code stops the execution of the program until the current task finishes. During this time, Node.js cannot process any other operations.
+
+Blocking operations are generally slower in server environments because they prevent the system from handling multiple requests efficiently. For high-performance applications, non-blocking operations are usually preferred.
+
+---
+
+## Q 19. What is Callback Hell?
+
+**Ans:** Callback Hell occurs when multiple callbacks are nested inside one another. This makes the code difficult to read, maintain, and debug.
+
+When many asynchronous operations depend on each other, deeply nested callbacks create messy and confusing code structures.
+
+Common solutions to callback hell include:
+
+- Using Promises
+- Using Async/Await
+- Breaking code into smaller reusable functions
+
+---
+
+## Q 20. What is a Promise?
+
+**Ans:** A Promise represents a future value of an asynchronous operation.
+
+**States:**
+
+- Pending
+- Resolved
+- Rejected
+
+Example:
+
+```javascript
+const p = new Promise((resolve, reject) => {
+  resolve("Success");
+});
+```
+
+Usage Example:
+
+```javascript
+fetchData()
+  .then((data) => console.log(data))
+  .catch((err) => console.log(err));
+```
+
+---
+
+## Q 21. Promise methods
+
+**Ans:**
+
+- `.then()`
+- `.catch()`
+- `.finally()`
+
+Example:
+
+```javascript
+fetchData()
+  .then((data) => console.log(data))
+  .catch((err) => console.log(err));
+```
+
+---
+
+## Q 22. What is an async function?
+
+**Ans:** Declares an asynchronous function that always returns a promise.
+
+Example:
+
+```javascript
+async function getData() {
+  return "Hello";
+}
+```
+
+---
+
+## Q 23. What is await?
+
+**Ans:** Used to wait for a promise result inside an `async` function.
+
+Example:
+
+```javascript
+const data = await fetchData();
+```
+
+---
+
+## Q 24. Advantages of async/await
+
+**Ans:** `async/await` makes asynchronous code look and behave like synchronous code, making it much easier to read and maintain.
+
+It solves the problem of "Callback Hell" and complex Promise chaining by allowing Node.js developers to:
+
+- Use try/catch for error handling
+- Read code sequentially top-to-bottom
+- Break code into smaller reusable functions without deep nesting
+
+---
+
+## Q 25. What is libuv in Node.js?
+
+**Ans:** `libuv` is the C library used by Node.js to handle:
+
+- Event loop
+- Asynchronous I/O
+- Thread pool
+- File system operations
+
+It allows Node.js to perform non-blocking operations by delegating them to the OS.
+
+Example concept:
+`Node.js → libuv → OS APIs`
+
+---
+
+## Q 26. What is the Thread Pool in Node.js?
+
+**Ans:** Node.js uses a thread pool (default size: 4) provided by `libuv` to run heavy operations that cannot be handled asynchronously by the OS, like:
+
+- File system tasks
+- DNS lookup
+- Crypto operations
+
+Example:
+
+```javascript
+const crypto = require("crypto");
+
+crypto.pbkdf2("pass", "salt", 1000, 64, "sha512", () => {
+  console.log("done");
+});
+```
+
+---
+
+## Q 27. What is Blocking vs Non-Blocking Code?
+
+**Ans:**
+**Blocking code** stops execution until the task completes.
+Example:
+
+```javascript
+const data = fs.readFileSync("file.txt");
+```
+
+**Non-blocking code** executes asynchronously.
+Example:
+
+```javascript
+fs.readFile("file.txt", (err, data) => {
+  console.log(data);
+});
+```
+
+---
+
+## Q 28. What is process.nextTick()?
+
+**Ans:** `process.nextTick()` executes a callback _immediately_ before the next event loop cycle begins. It has the highest priority in the asynchronous queue.
+
+---
+
+## Q 29. What is setImmediate()?
+
+**Ans:** `setImmediate()` executes code in the "Check" phase of the event loop, typically after I/O events have been processed.

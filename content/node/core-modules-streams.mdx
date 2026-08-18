@@ -1,0 +1,227 @@
+---
+title: Core Modules, Streams & Buffers
+category: Node.js
+difficulty: Intermediate
+interviewFrequency: High
+experienceLevel: Mid-Level
+estimatedReadTime: 12
+tags: [nodejs, streams, buffers, events, core-modules, env]
+---
+
+# Core Modules, Streams & Buffers
+
+## Q 45. What is a Stream in Node.js?
+
+**Ans:** Streams are objects that let you read data from a source or write data to a destination in continuous chunks, rather than loading the entire payload into memory at once. This is extremely efficient for large files or network communications.
+
+Example:
+
+```javascript
+const fs = require("fs");
+const stream = fs.createReadStream("file.txt");
+
+stream.on("data", (chunk) => {
+  console.log(chunk);
+});
+```
+
+---
+
+## Q 46. What are the Types of Streams?
+
+**Ans:**
+
+- **Readable**: Used for reading operations. (e.g., `fs.createReadStream()`)
+- **Writable**: Used for writing operations. (e.g., `fs.createWriteStream()`)
+- **Duplex**: Can be used for both reading and writing (e.g., TCP sockets).
+- **Transform**: A type of duplex stream where the output is computed based on the input (e.g., zlib compression).
+
+---
+
+## Q 47. What is `pipe()` in Streams?
+
+**Ans:** `pipe()` is a method used to connect a Readable stream directly to a Writable stream, transferring data efficiently without manually managing the events.
+
+Example:
+
+```javascript
+const fs = require("fs");
+
+const read = fs.createReadStream("input.txt");
+const write = fs.createWriteStream("output.txt");
+
+read.pipe(write); // Data flows from input.txt directly to output.txt
+```
+
+---
+
+## Q 48. What is a Buffer in Node.js?
+
+**Ans:** A Buffer is a temporary memory spot that stores raw binary data. It is a built-in global class in Node.js.
+
+Example:
+
+```javascript
+const buffer = Buffer.from("Hello");
+console.log(buffer); // Outputs: <Buffer 48 65 6c 6c 6f>
+```
+
+---
+
+## Q 49. Why are Buffers needed?
+
+**Ans:** JavaScript historically had no mechanism to handle raw binary data. Node.js handles binary streams heavily (reading files, processing videos, receiving network packets), so Buffers were introduced to allocate raw memory outside the V8 engine to store and manipulate this binary data before processing.
+
+---
+
+## Q 50. What is EventEmitter?
+
+**Ans:** `EventEmitter` is a core module that allows you to create, fire, and listen for custom events in Node.js. Much of Node's core architecture (like Streams and HTTP servers) is built on top of it.
+
+Example:
+
+```javascript
+const EventEmitter = require("events");
+const emitter = new EventEmitter();
+
+emitter.on("greet", () => {
+  console.log("Hello event triggered");
+});
+
+emitter.emit("greet");
+```
+
+---
+
+## Q 51. What is the `process` object?
+
+**Ans:** `process` is a global object that provides information and control over the current Node.js process executing the script.
+
+Example:
+
+```javascript
+console.log(process.version); // Prints Node version
+console.log(process.pid); // Prints process ID
+```
+
+---
+
+## Q 52. What is `process.env`?
+
+**Ans:** It is a property of the `process` object that returns an object containing the user environment variables.
+
+Example:
+
+```javascript
+console.log(process.env.PORT);
+```
+
+Often used alongside the `dotenv` package to securely load configuration.
+
+---
+
+## Q 53. What is dotenv?
+
+**Ans:** `dotenv` is a third-party module that loads environment variables from a `.env` file into `process.env`.
+
+Example `.env` file:
+
+```env
+PORT=5000
+DB_URL=mongodb://localhost:27017/mydb
+```
+
+Usage in JS:
+
+```javascript
+require("dotenv").config();
+console.log(process.env.PORT);
+```
+
+---
+
+## Q 54. What is nodemon?
+
+**Ans:** Nodemon is a utility tool that automatically restarts the Node.js server whenever it detects file changes in the directory.
+
+Install globally:
+
+```bash
+npm install -g nodemon
+```
+
+Run:
+
+```bash
+nodemon app.js
+```
+
+---
+
+## Q 55. What is the REPL in Node.js?
+
+**Ans:** **REPL** stands for:
+
+- **R**ead (Reads user input)
+- **E**val (Evaluates the code)
+- **P**rint (Prints the result)
+- **L**oop (Loops back to the prompt)
+
+It acts like an interactive terminal to execute JavaScript directly.
+
+Example:
+
+```bash
+$ node
+> 2 + 3
+5
+```
+
+---
+
+## Q 56. What is the Global Object in Node.js?
+
+**Ans:** Instead of the `window` object in browsers, Node.js uses the `global` object. It provides variables and functions accessible everywhere without importing them (e.g., `setTimeout`, `Buffer`, `process`).
+
+---
+
+## Q 57. What is `__dirname`?
+
+**Ans:** A global variable that returns the absolute path of the directory containing the currently executing file.
+
+Example:
+
+```javascript
+console.log(__dirname);
+// Output: /Users/username/project/app
+```
+
+---
+
+## Q 58. What is `__filename`?
+
+**Ans:** A global variable that returns the absolute path of the currently executing file itself.
+
+Example:
+
+```javascript
+console.log(__filename);
+// Output: /Users/username/project/app/index.js
+```
+
+---
+
+## Q 59. What is the Path Module?
+
+**Ans:** The `path` module provides utilities for working with file and directory paths across different operating systems cleanly.
+
+Example:
+
+```javascript
+const path = require("path");
+
+console.log(path.basename(__filename));
+// Output: index.js
+
+console.log(path.join(__dirname, "public", "index.html"));
+```

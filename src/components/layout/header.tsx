@@ -1,6 +1,7 @@
 import Link from "next/link";
 import dynamic from "next/dynamic";
 import { ModeToggle } from "@/components/mode-toggle";
+import { ThemeColorToggle } from "@/components/theme-color-toggle";
 
 const Search = dynamic(() => import("@/components/search").then((mod) => mod.Search), { 
   loading: () => <div className="h-9 w-9 md:w-64 bg-muted animate-pulse rounded-md border border-input" />
@@ -17,12 +18,14 @@ export function Header() {
           <nav className="flex items-center space-x-6 text-sm font-medium">
             <Link
               href="/topics"
+              prefetch={true}
               className="transition-colors hover:text-foreground/80 text-foreground/60"
             >
               Topics
             </Link>
             <Link
               href="/questions"
+              prefetch={true}
               className="transition-colors hover:text-foreground/80 text-foreground/60"
             >
               Interview Questions
@@ -31,6 +34,7 @@ export function Header() {
         </div>
         <div className="flex items-center space-x-2">
           <Search />
+          <ThemeColorToggle />
           <ModeToggle />
         </div>
       </div>

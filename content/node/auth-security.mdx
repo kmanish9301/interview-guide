@@ -1,0 +1,72 @@
+---
+title: Authentication & Security
+category: Node.js
+difficulty: Advanced
+interviewFrequency: High
+experienceLevel: Mid-Level
+estimatedReadTime: 8
+tags: [nodejs, jwt, security, authentication, rate-limiting]
+---
+
+# Authentication & Security
+
+## 📖 What is Authentication & Security in Node.js?
+
+Building a fast application is useless if it's completely insecure. As a backend Node.js developer, protecting user data and preventing server crashes due to malicious attacks is arguably your most important responsibility. 
+
+**Authentication** is the process of verifying a user's identity. When a user sends an email and password to your API, you verify it against your database, and if it matches, you generate an access token (like a **JWT** or a **Session Cookie**) to remember them.
+
+**Security** in Node.js extends beyond just logging users in. Because Node.js is single-threaded, it is inherently vulnerable to DDoS (Distributed Denial of Service) attacks. If an attacker sends 100,000 requests per second to your server, the event loop will choke, and legitimate users won't be able to access your site. Implementing defenses like **Rate Limiting** is critical. Additionally, securing your HTTP headers using tools like **Helmet** prevents browsers from executing malicious injected scripts (XSS attacks).
+
+## 🤔 Why do we need Authentication & Security?
+
+Imagine building an e-commerce backend without proper authorization logic. A user could simply change the `userId` in their request payload from `12` to `1` (which might be the Admin account) and suddenly gain access to delete your entire product database!
+
+By strictly separating **Authentication** ("Are you logged in?") from **Authorization** ("Do you have the correct role/permissions to do this?"), and aggressively validating user input, you ensure your backend cannot be tricked into executing destructive actions or leaking private user data.
+
+---
+
+## ❓ Interview Questions
+
+1. **What is Authentication vs Authorization?**
+   - **Authentication**: Determines *Who you are*. (e.g., verifying email/password and issuing a JWT).
+   - **Authorization**: Determines *What you can access*. (e.g., checking if the authenticated user has the 'ADMIN' role before allowing them to delete a product).
+
+2. **What is JWT?**
+   JWT (JSON Web Token) is a compact, URL-safe standard used for securely transmitting information and authentication claims between a client and a server. It consists of three parts: `Header.Payload.Signature`.
+
+3. **How do you create a JWT?**
+   You use the `jsonwebtoken` package to sign a payload using a highly secure private secret key.
+   ```javascript
+   const jwt = require("jsonwebtoken");
+   const token = jwt.sign({ id: 1 }, "your_secret_key", { expiresIn: "1h" });
+   ```
+
+4. **How do you verify a JWT?**
+   You use the same secret key to verify the cryptographic signature of the token to ensure the payload hasn't been tampered with by the client.
+   ```javascript
+   const jwt = require("jsonwebtoken");
+   const decoded = jwt.verify(token, "your_secret_key");
+   ```
+
+5. **What is the difference between JWT and Session Authentication?**
+   - **State:** JWT is *stateless* (the server doesn't need to look up a session in the database). Sessions are *stateful* (the server stores session data).
+   - **Storage:** JWTs are typically stored on the client (in HTTPOnly Cookies or LocalStorage). Sessions are stored on the server (usually in memory or Redis).
+   - **Best Used For:** JWTs are excellent for distributed REST APIs and Microservices where you have many backend servers. Sessions are great for traditional monolithic server-rendered apps.
+
+6. **What is Rate Limiting?**
+   Rate limiting restricts the number of requests a single user (or IP address) can make within a specific timeframe (e.g., 100 requests per minute). It is critically used for **DDoS protection** and preventing brute-force password attacks.
+   ```javascript
+   const rateLimit = require("express-rate-limit");
+   const limiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 100 });
+   app.use(limiter);
+   ```
+
+7. **What are the top Node.js Security Best Practices?**
+   Important practices every backend developer should follow:
+   - **Use Helmet**: To set secure HTTP headers globally.
+   - **Validate Inputs**: Always sanitize and validate user data (using Joi or Zod) to prevent NoSQL/SQL injection.
+   - **Use HTTPS**: Encrypt transit data to prevent man-in-the-middle attacks.
+   - **Rate Limiting**: Prevent DDoS attacks and brute forcing.
+   - **Hide Errors in Production**: Never leak backend stack traces to users, as they reveal your directory structure and dependencies.
+   - **Use `.env` files**: Never hardcode database secrets or API keys into your source code.

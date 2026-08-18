@@ -1,0 +1,203 @@
+---
+title: Scaling, System Design & Architecture
+category: Node.js
+difficulty: Advanced
+interviewFrequency: Very High
+experienceLevel: Senior
+estimatedReadTime: 20
+tags: [nodejs, scaling, microservices, clustering, redis, system-design]
+---
+
+# Scaling, System Design & Architecture
+
+## 📖 What is Scaling & System Design in Node.js?
+
+As your application grows from 100 users to 1,000,000 users, simply writing clean code is no longer enough. **System Design** is the high-level architecture of how multiple servers, databases, and caches communicate with each other over the network. 
+
+Because Node.js runs on a single thread by default, a single server instance can only utilize one CPU core. If you deploy a Node.js app to an AWS server with 16 CPU cores, 15 of them will sit completely idle! **Scaling** is the process of utilizing all hardware available to you. 
+- **Clustering** allows you to spin up multiple Node.js instances on the same machine to use all CPU cores.
+- **Horizontal Scaling** allows you to spin up multiple entirely separate machines and put a Load Balancer in front of them to distribute the traffic.
+
+## 🤔 Why do we need Scaling & Architecture?
+
+If a single monolithic server handles routing, database queries, image processing, and real-time chat, it becomes a massive bottleneck. If that server crashes, your entire business goes offline.
+
+By adopting architectural patterns like **Microservices** (splitting the app into smaller, independent services), using **Redis** for in-memory caching to bypass slow database queries, and utilizing **Message Queues** (like RabbitMQ) to handle heavy background jobs asynchronously, backend developers build resilient systems that never go down, no matter how much traffic spikes.
+
+---
+
+## ❓ Interview Questions
+
+1. **What makes Node.js scalable?**
+   Node.js scalability comes from:
+   - The single-threaded Event loop
+   - Non-blocking I/O
+   - Microservices architecture
+   - Horizontal scaling capabilities
+
+2. **What is Clustering in Node.js?**
+   Node.js uses one CPU core by default. Cluster allows using multiple CPU cores by forking the Node.js process.
+   ```javascript
+   const cluster = require("cluster");
+   if (cluster.isMaster) { cluster.fork(); }
+   ```
+
+3. **What are Worker Threads?**
+   Worker threads run CPU-intensive tasks in background threads so they don't block the main event loop.
+   Examples of use: image processing, data compression.
+
+4. **Worker Threads vs Cluster?**
+   - **Worker Threads:** Used for CPU tasks, shares memory, good for heavy computation.
+   - **Cluster:** Used for multiple processes, uses separate memory, good for high-traffic web servers.
+
+5. **What is PM2?**
+   PM2 is a Node.js process manager for production.
+   Example: `pm2 start app.js`
+   Features include: clustering, monitoring, and auto restart on crashes.
+
+6. **What is Vertical Scaling?**
+   Increasing the CPU or RAM of one single server.
+   Example: Upgrading from 4GB RAM to 16GB RAM.
+
+7. **What is Horizontal Scaling?**
+   Adding more servers to handle the load.
+   Example: `Server1 <-> Server2 <-> Server3`
+
+8. **What is a Load Balancer?**
+   Distributes traffic across multiple servers.
+   Examples: NGINX, AWS ELB.
+
+9. **What are Load Balancing Strategies?**
+   Common strategies include:
+   - Round Robin
+   - Least Connections
+   - IP Hash
+
+10. **What is a Reverse Proxy?**
+    A reverse proxy forwards client requests to backend servers.
+    Examples: NGINX, Cloudflare.
+
+11. **What is API Gateway?**
+    API gateway manages multiple backend services.
+    Responsibilities: authentication, rate limiting, routing.
+    Example tools: AWS API Gateway.
+
+12. **What is Microservices Architecture?**
+    Application is divided into small independent services.
+    Example: User Service, Payment Service, Order Service.
+    Benefits: independent deployment, fault isolation, scalability.
+
+13. **What is a Message Queue?**
+    Message queues enable asynchronous communication between services. Used heavily in microservices.
+    Examples: RabbitMQ, Kafka, AWS SQS.
+
+14. **What is Redis?**
+    Redis is an in-memory data store used for caching.
+    Example usage: API request -> check Redis -> DB
+    Benefits: faster responses, reduced database load.
+
+15. **Redis vs Memory Cache?**
+    - **Redis:** External store, Persistent, Scalable across multiple servers.
+    - **Memory Cache:** Inside the server process, Temporary, Limited scalability.
+
+16. **What is a CDN?**
+    CDN (Content Delivery Network) distributes content across global servers.
+    Example: Cloudflare, AWS CloudFront.
+    Used for: static files, images, videos.
+    Benefits: faster load time, reduced server load, improved performance.
+
+17. **What is Serverless Architecture?**
+    Serverless means running code without managing servers.
+    Examples: AWS Lambda, Firebase Functions.
+    Benefits: No server management, Auto scaling.
+
+18. **What is a Cold Start?**
+    Cold start happens when a serverless function starts for the first time. It may cause a small delay.
+
+19. **What is Containerization?**
+    Containers package an app with its dependencies.
+    Example: Docker.
+    Benefits over Serverless: Runs inside a container, allows manual scaling.
+
+20. **What is Docker?**
+    Docker creates isolated environments.
+    Example command: `$ docker build .`
+
+21. **What is CI/CD?**
+    CI/CD automates build and deployment.
+    Examples: GitHub Actions, Jenkins, GitLab CI.
+
+22. **What is WebSocket?**
+    WebSocket provides real-time communication.
+    Examples: chat applications, live notifications.
+
+23. **WebSockets vs HTTP?**
+    - **HTTP:** Request-response, Stateless.
+    - **WebSockets:** Real-time connection, Persistent.
+
+24. **Express vs Fastify?**
+    - **Express:** Older, Large ecosystem, More middleware.
+    - **Fastify:** Newer, Faster performance, Built-in validation.
+
+25. **REST vs GraphQL?**
+    - **REST:** Multiple endpoints, Over-fetching data, Uses standard HTTP methods.
+    - **GraphQL:** Single endpoint, Fetch exact data needed, Uses specific queries.
+
+26. **What is a Memory Leak?**
+    Memory leak occurs when memory is not released after use.
+    Common causes: global variables, unused timers, large caches.
+
+27. **How to Detect Memory Leaks?**
+    Tools: Node Inspector, Chrome DevTools, clinic.js.
+
+28. **What is Heap Memory?**
+    Heap stores dynamic data like objects and arrays.
+    Example: `let user = {name:"John"};`
+
+29. **What is Garbage Collection?**
+    Garbage collector automatically removes unused memory. Node uses the V8 GC.
+
+30. **What is Monitoring?**
+    Monitoring tracks application performance.
+    Metrics tracked: CPU usage, Memory, API response time.
+    Tools: Prometheus, Grafana, Datadog, New Relic.
+
+31. **What is a Health Check Endpoint?**
+    Used to check server status for load balancers and orchestrators.
+    ```javascript
+    app.get("/health", (req,res) => { res.send("Server OK"); });
+    ```
+
+32. **What is API Versioning?**
+    Maintaining multiple API versions to prevent breaking changes for older clients.
+    Example: `/api/v1/users`, `/api/v2/users`
+
+33. **What is Pagination?**
+    Pagination limits results returned from API to avoid fetching massive payloads.
+    Example: `/users?page=1&limit=10`
+
+34. **What is a Webhook?**
+    Webhook sends a real-time HTTP callback when an event occurs.
+    Example: Payment success -> webhook -> update order.
+
+35. **What is Idempotency?**
+    Same request produces same result every time.
+    Example: PUT request.
+
+36. **Node.js Performance Optimization?**
+    Techniques: caching with Redis, clustering, load balancing, database indexing.
+    Example compression middleware: `app.use(compression());`
+
+37. **Graceful Shutdown in Node.js?**
+    Graceful shutdown ensures ongoing requests complete before server stops.
+    ```javascript
+    process.on("SIGINT", () => {
+      console.log("Server shutting down");
+      process.exit();
+    });
+    ```
+
+38. **What does Production Node.js Architecture look like?**
+    Typical production architecture:
+    Client -> CDN -> Load Balancer -> Node.js Servers -> Redis Cache -> Database
+    Benefits: scalability, reliability, high performance.

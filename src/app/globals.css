@@ -119,6 +119,36 @@
   --sidebar-ring: oklch(0.556 0 0);
 }
 
+[data-theme="blue"] {
+  --primary: oklch(0.546 0.245 262.881);
+  --primary-foreground: oklch(0.985 0 0);
+}
+
+.dark[data-theme="blue"] {
+  --primary: oklch(0.546 0.245 262.881);
+  --primary-foreground: oklch(0.985 0 0);
+}
+
+[data-theme="violet"] {
+  --primary: oklch(0.528 0.25 285);
+  --primary-foreground: oklch(0.985 0 0);
+}
+
+.dark[data-theme="violet"] {
+  --primary: oklch(0.528 0.25 285);
+  --primary-foreground: oklch(0.985 0 0);
+}
+
+[data-theme="rose"] {
+  --primary: oklch(0.569 0.237 17.067);
+  --primary-foreground: oklch(0.985 0 0);
+}
+
+.dark[data-theme="rose"] {
+  --primary: oklch(0.569 0.237 17.067);
+  --primary-foreground: oklch(0.985 0 0);
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
