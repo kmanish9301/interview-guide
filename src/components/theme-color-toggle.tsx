@@ -8,7 +8,7 @@ const themes = [
   { name: "zinc", color: "bg-zinc-500" },
   { name: "blue", color: "bg-blue-500" },
   { name: "violet", color: "bg-violet-500" },
-  { name: "rose", color: "bg-rose-500" },
+  { name: "rose", color: "bg-rose-500" }
 ];
 
 export function ThemeColorToggle() {
@@ -39,13 +39,15 @@ export function ThemeColorToggle() {
   };
 
   return (
-    <div className="flex items-center space-x-2 border rounded-full px-2 py-1 mr-2 bg-background/50">
+    <div className="flex items-center space-x-2 border rounded-full px-2 py-1 bg-background/50">
       {themes.map((t) => (
         <button
           key={t.name}
           onClick={() => setThemeColor(t.name)}
           className={`h-4 w-4 rounded-full transition-all ${t.color} ${
-            activeTheme === t.name ? "ring-2 ring-foreground ring-offset-2 ring-offset-background scale-110" : "hover:scale-110 opacity-70"
+            activeTheme === t.name
+              ? "ring-2 ring-foreground ring-offset-2 ring-offset-background scale-110"
+              : "hover:scale-110 opacity-70"
           }`}
           aria-label={`Switch to ${t.name} theme`}
         />

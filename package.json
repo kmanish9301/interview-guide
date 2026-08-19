@@ -6,7 +6,8 @@
     "dev": "velite && next dev -p 5000",
     "build": "velite && next build",
     "start": "next start -p 5000",
-    "lint": "eslint"
+    "lint": "eslint",
+    "format": "prettier --write \"src/**/*.{ts,tsx,css}\" \"*.{ts,json,mjs}\""
   },
   "dependencies": {
     "@base-ui/react": "^1.7.0",
@@ -38,6 +39,7 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.3.0",
+    "prettier": "^3.9.6",
     "tailwindcss": "^4",
     "typescript": "^5"
   }

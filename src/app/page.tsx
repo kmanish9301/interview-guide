@@ -13,19 +13,19 @@ export default function Home() {
     .slice(0, 6);
 
   return (
-    <div className="container mx-auto py-10 px-4 md:px-8 max-w-6xl">
-      <section className="flex flex-col items-center justify-center space-y-6 text-center py-24">
-        <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl">
+    <div className="container mx-auto py-6 md:py-10 px-4 md:px-8 max-w-6xl">
+      <section className="flex flex-col items-center justify-center space-y-4 md:space-y-6 text-center py-12 md:py-20 lg:py-24">
+        <h1 className="text-3xl font-extrabold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl">
           Frontend Interview Engine
         </h1>
-        <p className="max-w-[700px] text-lg text-muted-foreground sm:text-xl">
+        <p className="max-w-[700px] text-base text-muted-foreground sm:text-xl px-2">
           The ultimate static knowledge base for frontend engineers. Search
           across concepts, architecture, and coding patterns instantly.
         </p>
-        <div className="flex gap-4 pt-4">
+        <div className="flex flex-wrap gap-3 pt-2 md:pt-4 justify-center">
           <Link
             href="/topics"
-            className="inline-flex h-12 items-center justify-center rounded-full bg-primary px-10 text-sm font-semibold text-primary-foreground shadow-lg shadow-primary/20 transition-all hover:-translate-y-0.5 hover:shadow-xl hover:bg-primary/90"
+            className="inline-flex h-11 md:h-12 items-center justify-center rounded-full bg-primary px-8 md:px-10 text-sm font-semibold text-primary-foreground shadow-lg shadow-primary/20 transition-all hover:-translate-y-0.5 hover:shadow-xl hover:bg-primary/90"
           >
             Browse Topics
           </Link>

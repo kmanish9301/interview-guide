@@ -21,7 +21,9 @@ function QuestionsSkeleton() {
 
 export default async function QuestionsPage() {
   const { topics } = await import("#velite");
-  const questions: Question[] = topics.flatMap((topic: any) => topic.questions || []);
+  const questions: Question[] = topics.flatMap(
+    (topic: any) => topic.questions || []
+  );
 
   return (
     <div className="container mx-auto py-12 px-4 md:px-8 max-w-4xl">

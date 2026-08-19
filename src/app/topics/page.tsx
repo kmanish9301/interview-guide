@@ -35,7 +35,7 @@ export default function TopicsPage() {
     interviewFrequency: t.interviewFrequency,
     experienceLevel: t.experienceLevel,
     estimatedReadTime: t.estimatedReadTime,
-    permalink: t.permalink,
+    permalink: t.permalink
   }));
 
   return (

@@ -58,9 +58,19 @@ export function Search() {
 
   return (
     <>
+      {/* Mobile: icon-only button */}
       <button
         onClick={() => setOpen(true)}
-        className="inline-flex items-center rounded-md font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring border border-input bg-transparent shadow-sm hover:bg-accent hover:text-accent-foreground h-9 px-4 py-2 text-sm w-full md:w-64 justify-between text-muted-foreground"
+        className="md:hidden inline-flex items-center justify-center rounded-md border border-input bg-transparent shadow-sm hover:bg-accent hover:text-accent-foreground h-9 w-9 text-muted-foreground transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+        aria-label="Search"
+      >
+        <SearchIcon className="h-4 w-4" />
+      </button>
+
+      {/* Desktop: full labeled button */}
+      <button
+        onClick={() => setOpen(true)}
+        className="hidden md:inline-flex items-center rounded-md font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring border border-input bg-transparent shadow-sm hover:bg-accent hover:text-accent-foreground h-9 px-4 py-2 text-sm w-64 justify-between text-muted-foreground"
       >
         <span className="flex items-center">
           <SearchIcon className="mr-2 h-4 w-4" />

@@ -30,34 +30,39 @@ export function QuestionsList({ initialQuestions }: QuestionsListProps) {
   const [search, setSearch] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
-  const categories = Array.from(new Set(initialQuestions.map(q => q.category)));
+  const categories = Array.from(
+    new Set(initialQuestions.map((q) => q.category))
+  );
 
   const filtered = initialQuestions.filter((item) => {
-    const matchesSearch = item.q.toLowerCase().includes(search.toLowerCase()) ||
+    const matchesSearch =
+      item.q.toLowerCase().includes(search.toLowerCase()) ||
       item.topicTitle.toLowerCase().includes(search.toLowerCase()) ||
       item.category.toLowerCase().includes(search.toLowerCase());
-      
-    const matchesCategory = selectedCategory ? item.category === selectedCategory : true;
-    
+
+    const matchesCategory = selectedCategory
+      ? item.category === selectedCategory
+      : true;
+
     return matchesSearch && matchesCategory;
   });
 
   return (
     <>
-      <div className="mb-12">
-        <h1 className="text-4xl font-extrabold tracking-tight mb-4">
+      <div className="mb-8 md:mb-12">
+        <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight mb-3 md:mb-4">
           Top Interview Questions
         </h1>
-        <p className="text-muted-foreground text-xl mb-8">
+        <p className="text-muted-foreground text-base md:text-xl mb-6 md:mb-8">
           A curated list of the most frequently asked frontend interview
           questions extracted directly from our topics.
         </p>
 
-        <div className="relative w-full mb-6">
+        <div className="relative w-full mb-4 md:mb-6">
           <SearchIcon className="absolute left-3 top-3 h-5 w-5 text-muted-foreground" />
           <Input
             placeholder="Search questions by keyword or topic..."
-            className="pl-10 h-12 text-lg rounded-xl"
+            className="pl-10 h-12 text-base md:text-lg rounded-xl"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
@@ -65,7 +70,9 @@ export function QuestionsList({ initialQuestions }: QuestionsListProps) {
 
         {categories.length > 0 && (
           <div className="flex flex-wrap gap-2 items-center">
-            <span className="text-sm text-muted-foreground mr-2">Filter by Category:</span>
+            <span className="hidden sm:inline text-sm text-muted-foreground mr-2">
+              Filter by Category:
+            </span>
             <Badge
               variant={selectedCategory === null ? "default" : "outline"}
               className="cursor-pointer transition-colors"
@@ -73,7 +80,7 @@ export function QuestionsList({ initialQuestions }: QuestionsListProps) {
             >
               All
             </Badge>
-            {categories.map(cat => (
+            {categories.map((cat) => (
               <Badge
                 key={cat}
                 variant={selectedCategory === cat ? "default" : "outline"}
@@ -87,20 +94,20 @@ export function QuestionsList({ initialQuestions }: QuestionsListProps) {
         )}
       </div>
 
-      <div className="space-y-6">
+      <div className="space-y-4 md:space-y-6">
         {filtered.map((item, idx) => (
           <Card
             key={idx}
             className="overflow-hidden border-border/60 transition-all hover:border-primary/30"
           >
             <CardHeader className="bg-muted/30 pb-4 border-b border-border/40">
-              <div className="flex justify-between items-start gap-4">
-                <CardTitle className="text-lg leading-relaxed font-bold">
+              <div className="flex flex-col gap-2 sm:flex-row sm:justify-between sm:items-start sm:gap-4">
+                <CardTitle className="text-base md:text-lg leading-relaxed font-bold">
                   {item.q}
                 </CardTitle>
                 <Badge
                   variant="outline"
-                  className="whitespace-nowrap shrink-0 border-primary/20 bg-primary/5 text-primary"
+                  className="whitespace-nowrap shrink-0 self-start border-primary/20 bg-primary/5 text-primary"
                 >
                   {item.category}
                 </Badge>
@@ -121,33 +128,35 @@ export function QuestionsList({ initialQuestions }: QuestionsListProps) {
                       <SearchIcon className="w-4 h-4 mr-2 text-primary" />
                       Interviewer Deep Dive
                     </h4>
-                    {item.deepDive.split("\n").map((line: string, i: number) => {
-                      const trimmed = line.trim();
-                      if (!trimmed) return null;
-                      if (
-                        trimmed.startsWith("- ") ||
-                        trimmed.startsWith("* ")
-                      ) {
-                        return (
-                          <li key={i} className="ml-5 list-disc">
-                            {trimmed.substring(2).replace(/\*/g, "")}
-                          </li>
-                        );
-                      }
-                      if (trimmed.startsWith("**")) {
-                        return (
-                          <p
-                            key={i}
-                            className="font-semibold text-foreground/80 mt-3"
-                          >
-                            {trimmed.replace(/\*/g, "")}
-                          </p>
-                        );
-                      }
-                      return <p key={i}>{trimmed.replace(/\*/g, "")}</p>;
-                    })}
+                    {item.deepDive
+                      .split("\n")
+                      .map((line: string, i: number) => {
+                        const trimmed = line.trim();
+                        if (!trimmed) return null;
+                        if (
+                          trimmed.startsWith("- ") ||
+                          trimmed.startsWith("* ")
+                        ) {
+                          return (
+                            <li key={i} className="ml-5 list-disc">
+                              {trimmed.substring(2).replace(/\*/g, "")}
+                            </li>
+                          );
+                        }
+                        if (trimmed.startsWith("**")) {
+                          return (
+                            <p
+                              key={i}
+                              className="font-semibold text-foreground/80 mt-3"
+                            >
+                              {trimmed.replace(/\*/g, "")}
+                            </p>
+                          );
+                        }
+                        return <p key={i}>{trimmed.replace(/\*/g, "")}</p>;
+                      })}
                   </div>
-                 )}
+                )}
               </div>
             </CardContent>
             <CardFooter className="bg-muted/10 pt-4 border-t border-border/40 text-xs">

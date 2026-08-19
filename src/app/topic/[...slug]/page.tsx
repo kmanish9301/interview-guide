@@ -42,9 +42,9 @@ export default async function TopicPage({ params }: TopicPageProps) {
   }
 
   return (
-    <div className="container mx-auto py-10 px-4 md:px-8 max-w-4xl">
-      <div className="mb-12 border-b border-border/40 pb-10">
-        <div className="flex items-center gap-3 mb-6">
+    <div className="container mx-auto py-6 md:py-10 px-4 md:px-8 max-w-4xl">
+      <div className="mb-8 md:mb-12 border-b border-border/40 pb-8 md:pb-10">
+        <div className="flex flex-wrap items-center gap-2 mb-4 md:mb-6">
           <span className="inline-flex items-center rounded-full bg-primary/10 px-3 py-1 text-sm font-semibold text-primary">
             {topic.category}
           </span>
@@ -56,11 +56,11 @@ export default async function TopicPage({ params }: TopicPageProps) {
           </span>
         </div>
 
-        <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight mb-6 text-foreground">
+        <h1 className="text-3xl md:text-5xl lg:text-6xl font-extrabold tracking-tight mb-4 md:mb-6 text-foreground">
           {topic.title}
         </h1>
 
-        <div className="flex flex-wrap items-center gap-2 mb-6">
+        <div className="flex flex-wrap items-center gap-2 mb-4 md:mb-6">
           <span className="text-sm text-muted-foreground font-medium mr-2">
             Companies:
           </span>
@@ -86,7 +86,7 @@ export default async function TopicPage({ params }: TopicPageProps) {
         </div>
       </div>
 
-      <article className="prose prose-zinc dark:prose-invert prose-headings:font-bold prose-headings:tracking-tight prose-a:text-primary prose-a:underline-offset-4 hover:prose-a:text-primary/80 prose-code:text-primary prose-code:bg-primary/10 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded-md prose-code:before:content-none prose-code:after:content-none prose-pre:bg-zinc-950 prose-pre:border prose-pre:border-border/50 max-w-none mt-8 pb-20">
+      <article className="prose prose-zinc dark:prose-invert prose-headings:font-bold prose-headings:tracking-tight prose-a:text-primary prose-a:underline-offset-4 hover:prose-a:text-primary/80 prose-code:text-primary prose-code:bg-primary/10 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded-md prose-code:before:content-none prose-code:after:content-none prose-pre:bg-zinc-950 prose-pre:border prose-pre:border-border/50 max-w-none mt-6 md:mt-8 pb-20">
         <MDXContent code={topic.body} />
       </article>
     </div>

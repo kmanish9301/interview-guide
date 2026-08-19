@@ -40,11 +40,11 @@ export function TopicsList({ initialTopics }: TopicsListProps) {
 
   return (
     <>
-      <div className="mb-12">
-        <h1 className="text-4xl font-extrabold tracking-tight mb-4">
+      <div className="mb-8 md:mb-12">
+        <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight mb-3 md:mb-4">
           All Topics
         </h1>
-        <p className="text-muted-foreground text-xl max-w-2xl mb-8">
+        <p className="text-muted-foreground text-base md:text-xl max-w-2xl mb-6 md:mb-8">
           Browse the complete list of interview topics across JavaScript, React,
           TypeScript, and more.
         </p>
