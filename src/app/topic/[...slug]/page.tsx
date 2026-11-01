@@ -86,7 +86,7 @@ export default async function TopicPage({ params }: TopicPageProps) {
         </div>
       </div>
 
-      <article className="prose prose-zinc dark:prose-invert prose-headings:font-bold prose-headings:tracking-tight prose-a:text-primary prose-a:underline-offset-4 hover:prose-a:text-primary/80 prose-code:text-primary prose-code:bg-primary/10 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded-md prose-code:before:content-none prose-code:after:content-none prose-pre:bg-zinc-950 prose-pre:border prose-pre:border-border/50 max-w-none mt-6 md:mt-8 pb-20">
+      <article className="prose prose-zinc dark:prose-invert prose-headings:font-bold prose-headings:tracking-tight prose-a:text-primary prose-a:underline-offset-4 hover:prose-a:text-primary/80 prose-code:before:content-none prose-code:after:content-none max-w-none mt-6 md:mt-8 pb-20">
         <MDXContent code={topic.body} />
       </article>
     </div>

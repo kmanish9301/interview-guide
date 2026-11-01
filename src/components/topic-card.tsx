@@ -6,12 +6,17 @@ import {
   Blocks,
   Type,
   Server,
-  Paintbrush
+  Paintbrush,
+  Boxes
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
 const categoryConfig: Record<string, { color: string; icon: React.ReactNode }> =
   {
+    Kubernetes: {
+      color: "text-sky-500 bg-sky-500/10 border-sky-500/20",
+      icon: <Boxes className="w-3.5 h-3.5 mr-1.5" />
+    },
     JavaScript: {
       color: "text-yellow-500 bg-yellow-500/10 border-yellow-500/20",
       icon: <Code2 className="w-3.5 h-3.5 mr-1.5" />

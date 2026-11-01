@@ -1,7 +1,10 @@
 /* eslint-disable react-hooks/static-components */
 import * as runtime from "react/jsx-runtime";
 
+import { Mermaid } from "./mermaid";
+
 const sharedComponents = {
+  Mermaid,
   // We can add Callouts, Sandpack, or custom Alerts here later
 };
 
